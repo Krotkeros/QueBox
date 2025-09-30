@@ -1,0 +1,9 @@
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Servicios\bin\Debug\netstandard2.1\MiApi.Servicios.deps.json
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Servicios\bin\Debug\netstandard2.1\MiApi.Servicios.dll
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Servicios\bin\Debug\netstandard2.1\MiApi.Servicios.pdb
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Servicios\obj\Debug\netstandard2.1\MiApi.Servicios.GeneratedMSBuildEditorConfig.editorconfig
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Servicios\obj\Debug\netstandard2.1\MiApi.Servicios.AssemblyInfoInputs.cache
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Servicios\obj\Debug\netstandard2.1\MiApi.Servicios.AssemblyInfo.cs
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Servicios\obj\Debug\netstandard2.1\MiApi.Servicios.csproj.CoreCompileInputs.cache
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Servicios\obj\Debug\netstandard2.1\MiApi.Servicios.dll
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Servicios\obj\Debug\netstandard2.1\MiApi.Servicios.pdb

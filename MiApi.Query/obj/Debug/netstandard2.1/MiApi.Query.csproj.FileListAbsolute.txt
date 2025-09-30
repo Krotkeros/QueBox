@@ -1,0 +1,13 @@
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\bin\Debug\netstandard2.1\MiApi.Query.deps.json
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\bin\Debug\netstandard2.1\MiApi.Query.dll
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\bin\Debug\netstandard2.1\MiApi.Query.pdb
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\bin\Debug\netstandard2.1\MiApi.Models.dll
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\bin\Debug\netstandard2.1\MiApi.Models.pdb
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\obj\Debug\netstandard2.1\MiApi.Query.csproj.AssemblyReference.cache
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\obj\Debug\netstandard2.1\MiApi.Query.GeneratedMSBuildEditorConfig.editorconfig
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\obj\Debug\netstandard2.1\MiApi.Query.AssemblyInfoInputs.cache
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\obj\Debug\netstandard2.1\MiApi.Query.AssemblyInfo.cs
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\obj\Debug\netstandard2.1\MiApi.Query.csproj.CoreCompileInputs.cache
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\obj\Debug\netstandard2.1\MiApi.Qu.24579934.Up2Date
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\obj\Debug\netstandard2.1\MiApi.Query.dll
+E:\PBravo\Herramientas Programacion III\MiApi\MiApi.Query\obj\Debug\netstandard2.1\MiApi.Query.pdb

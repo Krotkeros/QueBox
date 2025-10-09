@@ -1,3 +1,15 @@
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using QueBox.Contexts;
+using QueBox.Query.Implements;
+using QueBox.Query.Interfaces;
+using QueBox.Repository.Implements;
+using QueBox.Repository.Interfaces;
+using QueBox.Servicios.Implements;
+using QueBox.Servicios.Interfaces;
+using System.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace QueBox
 {
@@ -10,8 +22,28 @@ namespace QueBox
             // Add services to the container.
             builder.Services.AddAuthorization();
 
+            builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+
+            // builder.Services.AddTransient<IAnimal, Perro>();  <- Codigo para los servicios
+            builder.Services.AddTransient<IPersonaQueries, PersonaQueries>();
+            builder.Services.AddTransient<IPersonaRepository, PersonaRepository>();
+
+            builder.Services.AddDbContext<ApiContext>(
+                opt =>
+                opt.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
+
+            builder.Services.AddScoped<IDbConnection>(options =>
+            {
+                return new SqlConnection(builder.Configuration.GetConnectionString("SqlConnection"));
+            });
+
+            builder.Services.AddSwaggerGen(options =>
+            {
+                string archivo = "QueBox.xml";
+                string path = Path.Combine(AppContext.BaseDirectory, archivo);
+                options.IncludeXmlComments(path);
+            });
 
             var app = builder.Build();
 
@@ -21,28 +53,9 @@ namespace QueBox
                 app.MapOpenApi();
             }
 
-            app.UseHttpsRedirection();
-
             app.UseAuthorization();
 
-            var summaries = new[]
-            {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
-
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast
-                    {
-                        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                        TemperatureC = Random.Shared.Next(-20, 55),
-                        Summary = summaries[Random.Shared.Next(summaries.Length)]
-                    })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast");
+            app.MapControllers();
 
             app.Run();
         }

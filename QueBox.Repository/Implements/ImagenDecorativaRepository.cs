@@ -1,4 +1,6 @@
-﻿using MiApi.Repository.Interfaces;
+﻿using Dapper.Contrib.Extensions;
+using QueBox.Models;
+using QueBox.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -7,39 +9,59 @@ using System.Threading.Tasks;
 
 namespace QueBox.Repository.Implements
 {
-    internal class ImagenDecorativaRepository
-    {
-    }
-}
-
-
-//
-
-using Dapper.Contrib.Extensions;
-using MiApi.Models;
-using MiApi.Repository.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MiApi.Repository.Implements
-{
-    public class PersonaRepository : IPersonaRepository
+    public class ImagenDecorativaRepository : IImagenDecorativaRepository
     {
         private readonly IDbConnection _db;
 
-        public PersonaRepository(IDbConnection db)
+        public ImagenDecorativaRepository(IDbConnection db)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
         }
-        public async Task<int> Add(Persona p)
+        public async Task<int> Add(ImagenDecorativa I)
         {
             try
             {
-                var id = await _db.InsertAsync(p);
-                return id;
+                int ID_IMG = await _db.InsertAsync(p);
+                return ID_IMG;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<int> Add(ImagenDecorativa I)
+        {
+            try
+            {
+                var Url = await _db.InsertAsync(p);
+                return Url;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<float> Add(ImagenDecorativa I)
+        {
+            try
+            {
+                float Ancho = await _db.InsertAsync(p);
+                return Ancho;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<float> Add(ImagenDecorativa I)
+        {
+            try
+            {
+                float Alto = await _db.InsertAsync(p);
+                return Alto;
             }
             catch (Exception)
             {

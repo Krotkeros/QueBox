@@ -1,26 +1,18 @@
-﻿using System;
+﻿// Archivo: Interfaces/IImagenDecorativaQueries.cs
+// Ubicación: QueBox.Query/Interfaces/IImagenDecorativaQueries.cs
+
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace QueBox.Query.Interfaces
 {
-    internal interface IImagenDecorativaQueries
+    public interface IImagenDecorativaQueries
     {
-    }
-}
-
-
-using MiApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MiApi.Query.Interfaces
-{
-    public interface IPersonaQueries
-    {
-        Task<IEnumerable<Persona>> GetAll();
+        Task<ImagenDecorativa> ObtenerPorIdAsync(int id);
+        Task<IEnumerable<ImagenDecorativa>> ObtenerTodasAsync();
+        Task<ImagenDecorativa> ObtenerPorUrlAsync(string url);
+        Task<IEnumerable<ImagenDecorativa>> ObtenerPorDimensionesAsync(float ancho, float alto);
+        Task<IEnumerable<ImagenDecorativa>> ObtenerImagenesConCapasAsync();
+        Task<int> ContarCapasPorImagenAsync(int idImagen);
     }
 }

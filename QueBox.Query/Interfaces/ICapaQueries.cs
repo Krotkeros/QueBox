@@ -1,26 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace QueBox.Query.Interfaces
 {
-    internal interface ICapaQueries
+    public interface ICapaQueries
     {
-    }
-}
-
-
-using MiApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MiApi.Query.Interfaces
-{
-    public interface IPersonaQueries
-    {
-        Task<IEnumerable<Persona>> GetAll();
+        Task<Capa> ObtenerPorIdAsync(int id);
+        Task<IEnumerable<Capa>> ObtenerPorImagenDecorativaAsync(int idCapa);
+        Task<IEnumerable<Capa>> ObtenerTodasAsync();
+        Task<Capa> ObtenerCapaConImagenAsync(int id);
+        Task<int> ObtenerNumeroPorImagenAsync(int idCapa, int numero);
+        Task<IEnumerable<Capa>> ObtenerCapasDisponiblesAsync();
     }
 }

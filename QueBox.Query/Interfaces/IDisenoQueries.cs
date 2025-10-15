@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace QueBox.Query.Interfaces
 {
-    internal interface IDisenoQueries
+    public interface IDisenoQueries
     {
-    }
-}
-
-using MiApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MiApi.Query.Interfaces
-{
-    public interface IPersonaQueries
-    {
-        Task<IEnumerable<Persona>> GetAll();
+        Task<Diseno> ObtenerPorIdAsync(int id);
+        Task<IEnumerable<Diseno>> ObtenerPorUsuarioAsync(int idUsuario);
+        Task<IEnumerable<Diseno>> ObtenerPorCapaAsync(int idDiseno);
+        Task<IEnumerable<Diseno>> ObtenerTodosAsync();
+        Task<Diseno> ObtenerDisenoCompletoAsync(int id);
+        Task<int> ContarDisenoPorUsuarioAsync(int idUsuario);
+        Task<IEnumerable<Diseno>> ObtenerDisenosRecientesAsync(int limite);
     }
 }

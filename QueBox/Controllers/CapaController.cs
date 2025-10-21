@@ -1,102 +1,134 @@
 ﻿using MiApi.Contexts;
-using MiApi.Models;
-using MiApi.Query.Interfaces;
-using MiApi.Repository.Interfaces;
-using MiApi.Servicios.Interfaces;
+using QueBox.Context;
+using QueBox.Models;
+using QueBox.Query.Interfaces;
+using QueBox.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MiApi.Controllers
+namespace QueBox.Controllers
 {
     /// <summary>
-    /// Controlador para las acciones de personas
+    /// Controlador para las acciones de capas
     /// </summary>
-
     [Route("api/[controller]")]
     [ApiController]
-    public class PersonaController : ControllerBase
+    public class CapaController : ControllerBase
     {
-        private readonly IAnimal _animal;
-        private readonly ILogger<PersonaController> _logger;
+        private readonly ILogger<CapaController> _logger;
         private readonly ApiContext _db;
-        private readonly IPersonaQueries _personaQueries;
-        private readonly IPersonaRepository _personaRepository;
+        private readonly ICapaQueries _capaQueries;
+        private readonly ICapaRepository _capaRepository;
 
-        public PersonaController(IAnimal animal,
-            ILogger<PersonaController> logger, ApiContext apiContext, IPersonaQueries personaQueries,
-            IPersonaRepository repository)
+        public CapaController(ILogger<CapaController> logger, ApiContext apicontext, 
+            ICapaQueries capaQueries,
+            ICapaRepository capaRepository)
         {
-            _animal = animal ?? throw new ArgumentNullException(nameof(animal));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _db = apiContext ?? throw new ArgumentNullException(nameof(apiContext));
-            _personaQueries = personaQueries ?? throw new ArgumentException(nameof(personaQueries));
+            _db = apicontext ?? throw new ArgumentNullException(nameof(apicontext));
+            _capaQueries = capaQueries ?? throw new ArgumentNullException(nameof(capaQueries));
+            _capaRepository = capaRepository ?? throw new ArgumentNullException(nameof(capaRepository));
             _logger.LogInformation("Entrando al constructor");
-            _personaRepository = repository ?? throw new ArgumentException(nameof(repository));
         }
 
         /// <summary>
-        /// Metodo que lista todos los usuarios
+        /// Método que lista todas las capas
         /// </summary>
-        /// <response code="200">Lista de usuarios</response>
-        /// <response code="500">Error procesando la peticion</response>
+        /// <response code="200">Lista de capas</response>
+        /// <response code="500">Error procesando la petición</response>
         [HttpGet]
-        [ProducesResponseType(typeof(List<Persona>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<Capa>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ListarPersona()
+        public async Task<IActionResult> ListarCapas()
         {
-            //_animal.Morir();
-            //var rs = _db.Personas.ToList();
-            var rsDapper = await _personaQueries.GetAll();
+            //var rs = _db.Capas.ToList();
+            var rsDapper = await _capaQueries.ObtenerTodasAsync();
             return Ok(rsDapper);
         }
 
         /// <summary>
-        /// Buscar usuario por id
+        /// Buscar capa por id
         /// </summary>
-        /// <param name="id">Id usuario a buscar</param>
-        /// <response code="200">Cuando se encuentra el usuario</response>
-        /// <response code="404">El Usuario no existe</response>
-        /// <response code="500">Error procesando la peticion</response>
-
+        /// <param name="id">Id capa a buscar</param>
+        /// <response code="200">Cuando se encuentra la capa</response>
+        /// <response code="404">La Capa no existe</response>
+        /// <response code="500">Error procesando la petición</response>
         [HttpGet("ById/{id}")]
-        [ProducesResponseType(typeof(Persona), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Capa), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> BuscarById(int id)
         {
-            _logger.LogInformation("Buscando por id => {0}", id);
-            Persona? p = _db.Personas.FirstOrDefault(f => f.Id == id);
+            _logger.LogInformation("Buscando por id -> {0}", id);
+            Capa? p = _db.Capas.FirstOrDefault(f => f.ID_Capa == id);
 
             if (p == null)
             {
-                _logger.LogWarning("Persona no encontrada en bd");
-                return NotFound("Coja oficio no existe");
+                _logger.LogWarning("Capa no encontrada en bd");
+                return NotFound("Capa no existe");
             }
 
-            _logger.LogInformation("Persona encontrada. Nombre=>{0}, Edad => {1}", p.Nombre, p.Edad);
+            _logger.LogInformation("Capa encontrada. ID->{0}, Numero -> {1}", p.ID_Capa, p.Numero);
 
             return Ok(p);
-
         }
 
-
         /// <summary>
-        /// Add persona con dapper
+        /// Add capa con dapper
         /// </summary>
         /// <param name="p">Body</param>
-        /// <returns></returns>
+        /// <returns>returns</returns>
         [HttpPost]
-        public async Task<IActionResult> Crear(Persona p)
+        public async Task<IActionResult> Crear(Capa p)
         {
             try
             {
-                var rs = await _personaRepository.Add(p);
-                p.Id = rs;
+                var rs = await _capaRepository.Add(p);
+                p.ID_Capa = rs;
                 return Ok(p);
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
 
+        /// <summary>
+        /// Actualizar capa
+        /// </summary>
+        /// <param name="p">Capa a actualizar</param>
+        /// <response code="200">Capa actualizada exitosamente</response>
+        /// <response code="500">Error procesando la petición</response>
+        [HttpPut]
+        public async Task<IActionResult> Actualizar(Capa p)
+        {
+            try
+            {
+                await _capaRepository.Update(p);
+                return Ok(p);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Eliminar capa
+        /// </summary>
+        /// <param name="id">Id de la capa a eliminar</param>
+        /// <response code="200">Capa eliminada exitosamente</response>
+        /// <response code="500">Error procesando la petición</response>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            try
+            {
+                await _capaRepository.Delete(id);
+                return Ok();
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }

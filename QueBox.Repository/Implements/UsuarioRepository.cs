@@ -34,8 +34,8 @@ namespace QueBox.Repository.Implements
         {
             try
             {
-                var Usuario = await _db.InsertAsync(p);
-                return Usuario;
+                var Nombre = await _db.InsertAsync(p);
+                return Nombre;
             }
             catch (Exception)
             {

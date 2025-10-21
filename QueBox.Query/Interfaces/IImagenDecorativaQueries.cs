@@ -1,26 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace QueBox.Query.Interfaces
 {
-    internal interface IImagenDecorativaQueries
+    public interface IImagenDecorativaQueries
     {
-    }
-}
-
-
-using MiApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MiApi.Query.Interfaces
-{
-    public interface IPersonaQueries
-    {
-        Task<IEnumerable<Persona>> GetAll();
+        Task<ImagenDecorativa> ObtenerPorIdAsync(int id);
+        Task<IEnumerable<ImagenDecorativa>> ObtenerTodasAsync();
+        Task<ImagenDecorativa> ObtenerPorUrlAsync(string url);
+        Task<IEnumerable<ImagenDecorativa>> ObtenerPorDimensionesAsync(float largo, float alto);
+        Task<IEnumerable<ImagenDecorativa>> ObtenerImagenesConCarasAsync();
+        Task<int> ContarCarasPorImagenAsync(int idImagen);
     }
 }

@@ -47,7 +47,7 @@ namespace MiApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDiseno(int id, Diseno diseno)
         {
-            if (id != diseno.Id)
+            if (id != diseno.id_Diseno)
             {
                 return BadRequest();
             }
@@ -102,7 +102,7 @@ namespace MiApi.Controllers
 
         private bool DisenoExists(int id)
         {
-            return _context.Disenos.Any(e => e.Id == id);
+            return _context.Disenos.Any(e => e.id_Diseno == id);
         }
     }
 }

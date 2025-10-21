@@ -62,7 +62,7 @@ namespace QueBox.Controllers
         public async Task<IActionResult> BuscarById(int id)
         {
             _logger.LogInformation("Buscando por id => {0}", id);
-            ImagenDecorativa? i = _db.ImagenDecorativas.FirstOrDefault(f => f.ID_IMG == id);
+            ImagenDecorativa? i = _db.ImagenDecorativas.FirstOrDefault(f => f.id_img == id);
 
             if (i == null)
             {
@@ -70,7 +70,7 @@ namespace QueBox.Controllers
                 return NotFound("Coja oficio no existe");
             }
 
-            _logger.LogInformation("ImagenDecorativa encontrada. ID_Capa=>{0}, Ancho => {1}, Alto => {2}, Url => {3}", i.ID_Capa, i.Ancho, i.Alto, i.Url);
+            _logger.LogInformation("ImagenDecorativa encontrada. id_Capa=>{0}, Ancho => {1}, Alto => {2}, Url => {3}", i.id_Capa, i.Ancho, i.Alto, i.Url);
 
             return Ok(i);
 

@@ -62,7 +62,7 @@ namespace QueBox.Controllers
         public async Task<IActionResult> BuscarById(int id)
         {
             _logger.LogInformation("Buscando por id => {0}", id);
-            Usuario? u = _db.Usuarios.FirstOrDefault(f => f.ID_Usuario == id);
+            Usuario? u = _db.Usuarios.FirstOrDefault(f => f.id_Usuario == id);
 
             if (u == null)
             {
@@ -70,7 +70,7 @@ namespace QueBox.Controllers
                 return NotFound("Coja oficio no existe");
             }
 
-            _logger.LogInformation("Usuario encontrada. ID_Diseno=>{0}, Numero de capa => {3}", u.ID_Diseno, u.Numero);
+            _logger.LogInformation("Usuario encontrada. Usuario=>{0}, Clave => {1}, Correo => {2}, ", u.Usuario, u.Clave, u.Correo);
 
             return Ok(u);
 

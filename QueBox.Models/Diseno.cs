@@ -7,7 +7,6 @@ namespace QueBox.Models
     {
         [Key]   
         public int Id_Diseno { get; set; }
-        [ForeignKey("Usuario")]
         public int Id_Usuario { get; set; }
         public float Largo { get; set; }
         public float Alto { get; set; }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace QueBox.Repository.Implements
 {
-    public class UsuarioRepository : IUserRepository
+    public class UsuarioRepository : IUsuarioRepository
     {
         private readonly IDbConnection _db;
 

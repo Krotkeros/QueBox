@@ -1,5 +1,6 @@
 ﻿using Dapper.Contrib.Extensions;
 
+
 namespace QueBox.Models
 {
     [Table("dbo.ImagenDecorativa")]
@@ -7,11 +8,11 @@ namespace QueBox.Models
     {
         [Key]
         public int Id_Img { get; set; }
-        [ForeignKey("Capa")]
         public int Id_Capa{ get; set; }
         public string Url { get; set; }
         public float Alto { get; set; }
-        public float Ancho { get; set; }
+        public float Ancho { get; set; }    
+
     }
 
 }

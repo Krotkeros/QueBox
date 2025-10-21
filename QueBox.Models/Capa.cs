@@ -1,4 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
+using System.Collections.Generic;
 
 namespace QueBox.Models
 {
@@ -7,7 +8,6 @@ namespace QueBox.Models
     {
         [Key]
         public int Id_Capa { get; set; }
-        [ForeignKey("Diseno")]
         public int Id_Diseno { get; set; }
         public int Numero { get; set; }
     }

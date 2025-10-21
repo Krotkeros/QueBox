@@ -7,72 +7,72 @@ using QueBox.Query.Interfaces;
 
 namespace QueBox.Query
 {
-    public class CaraQueries : ICapaQueries
+    public class CapaQueries : ICapaQueries
     {
         private readonly IDbConnection _connection;
 
-        public CaraQueries(IDbConnection connection)
+        public CapaQueries(IDbConnection connection)
         {
             _connection = connection;
         }
 
-        public async Task<Cara> ObtenerPorIdAsync(int id)
+        public async Task<Capa> ObtenerPorIdAsync(int id)
         {
             const string query = @"
-                SELECT ID_Cara, ID_IMG, Numero
-                FROM Cara
-                WHERE ID_Cara = @Id";
+                SELECT Id_Capa, Id_Img, Numero
+                FROM Capa
+                WHERE Id_Capa = @Id";
 
-            return await _connection.QueryFirstOrDefaultAsync<Cara>(query, new { Id = id });
+            return await _connection.QueryFirstOrDefaultAsync<Capa>(query, new { Id = id });
         }
 
-        public async Task<IEnumerable<Cara>> ObtenerPorImagenDecorativaAsync(int idImagen)
+        public async Task<IEnumerable<Capa>> ObtenerPorImagenDecorativaAsync(int idImagen)
         {
             const string query = @"
-                SELECT ID_Cara, ID_IMG, Numero
-                FROM Cara
-                WHERE ID_IMG = @IdImagen
+                SELECT Id_Capa, Id_Img, Numero
+                FROM Capa
+                WHERE Id_Img = @IdImagen
                 ORDER BY Numero";
 
-            return await _connection.QueryAsync<Cara>(query, new { IdImagen = idImagen });
+            return await _connection.QueryAsync<Capa>(query, new { IdImagen = idImagen });
         }
 
-        public async Task<IEnumerable<Cara>> ObtenerTodasAsync()
+        public async Task<IEnumerable<Capa>> ObtenerTodasAsync()
         {
             const string query = @"
-                SELECT ID_Cara, ID_IMG, Numero
-                FROM Cara
-                ORDER BY ID_Cara";
+                SELECT Id_Capa, Id_Img, Numero
+                FROM Capa
+                ORDER BY Id_Capa";
 
-            return await _connection.QueryAsync<Cara>(query);
+            return await _connection.QueryAsync<Capa>(query);
         }
 
-        public async Task<Cara> ObtenerCaraConImagenAsync(int id)
+        public async Task<Capa> ObtenerCapaConImagenAsync(int id)
         {
             const string query = @"
                 SELECT 
-                    c.ID_Cara, c.ID_IMG, c.Numero,
-                    i.ID_IMG, i.Url, i.Ancho, i.Alto
-                FROM Cara c
-                INNER JOIN Imagen_Decorativa i ON c.ID_IMG = i.ID_IMG
-                WHERE c.ID_Cara = @Id";
+                    c.Id_Capa, c.Id_Img, c.Numero,
+                    i.Id_Img, i.Url, i.Ancho, i.Alto
+                FROM Capa c
+                INNER JOIN Imagen_Decorativa i ON c.Id_Img = i.Id_Img
+                WHERE c.Id_Capa = @Id";
 
-            var caraDictionary = new Dictionary<int, Cara>();
+            var capaDictionary = new Dictionary<int, Capa>();
 
-            var result = await _connection.QueryAsync<Cara, ImagenDecorativa, Cara>(
+            var result = await _connection.QueryAsync<Capa, ImagenDecorativa, Capa>(
                 query,
-                (cara, imagen) =>
+                (capa, imagen) =>
                 {
-                    if (!caraDictionary.TryGetValue(cara.ID_Cara, out var caraEntry))
+                    if (!capaDictionary.TryGetValue(capa.Id_Capa, out var capaEntry))
                     {
-                        caraEntry = cara;
-                        caraEntry.ImagenDecorativa = imagen;
-                        caraDictionary.Add(caraEntry.ID_Cara, caraEntry);
+                        capaEntry = capa;
+                        capaEntry.ImagenDecorativa = imagen;
+                        capaDictionary.Add(capaEntry.Id_Capa, capaEntry);
                     }
-                    return caraEntry;
+                    return capaEntry;
                 },
                 new { Id = id },
-                splitOn: "ID_IMG"
+                splitOn: "Id_Img"
             );
 
             return result.FirstOrDefault();
@@ -82,22 +82,22 @@ namespace QueBox.Query
         {
             const string query = @"
                 SELECT COUNT(*)
-                FROM Cara
-                WHERE ID_IMG = @IdImagen AND Numero = @Numero";
+                FROM Capa
+                WHERE Id_Img = @IdImagen AND Numero = @Numero";
 
             return await _connection.ExecuteScalarAsync<int>(query, new { IdImagen = idImagen, Numero = numero });
         }
 
-        public async Task<IEnumerable<Cara>> ObtenerCarasDisponiblesAsync()
+        public async Task<IEnumerable<Capa>> ObtenerCapasDisponiblesAsync()
         {
             const string query = @"
-                SELECT c.ID_Cara, c.ID_IMG, c.Numero
-                FROM Cara c
-                LEFT JOIN Diseno d ON c.ID_Cara = d.ID_Cara
-                WHERE d.ID_Cara IS NULL
-                ORDER BY c.ID_Cara";
+                SELECT c.Id_Capa, c.Id_Img, c.Numero
+                FROM Capa c
+                LEFT JOIN Diseno d ON c.Id_Capa = d.Id_Capa
+                WHERE d.Id_Capa IS NULL
+                ORDER BY c.Id_Capa";
 
-            return await _connection.QueryAsync<Cara>(query);
+            return await _connection.QueryAsync<Capa>(query);
         }
     }
 }

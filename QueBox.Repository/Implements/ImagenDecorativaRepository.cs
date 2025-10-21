@@ -21,8 +21,21 @@ namespace QueBox.Repository.Implements
         {
             try
             {
-                int ID_IMG = await _db.InsertAsync(p);
-                return ID_IMG;
+                int Id_Img = await _db.InsertAsync(p);
+                return Id_Img;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<int> Add(ImagenDecorativa I)
+        {
+            try
+            {
+                int Id_Capa = await _db.InsertAsync(p);
+                return Id_Capa;
             }
             catch (Exception)
             {

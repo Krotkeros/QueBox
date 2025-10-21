@@ -6,8 +6,8 @@ namespace QueBox.Models
     public class Capa
     {
         [Key]
-        public int ID_Capa { get; set; }
-        public int ID_IMG { get; set; }
+        public int Id_Capa { get; set; }
+        public int Id_Img { get; set; }
         public int Numero { get; set; }
     }
 

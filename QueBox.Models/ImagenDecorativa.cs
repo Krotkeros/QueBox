@@ -6,7 +6,9 @@ namespace QueBox.Models
     public class ImagenDecorativa
     {
         [Key]
-        public int ID_IMG { get; set; }
+        public int Id_Img { get; set; }
+        [Foreign Key]
+        public int Id_Capa{ get; set; }
         public string Url { get; set; }
         public float Alto { get; set; }
         public float Ancho { get; set; }

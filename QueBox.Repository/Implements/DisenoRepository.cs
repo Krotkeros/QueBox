@@ -21,8 +21,8 @@ namespace QueBox.Repository.Implements
         {
             try
             {
-                int ID_diseno = await _db.InsertAsync(D);
-                return ID_diseno;
+                int Id_diseno = await _db.InsertAsync(D);
+                return Id_diseno;
             }
             catch (Exception)
             {
@@ -35,7 +35,7 @@ namespace QueBox.Repository.Implements
             try
             {
                 int ID_usuario = await _db.InsertAsync(D);
-                return ID_usuario;
+                return Id_Usuario;
             }
             catch (Exception)
             {
@@ -95,18 +95,6 @@ namespace QueBox.Repository.Implements
                 throw;
             }
         }
-        public async Task<int> Add(Diseno D)
-        {
-            try
-            {
-                int ID_Capa = await _db.InsertAsync(D);
-                return ID_Capa;
-            }
-            catch (Exception)
-            {
 
-                throw;
-            }
-        }
     }
 }

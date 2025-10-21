@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace QueBox.Repository.Implements
 {
-    public class UserRepository : IUserRepository
+    public class UsuarioRepository : IUserRepository
     {
         private readonly IDbConnection _db;
 
-        public UserRepository(IDbConnection db)
+        public UsuarioRepository(IDbConnection db)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
         }
@@ -21,8 +21,8 @@ namespace QueBox.Repository.Implements
         {
             try
             {
-                int ID_usuario= await _db.InsertAsync(p);
-                return ID_usuario;
+                int Id_Usuario= await _db.InsertAsync(p);
+                return Id_Usuario;
             }
             catch (Exception)
             {

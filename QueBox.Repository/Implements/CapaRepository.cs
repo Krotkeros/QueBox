@@ -22,7 +22,7 @@ namespace QueBox.Repository.Implements
             try
             {
                 int ID_Capa = await _db.InsertAsync(C);
-                return ID_Capa;
+                return Id_Capa;
             }
             catch (Exception)
             {
@@ -35,7 +35,7 @@ namespace QueBox.Repository.Implements
             try
             {
                 int ID_IMG = await _db.InsertAsync(C);
-                return ID_IMG;
+                return Id_Diseno;
             }
             catch (Exception)
             {

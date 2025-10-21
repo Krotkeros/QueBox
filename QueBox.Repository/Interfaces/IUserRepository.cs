@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace QueBox.Repository.Interfaces
 {
-    public interface IUserRepository
+    public interface IUsuarioRepository
     {
-        Task<int> Add(User U);
+        Task<int> Add(Usuario U);
     }
 }

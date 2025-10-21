@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using QueBox.Query.Interfaces;
+using QueBox.Models;
 
 namespace QueBox.Query
 {

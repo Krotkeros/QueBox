@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using QueBox.Models;
+
 
 namespace QueBox.Query.Interfaces
 {

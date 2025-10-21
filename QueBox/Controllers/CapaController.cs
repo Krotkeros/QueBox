@@ -1,5 +1,5 @@
 ﻿using MiApi.Contexts;
-using QueBox.Context;
+using QueBox.Contexts;
 using QueBox.Models;
 using QueBox.Query.Interfaces;
 using QueBox.Repository.Interfaces;
@@ -60,7 +60,7 @@ namespace QueBox.Controllers
         public async Task<IActionResult> BuscarById(int id)
         {
             _logger.LogInformation("Buscando por id -> {0}", id);
-            Capa? p = _db.Capas.FirstOrDefault(f => f.ID_Capa == id);
+            Capa? p = _db.Capas.FirstOrDefault(f => f.Id_Capa == id);
 
             if (p == null)
             {
@@ -68,7 +68,7 @@ namespace QueBox.Controllers
                 return NotFound("Capa no existe");
             }
 
-            _logger.LogInformation("Capa encontrada. ID->{0}, Numero -> {1}", p.ID_Capa, p.Numero);
+            _logger.LogInformation("Capa encontrada. Id diseno->{0}, Numero -> {1}", p.Id_Diseno, p.Numero);
 
             return Ok(p);
         }
@@ -84,7 +84,7 @@ namespace QueBox.Controllers
             try
             {
                 var rs = await _capaRepository.Add(p);
-                p.ID_Capa = rs;
+                p.Id_Capa = rs;
                 return Ok(p);
             }
             catch (Exception)

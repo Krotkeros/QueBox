@@ -67,7 +67,8 @@ namespace QueBox.Controllers
                 return NotFound("Diseño no existe");
             }
 
-            _logger.LogInformation("Diseño encontrado. ID->{0}, Nombre -> {1}", d.ID_Diseno, d.Nombre);
+            _logger.LogInformation("Diseño encontrado. id usuario ->{0}, Largo -> {1}, Alto -> {2}, Ancho -> {3},Nombre -> {4}, ",
+                d.Id_Usuario, d.Largo, d.Alto, d.Ancho, d.Nombre);
 
             return Ok(d);
         }
@@ -83,7 +84,7 @@ namespace QueBox.Controllers
             try
             {
                 var rs = await _disenoRepository.Add(d);
-                d.ID_Diseno = rs;
+                d.Id_Diseno = rs;
                 return Ok(d);
             }
             catch (Exception)

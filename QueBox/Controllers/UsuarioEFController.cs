@@ -47,7 +47,7 @@ namespace MiApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUsuario(int id, Usuario usuario)
         {
-            if (id != usuario.id_Usuario)
+            if (id != usuario.Id_Usuario)
             {
                 return BadRequest();
             }
@@ -81,7 +81,7 @@ namespace MiApi.Controllers
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUsuario", new { id = usuario.id_Usuario }, usuario);
+            return CreatedAtAction("GetUsuario", new { id = usuario.Id_Usuario }, usuario);
         }
 
         // DELETE: api/UsuarioEF/5
@@ -102,7 +102,7 @@ namespace MiApi.Controllers
 
         private bool UsuarioExists(int id)
         {
-            return _context.Usuarios.Any(e => e.id_Usuario == id);
+            return _context.Usuarios.Any(e => e.Id_Usuario == id);
         }
     }
 }

@@ -47,7 +47,7 @@ namespace QueBox.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCapas(int id, Capa capa)
         {
-            if (id != capa.id_Capa)
+            if (id != capa.Id_Capa)
             {
                 return BadRequest();
             }
@@ -81,7 +81,7 @@ namespace QueBox.Controllers
             _context.Capas.Add(capa);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCapa", new { id = capa.id_Capa }, capa);
+            return CreatedAtAction("GetCapa", new { id = capa.Id_Capa }, capa);
         }
 
         // DELETE: api/CapaEF/5
@@ -102,7 +102,7 @@ namespace QueBox.Controllers
 
         private bool CapaExists(int id)
         {
-            return _context.Capas.Any(e => e.id_Capa == id);
+            return _context.Capas.Any(e => e.Id_Capa == id);
         }
     }
 }

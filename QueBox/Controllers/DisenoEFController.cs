@@ -47,7 +47,7 @@ namespace MiApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDiseno(int id, Diseno diseno)
         {
-            if (id != diseno.id_Diseno)
+            if (id != diseno.Id_Diseno)
             {
                 return BadRequest();
             }
@@ -81,7 +81,7 @@ namespace MiApi.Controllers
             _context.Disenos.Add(diseno);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDiseno", new { id = diseno.ID_Diseno }, diseno);
+            return CreatedAtAction("GetDiseno", new { id = diseno.Id_Diseno }, diseno);
         }
 
         // DELETE: api/DisenoEF/5
@@ -102,7 +102,7 @@ namespace MiApi.Controllers
 
         private bool DisenoExists(int id)
         {
-            return _context.Disenos.Any(e => e.id_Diseno == id);
+            return _context.Disenos.Any(e => e.Id_Diseno == id);
         }
     }
 }

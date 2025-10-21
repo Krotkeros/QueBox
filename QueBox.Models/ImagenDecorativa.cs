@@ -7,7 +7,7 @@ namespace QueBox.Models
     {
         [Key]
         public int Id_Img { get; set; }
-        [Foreign Key]
+        [ForeignKey("Capa")]
         public int Id_Capa{ get; set; }
         public string Url { get; set; }
         public float Alto { get; set; }

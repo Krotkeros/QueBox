@@ -2,12 +2,12 @@
 
 namespace QueBox.Models
 {
-    [Table("dbo.diseno")]
+    [Table("dbo.Diseno")]
     public class Diseno
     {
         [Key]   
         public int Id_Diseno { get; set; }
-        [Foreign Key]
+        [ForeignKey("Usuario")]
         public int Id_Usuario { get; set; }
         public float Largo { get; set; }
         public float Alto { get; set; }

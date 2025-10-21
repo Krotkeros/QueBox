@@ -9,20 +9,20 @@ using System.Threading.Tasks;
 
 namespace QueBox.Repository.Implements
 {
-    public class ImagenDecorativaRepository : IImagenDecorativaRepository
+    public class UsuarioRepository : IUserRepository
     {
         private readonly IDbConnection _db;
 
-        public ImagenDecorativaRepository(IDbConnection db)
+        public UsuarioRepository(IDbConnection db)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
         }
-        public async Task<int> Add(ImagenDecorativa I)
+        public async Task<int> Add(User U)
         {
             try
             {
-                int Id_Img = await _db.InsertAsync(p);
-                return Id_Img;
+                int Id_Usuario= await _db.InsertAsync(p);
+                return Id_Usuario;
             }
             catch (Exception)
             {
@@ -30,12 +30,12 @@ namespace QueBox.Repository.Implements
                 throw;
             }
         }
-        public async Task<int> Add(ImagenDecorativa I)
+        public async Task<int> Add(User U)
         {
             try
             {
-                int Id_Capa = await _db.InsertAsync(p);
-                return Id_Capa;
+                var Usuario = await _db.InsertAsync(p);
+                return Usuario;
             }
             catch (Exception)
             {
@@ -43,12 +43,12 @@ namespace QueBox.Repository.Implements
                 throw;
             }
         }
-        public async Task<int> Add(ImagenDecorativa I)
+        public async Task<int> Add(User U)
         {
             try
             {
-                var Url = await _db.InsertAsync(p);
-                return Url;
+                var Clave = await _db.InsertAsync(p);
+                return Clave;
             }
             catch (Exception)
             {
@@ -56,25 +56,12 @@ namespace QueBox.Repository.Implements
                 throw;
             }
         }
-        public async Task<float> Add(ImagenDecorativa I)
+        public async Task<int> Add(User U)
         {
             try
             {
-                float Ancho = await _db.InsertAsync(p);
-                return Ancho;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public async Task<float> Add(ImagenDecorativa I)
-        {
-            try
-            {
-                float Alto = await _db.InsertAsync(p);
-                return Alto;
+                var Correo = await _db.InsertAsync(p);
+                return Correo;
             }
             catch (Exception)
             {

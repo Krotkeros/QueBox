@@ -5,8 +5,8 @@ using QueBox.Query.Implements;
 using QueBox.Query.Interfaces;
 using QueBox.Repository.Implements;
 using QueBox.Repository.Interfaces;
-using QueBox.Servicios.Implements;
-using QueBox.Servicios.Interfaces;
+using QueBox.Services.Implements;
+using QueBox.Services.Interfaces;
 using System.Data;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 

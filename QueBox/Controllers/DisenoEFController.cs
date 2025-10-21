@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,7 +47,7 @@ namespace MiApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDiseno(int id, Diseno diseno)
         {
-            if (id != diseno.ID_Diseno)
+            if (id != diseno.id_Diseno)
             {
                 return BadRequest();
             }
@@ -102,7 +102,7 @@ namespace MiApi.Controllers
 
         private bool DisenoExists(int id)
         {
-            return _context.Disenos.Any(e => e.ID_Diseno == id);
+            return _context.Disenos.Any(e => e.id_Diseno == id);
         }
     }
 }

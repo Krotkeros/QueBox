@@ -47,7 +47,7 @@ namespace MiApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutImagenDecorativa(int id, ImagenDecorativa imagenDecorativa)
         {
-            if (id != imagenDecorativa.ID_IMG)
+            if (id != imagenDecorativa.id_img)
             {
                 return BadRequest();
             }
@@ -81,7 +81,7 @@ namespace MiApi.Controllers
             _context.ImagenDecorativas.Add(imagenDecorativa);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetImagenDecorativa", new { id = imagenDecorativa.ID_IMG }, imagenDecorativa);
+            return CreatedAtAction("GetImagenDecorativa", new { id = imagenDecorativa.id_img }, imagenDecorativa);
         }
 
         // DELETE: api/ImagenDecorativaEF/5
@@ -102,7 +102,7 @@ namespace MiApi.Controllers
 
         private bool ImagenDecorativaExists(int id)
         {
-            return _context.ImagenDecorativas.Any(e => e.ID_IMG == id);
+            return _context.ImagenDecorativas.Any(e => e.id_img == id);
         }
     }
 }

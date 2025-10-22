@@ -1,5 +1,5 @@
-﻿using QueBox.Context;
-using QueBox.Query.Models;
+﻿using QueBox.Contexts;
+using QueBox.Models;
 using QueBox.Query.Interfaces;
 using QueBox.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -60,9 +60,9 @@ namespace QueBox.Controllers
         public async Task<IActionResult> BuscarById(int id)
         {
             _logger.LogInformation("Buscando diseño por id -> {0}", id);
-            Diseno? diseno = _db.Disenos.FirstOrDefault(f => f.Id_Diseno == id);
+            Diseno? d = _db.Disenos.FirstOrDefault(f => f.Id_Diseno == id);
 
-            if (diseno == null)
+            if (d == null)
             {
                 _logger.LogWarning("Diseño no encontrado en la base de datos");
                 return NotFound("El diseño no existe");
@@ -79,7 +79,7 @@ namespace QueBox.Controllers
         /// </summary>
         /// <param name="diseno">Datos del nuevo diseño</param>
         [HttpPost]
-        public async Task<IActionResult> Crear(Diseno diseno)
+        public async Task<IActionResult> Crear(Diseno d)
         {
             try
             {

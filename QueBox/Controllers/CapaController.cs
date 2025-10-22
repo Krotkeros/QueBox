@@ -1,5 +1,4 @@
-﻿using MiApi.Contexts;
-using QueBox.Contexts;
+﻿using QueBox.Contexts;
 using QueBox.Models;
 using QueBox.Query.Interfaces;
 using QueBox.Repository.Interfaces;

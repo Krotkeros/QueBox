@@ -2,7 +2,6 @@
 using QueBox.Models;
 using QueBox.Query.Interfaces;
 using QueBox.Repository.Interfaces;
-using QueBox.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

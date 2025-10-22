@@ -17,51 +17,12 @@ namespace QueBox.Repository.Implements
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
         }
-        public async Task<int> Add(User U)
+        public async Task<int> Add(Usuario U)
         {
             try
             {
                 int Id_Usuario= await _db.InsertAsync(p);
                 return Id_Usuario;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public async Task<int> Add(User U)
-        {
-            try
-            {
-                var Nombre = await _db.InsertAsync(p);
-                return Nombre;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public async Task<int> Add(User U)
-        {
-            try
-            {
-                var Clave = await _db.InsertAsync(p);
-                return Clave;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public async Task<int> Add(User U)
-        {
-            try
-            {
-                var Correo = await _db.InsertAsync(p);
-                return Correo;
             }
             catch (Exception)
             {

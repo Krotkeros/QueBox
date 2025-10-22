@@ -2,7 +2,6 @@
 using QueBox.Models;
 using QueBox.Query.Interfaces;
 using QueBox.Repository.Interfaces;
-using QueBox.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,7 +42,7 @@ namespace QueBox.Controllers
         public async Task<IActionResult> ListarUsuario()
         {
             //var rs = _db.Usuarios.ToList();
-            var rsDapper = await _usuarioQueries.GetAll();
+            var rsDapper = await _usuarioQueries.ObtenerTodosAsync();
             return Ok(rsDapper);
         }
 
@@ -88,7 +87,7 @@ namespace QueBox.Controllers
             try
             {
                 var rs = await _usuarioRepository.Add(u);
-                u.Id = rs;
+                u.Id_Usuario = rs;
                 return Ok(u);
             }
             catch (Exception)

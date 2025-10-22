@@ -1,7 +1,7 @@
 ﻿using QueBox.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace MiApi.Contexts
+namespace QueBox.Contexts
 {
     public class ApiContext : DbContext
     {

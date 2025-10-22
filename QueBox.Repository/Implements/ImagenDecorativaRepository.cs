@@ -30,57 +30,5 @@ namespace QueBox.Repository.Implements
                 throw;
             }
         }
-        public async Task<int> Add(ImagenDecorativa I)
-        {
-            try
-            {
-                int Id_Capa = await _db.InsertAsync(p);
-                return Id_Capa;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public async Task<int> Add(ImagenDecorativa I)
-        {
-            try
-            {
-                var Url = await _db.InsertAsync(p);
-                return Url;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public async Task<float> Add(ImagenDecorativa I)
-        {
-            try
-            {
-                float Ancho = await _db.InsertAsync(p);
-                return Ancho;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public async Task<float> Add(ImagenDecorativa I)
-        {
-            try
-            {
-                float Alto = await _db.InsertAsync(p);
-                return Alto;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
     }
 }

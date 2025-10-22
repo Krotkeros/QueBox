@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,9 +21,9 @@ namespace QueBox.Query
         public async Task<ImagenDecorativa> ObtenerPorIdAsync(int id)
         {
             const string query = @"
-                SELECT ID_IMG, Url, Ancho, Alto
-                FROM Imagen_Decorativa
-                WHERE ID_IMG = @Id";
+                SELECT Id_Img, Url, Ancho, Alto
+                FROM ImagenDecorativa
+                WHERE Id_Img = @Id";
 
             return await _connection.QueryFirstOrDefaultAsync<ImagenDecorativa>(query, new { Id = id });
         }
@@ -32,9 +31,9 @@ namespace QueBox.Query
         public async Task<IEnumerable<ImagenDecorativa>> ObtenerTodasAsync()
         {
             const string query = @"
-                SELECT ID_IMG, Url, Ancho, Alto
-                FROM Imagen_Decorativa
-                ORDER BY ID_IMG";
+                SELECT Id_Img, Url, Ancho, Alto
+                FROM ImagenDecorativa
+                ORDER BY Id_Img";
 
             return await _connection.QueryAsync<ImagenDecorativa>(query);
         }
@@ -42,67 +41,67 @@ namespace QueBox.Query
         public async Task<ImagenDecorativa> ObtenerPorUrlAsync(string url)
         {
             const string query = @"
-                SELECT ID_IMG, Url, Ancho, Alto
-                FROM Imagen_Decorativa
+                SELECT Id_Img, Url, Ancho, Alto
+                FROM ImagenDecorativa
                 WHERE Url = @Url";
 
             return await _connection.QueryFirstOrDefaultAsync<ImagenDecorativa>(query, new { Url = url });
         }
 
-        public async Task<IEnumerable<ImagenDecorativa>> ObtenerPorDimensionesAsync(float largo, float alto)
+        public async Task<IEnumerable<ImagenDecorativa>> ObtenerPorDimensionesAsync(float ancho, float alto)
         {
             const string query = @"
-                SELECT ID_IMG, Url, Ancho, Alto
-                FROM Imagen_Decorativa
-                WHERE Ancho = @Largo AND Alto = @Alto";
+                SELECT Id_Img, Url, Ancho, Alto
+                FROM ImagenDecorativa
+                WHERE Ancho = @Ancho AND Alto = @Alto";
 
-            return await _connection.QueryAsync<ImagenDecorativa>(query, new { Largo = largo, Alto = alto });
+            return await _connection.QueryAsync<ImagenDecorativa>(query, new { Ancho = ancho, Alto = alto });
         }
 
-        public async Task<IEnumerable<ImagenDecorativa>> ObtenerImagenesConCarasAsync()
+        public async Task<IEnumerable<ImagenDecorativa>> ObtenerImagenesConCapasAsync()
         {
             const string query = @"
                 SELECT 
-                    i.ID_IMG, i.Url, i.Ancho, i.Alto,
-                    c.ID_Cara, c.ID_IMG, c.Numero
-                FROM Imagen_Decorativa i
-                LEFT JOIN Cara c ON i.ID_IMG = c.ID_IMG
-                ORDER BY i.ID_IMG, c.Numero";
+                    i.Id_Img, i.Url, i.Ancho, i.Alto,
+                    c.Id_Capa, c.Id_Img, c.Numero
+                FROM ImagenDecorativa i
+                LEFT JOIN Capa c ON i.Id_Img = c.Id_Img
+                ORDER BY i.Id_Img, c.Numero";
 
             var imagenDictionary = new Dictionary<int, ImagenDecorativa>();
 
-            var result = await _connection.QueryAsync<ImagenDecorativa, Cara, ImagenDecorativa>(
+            var result = await _connection.QueryAsync<ImagenDecorativa, Capa, ImagenDecorativa>(
                 query,
-                (imagen, cara) =>
+                (imagen, capa) =>
                 {
-                    if (!imagenDictionary.TryGetValue(imagen.ID_IMG, out var imagenEntry))
+                    if (!imagenDictionary.TryGetValue(imagen.Id_Img, out var imagenEntry))
                     {
                         imagenEntry = imagen;
-                        imagenEntry.Caras = new List<Cara>();
-                        imagenDictionary.Add(imagenEntry.ID_IMG, imagenEntry);
+                        imagenEntry.Capas = new List<Capa>();
+                        imagenDictionary.Add(imagenEntry.Id_Img, imagenEntry);
                     }
 
-                    if (cara != null)
+                    if (capa != null)
                     {
-                        imagenEntry.Caras.Add(cara);
+                        imagenEntry.Capas.Add(capa);
                     }
 
                     return imagenEntry;
                 },
-                splitOn: "ID_Cara"
+                splitOn: "Id_Capa"
             );
 
             return imagenDictionary.Values;
         }
 
-        public async Task<int> ContarCarasPorImagenAsync(int idImagen)
+        public async Task<int> ContarCapasPorImagenAsync(int idImg)
         {
             const string query = @"
                 SELECT COUNT(*)
-                FROM Cara
-                WHERE ID_IMG = @IdImagen";
+                FROM Capa
+                WHERE Id_Img = @IdImg";
 
-            return await _connection.ExecuteScalarAsync<int>(query, new { IdImagen = idImagen });
+            return await _connection.ExecuteScalarAsync<int>(query, new { IdImg = idImg });
         }
     }
 }

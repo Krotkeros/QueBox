@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,15 +28,15 @@ namespace QueBox.Query
             return await _connection.QueryFirstOrDefaultAsync<Capa>(query, new { Id = id });
         }
 
-        public async Task<IEnumerable<Capa>> ObtenerPorImagenDecorativaAsync(int idImagen)
+        public async Task<IEnumerable<Capa>> ObtenerPorImagenDecorativaAsync(int idImg)
         {
             const string query = @"
                 SELECT Id_Capa, Id_Img, Numero
                 FROM Capa
-                WHERE Id_Img = @IdImagen
+                WHERE Id_Img = @IdImg
                 ORDER BY Numero";
 
-            return await _connection.QueryAsync<Capa>(query, new { IdImagen = idImagen });
+            return await _connection.QueryAsync<Capa>(query, new { IdImg = idImg });
         }
 
         public async Task<IEnumerable<Capa>> ObtenerTodasAsync()
@@ -56,7 +56,7 @@ namespace QueBox.Query
                     c.Id_Capa, c.Id_Img, c.Numero,
                     i.Id_Img, i.Url, i.Ancho, i.Alto
                 FROM Capa c
-                INNER JOIN Imagen_Decorativa i ON c.Id_Img = i.Id_Img
+                INNER JOIN ImagenDecorativa i ON c.Id_Img = i.Id_Img
                 WHERE c.Id_Capa = @Id";
 
             var capaDictionary = new Dictionary<int, Capa>();
@@ -80,14 +80,14 @@ namespace QueBox.Query
             return result.FirstOrDefault();
         }
 
-        public async Task<int> ObtenerNumeroPorImagenAsync(int idImagen, int numero)
+        public async Task<int> ObtenerNumeroPorImagenAsync(int idImg, int numero)
         {
             const string query = @"
                 SELECT COUNT(*)
                 FROM Capa
-                WHERE Id_Img = @IdImagen AND Numero = @Numero";
+                WHERE Id_Img = @IdImg AND Numero = @Numero";
 
-            return await _connection.ExecuteScalarAsync<int>(query, new { IdImagen = idImagen, Numero = numero });
+            return await _connection.ExecuteScalarAsync<int>(query, new { IdImg = idImg, Numero = numero });
         }
 
         public async Task<IEnumerable<Capa>> ObtenerCapasDisponiblesAsync()

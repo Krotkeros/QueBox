@@ -9,10 +9,10 @@ namespace QueBox.Query.Interfaces
     {
         Task<Usuario> ObtenerPorIdAsync(int id);
         Task<Usuario> ObtenerPorCorreoAsync(string correo);
-        Task<Usuario> ObtenerPorUsuarioAsync(string usuario);
+        Task<Usuario> ObtenerPorNombreAsync(string nombre);
         Task<IEnumerable<Usuario>> ObtenerTodosAsync();
         Task<bool> ExisteCorreoAsync(string correo);
-        Task<bool> ExisteUsuarioAsync(string usuario);
-        Task<Usuario> ValidarCredencialesAsync(string usuario, string clave);
+        Task<bool> ExisteNombreAsync(string nombre);
+        Task<Usuario> ValidarCredencialesAsync(string nombre, string clave);
     }
 }

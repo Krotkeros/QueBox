@@ -11,5 +11,8 @@ namespace QueBox.Query.Interfaces
         Task<IEnumerable<Capa>> ObtenerTodasAsync();
         Task<int> ObtenerNumeroPorImagenAsync(int Id_Img, int numero);
         Task<IEnumerable<Capa>> ObtenerCapasDisponiblesAsync();
+
+        Task<int> ActualizarCapaAsync();
+
     }
 }

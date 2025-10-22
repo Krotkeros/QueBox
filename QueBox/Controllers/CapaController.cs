@@ -98,11 +98,11 @@ namespace QueBox.Controllers
         /// </summary>
         /// <param name="capa">Objeto capa con los datos actualizados</param>
         [HttpPut]
-        public async Task<IActionResult> Actualizar(Capa capa)
+        public async Task<IActionResult> Actualizar(int id, Capa capa)
         {
             try
             {
-                await _capaRepository.Update(capa);
+                await _capaRepository.ActualizarCapaAsync(id, capa);
                 return Ok(capa);
             }
             catch (Exception ex)
@@ -121,7 +121,7 @@ namespace QueBox.Controllers
         {
             try
             {
-                await _capaRepository.Delete(id);
+                await _capaRepository.EliminarCapaAsync(id);
                 return Ok();
             }
             catch (Exception ex)

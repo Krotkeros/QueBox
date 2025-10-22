@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,9 +19,9 @@ namespace QueBox.Query
         public async Task<Diseno> ObtenerPorIdAsync(int id)
         {
             const string query = @"
-                SELECT ID_diseno, ID_usuario, ID_Cara, Largo, Alto, Ancho, Nombre
+                SELECT Id_Diseno, Id_Usuario, Id_Capa, Largo, Alto, Ancho, Nombre
                 FROM Diseno
-                WHERE ID_diseno = @Id";
+                WHERE Id_Diseno = @Id";
 
             return await _connection.QueryFirstOrDefaultAsync<Diseno>(query, new { Id = id });
         }
@@ -29,31 +29,31 @@ namespace QueBox.Query
         public async Task<IEnumerable<Diseno>> ObtenerPorUsuarioAsync(int idUsuario)
         {
             const string query = @"
-                SELECT ID_diseno, ID_usuario, ID_Cara, Largo, Alto, Ancho, Nombre
+                SELECT Id_Diseno, Id_Usuario, Id_Capa, Largo, Alto, Ancho, Nombre
                 FROM Diseno
-                WHERE ID_usuario = @IdUsuario
-                ORDER BY ID_diseno DESC";
+                WHERE Id_Usuario = @IdUsuario
+                ORDER BY Id_Diseno DESC";
 
             return await _connection.QueryAsync<Diseno>(query, new { IdUsuario = idUsuario });
         }
 
-        public async Task<IEnumerable<Diseno>> ObtenerPorCaraAsync(int idCara)
+        public async Task<IEnumerable<Diseno>> ObtenerPorCapaAsync(int idCapa)
         {
             const string query = @"
-                SELECT ID_diseno, ID_usuario, ID_Cara, Largo, Alto, Ancho, Nombre
+                SELECT Id_Diseno, Id_Usuario, Id_Capa, Largo, Alto, Ancho, Nombre
                 FROM Diseno
-                WHERE ID_Cara = @IdCara
-                ORDER BY ID_diseno DESC";
+                WHERE Id_Capa = @IdCapa
+                ORDER BY Id_Diseno DESC";
 
-            return await _connection.QueryAsync<Diseno>(query, new { IdCara = idCara });
+            return await _connection.QueryAsync<Diseno>(query, new { IdCapa = idCapa });
         }
 
         public async Task<IEnumerable<Diseno>> ObtenerTodosAsync()
         {
             const string query = @"
-                SELECT ID_diseno, ID_usuario, ID_Cara, Largo, Alto, Ancho, Nombre
+                SELECT Id_Diseno, Id_Usuario, Id_Capa, Largo, Alto, Ancho, Nombre
                 FROM Diseno
-                ORDER BY ID_diseno DESC";
+                ORDER BY Id_Diseno DESC";
 
             return await _connection.QueryAsync<Diseno>(query);
         }
@@ -62,31 +62,31 @@ namespace QueBox.Query
         {
             const string query = @"
                 SELECT 
-                    d.ID_diseno, d.ID_usuario, d.ID_Cara, d.Largo, d.Alto, d.Ancho, d.Nombre,
-                    u.ID_usuario, u.Usuario, u.Correo,
-                    c.ID_Cara, c.ID_IMG, c.Numero
+                    d.Id_Diseno, d.Id_Usuario, d.Id_Capa, d.Largo, d.Alto, d.Ancho, d.Nombre,
+                    u.Id_Usuario, u.Nombre, u.Correo,
+                    c.Id_Capa, c.Id_Img, c.Numero
                 FROM Diseno d
-                INNER JOIN Usuario u ON d.ID_usuario = u.ID_usuario
-                INNER JOIN Cara c ON d.ID_Cara = c.ID_Cara
-                WHERE d.ID_diseno = @Id";
+                INNER JOIN Usuario u ON d.Id_Usuario = u.Id_Usuario
+                INNER JOIN Capa c ON d.Id_Capa = c.Id_Capa
+                WHERE d.Id_Diseno = @Id";
 
             var disenoDictionary = new Dictionary<int, Diseno>();
 
-            var result = await _connection.QueryAsync<Diseno, Usuario, Cara, Diseno>(
+            var result = await _connection.QueryAsync<Diseno, Usuario, Capa, Diseno>(
                 query,
-                (diseno, usuario, cara) =>
+                (diseno, usuario, capa) =>
                 {
-                    if (!disenoDictionary.TryGetValue(diseno.ID_diseno, out var disenoEntry))
+                    if (!disenoDictionary.TryGetValue(diseno.Id_Diseno, out var disenoEntry))
                     {
                         disenoEntry = diseno;
                         disenoEntry.Usuario = usuario;
-                        disenoEntry.Cara = cara;
-                        disenoDictionary.Add(disenoEntry.ID_diseno, disenoEntry);
+                        disenoEntry.Capa = capa;
+                        disenoDictionary.Add(disenoEntry.Id_Diseno, disenoEntry);
                     }
                     return disenoEntry;
                 },
                 new { Id = id },
-                splitOn: "ID_usuario,ID_Cara"
+                splitOn: "Id_Usuario,Id_Capa"
             );
 
             return result.FirstOrDefault();
@@ -97,7 +97,7 @@ namespace QueBox.Query
             const string query = @"
                 SELECT COUNT(*)
                 FROM Diseno
-                WHERE ID_usuario = @IdUsuario";
+                WHERE Id_Usuario = @IdUsuario";
 
             return await _connection.ExecuteScalarAsync<int>(query, new { IdUsuario = idUsuario });
         }
@@ -105,9 +105,9 @@ namespace QueBox.Query
         public async Task<IEnumerable<Diseno>> ObtenerDisenosRecientesAsync(int limite)
         {
             const string query = @"
-                SELECT TOP(@Limite) ID_diseno, ID_usuario, ID_Cara, Largo, Alto, Ancho, Nombre
+                SELECT TOP(@Limite) Id_Diseno, Id_Usuario, Id_Capa, Largo, Alto, Ancho, Nombre
                 FROM Diseno
-                ORDER BY ID_diseno DESC";
+                ORDER BY Id_Diseno DESC";
 
             return await _connection.QueryAsync<Diseno>(query, new { Limite = limite });
         }

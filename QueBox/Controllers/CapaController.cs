@@ -1,6 +1,6 @@
-﻿using MiApi.Contexts;
+﻿﻿using MiApi.Contexts;
 using QueBox.Context;
-using QueBox.Models;
+using QueBox.Query.Models;
 using QueBox.Query.Interfaces;
 using QueBox.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +20,9 @@ namespace QueBox.Controllers
         private readonly ICapaQueries _capaQueries;
         private readonly ICapaRepository _capaRepository;
 
-        public CapaController(ILogger<CapaController> logger, ApiContext apicontext, 
+        public CapaController(
+            ILogger<CapaController> logger,
+            ApiContext apicontext,
             ICapaQueries capaQueries,
             ICapaRepository capaRepository)
         {
@@ -28,7 +30,7 @@ namespace QueBox.Controllers
             _db = apicontext ?? throw new ArgumentNullException(nameof(apicontext));
             _capaQueries = capaQueries ?? throw new ArgumentNullException(nameof(capaQueries));
             _capaRepository = capaRepository ?? throw new ArgumentNullException(nameof(capaRepository));
-            _logger.LogInformation("Entrando al constructor");
+            _logger.LogInformation("Entrando al constructor de CapaController");
         }
 
         /// <summary>
@@ -41,7 +43,6 @@ namespace QueBox.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ListarCapas()
         {
-            //var rs = _db.Capas.ToList();
             var rsDapper = await _capaQueries.ObtenerTodasAsync();
             return Ok(rsDapper);
         }
@@ -49,9 +50,9 @@ namespace QueBox.Controllers
         /// <summary>
         /// Buscar capa por id
         /// </summary>
-        /// <param name="id">Id capa a buscar</param>
+        /// <param name="id">Id de la capa a buscar</param>
         /// <response code="200">Cuando se encuentra la capa</response>
-        /// <response code="404">La Capa no existe</response>
+        /// <response code="404">La capa no existe</response>
         /// <response code="500">Error procesando la petición</response>
         [HttpGet("ById/{id}")]
         [ProducesResponseType(typeof(Capa), StatusCodes.Status200OK)]
@@ -59,66 +60,62 @@ namespace QueBox.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> BuscarById(int id)
         {
-            _logger.LogInformation("Buscando por id -> {0}", id);
-            Capa? p = _db.Capas.FirstOrDefault(f => f.ID_Capa == id);
+            _logger.LogInformation("Buscando capa por id -> {0}", id);
+            Capa? capa = _db.Capas.FirstOrDefault(f => f.Id_Capa == id);
 
-            if (p == null)
+            if (capa == null)
             {
-                _logger.LogWarning("Capa no encontrada en bd");
-                return NotFound("Capa no existe");
+                _logger.LogWarning("Capa no encontrada en base de datos");
+                return NotFound("La capa no existe");
             }
 
-            _logger.LogInformation("Capa encontrada. ID->{0}, Numero -> {1}", p.ID_Capa, p.Numero);
-
-            return Ok(p);
+            _logger.LogInformation("Capa encontrada. Id -> {0}, Numero -> {1}", capa.Id_Capa, capa.Numero);
+            return Ok(capa);
         }
 
         /// <summary>
-        /// Add capa con dapper
+        /// Agregar una nueva capa
         /// </summary>
-        /// <param name="p">Body</param>
-        /// <returns>returns</returns>
+        /// <param name="capa">Objeto capa recibido en el body</param>
         [HttpPost]
-        public async Task<IActionResult> Crear(Capa p)
+        public async Task<IActionResult> Crear(Capa capa)
         {
             try
             {
-                var rs = await _capaRepository.Add(p);
-                p.ID_Capa = rs;
-                return Ok(p);
+                var idGenerado = await _capaRepository.Add(capa);
+                capa.Id_Capa = idGenerado;
+                return Ok(capa);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                _logger.LogError(ex, "Error creando capa");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al crear la capa");
             }
         }
 
         /// <summary>
-        /// Actualizar capa
+        /// Actualizar una capa existente
         /// </summary>
-        /// <param name="p">Capa a actualizar</param>
-        /// <response code="200">Capa actualizada exitosamente</response>
-        /// <response code="500">Error procesando la petición</response>
+        /// <param name="capa">Objeto capa con los datos actualizados</param>
         [HttpPut]
-        public async Task<IActionResult> Actualizar(Capa p)
+        public async Task<IActionResult> Actualizar(Capa capa)
         {
             try
             {
-                await _capaRepository.Update(p);
-                return Ok(p);
+                await _capaRepository.Update(capa);
+                return Ok(capa);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                _logger.LogError(ex, "Error actualizando capa");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar la capa");
             }
         }
 
         /// <summary>
-        /// Eliminar capa
+        /// Eliminar una capa por ID
         /// </summary>
         /// <param name="id">Id de la capa a eliminar</param>
-        /// <response code="200">Capa eliminada exitosamente</response>
-        /// <response code="500">Error procesando la petición</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Eliminar(int id)
         {
@@ -127,9 +124,10 @@ namespace QueBox.Controllers
                 await _capaRepository.Delete(id);
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                _logger.LogError(ex, "Error eliminando capa");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al eliminar la capa");
             }
         }
     }

@@ -6,5 +6,6 @@ namespace QueBox.Models
 {
     internal class Capa
     {
+    
     }
 }

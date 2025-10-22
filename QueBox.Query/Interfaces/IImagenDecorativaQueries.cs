@@ -8,8 +8,8 @@ namespace QueBox.Query.Interfaces
         Task<ImagenDecorativa> ObtenerPorIdAsync(int id);
         Task<IEnumerable<ImagenDecorativa>> ObtenerTodasAsync();
         Task<ImagenDecorativa> ObtenerPorUrlAsync(string url);
-        Task<IEnumerable<ImagenDecorativa>> ObtenerPorDimensionesAsync(float largo, float alto);
-        Task<IEnumerable<ImagenDecorativa>> ObtenerImagenesConCarasAsync();
-        Task<int> ContarCarasPorImagenAsync(int idImagen);
+        Task<IEnumerable<ImagenDecorativa>> ObtenerPorDimensionesAsync(float ancho, float alto);
+        Task<IEnumerable<ImagenDecorativa>> ObtenerImagenesConCapasAsync();
+        Task<int> ContarCapasPorImagenAsync(int idImg);
     }
 }

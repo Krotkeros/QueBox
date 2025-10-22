@@ -1,5 +1,5 @@
 ﻿using QueBox.Context;
-using QueBox.Models;
+using QueBox.Query.Models;
 using QueBox.Query.Interfaces;
 using QueBox.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +19,9 @@ namespace QueBox.Controllers
         private readonly IDisenoQueries _disenoQueries;
         private readonly IDisenoRepository _disenoRepository;
 
-        public DisenoController(ILogger<DisenoController> logger, ApiContext apicontext,
+        public DisenoController(
+            ILogger<DisenoController> logger,
+            ApiContext apicontext,
             IDisenoQueries disenoQueries,
             IDisenoRepository disenoRepository)
         {
@@ -27,7 +29,7 @@ namespace QueBox.Controllers
             _db = apicontext ?? throw new ArgumentNullException(nameof(apicontext));
             _disenoQueries = disenoQueries ?? throw new ArgumentNullException(nameof(disenoQueries));
             _disenoRepository = disenoRepository ?? throw new ArgumentNullException(nameof(disenoRepository));
-            _logger.LogInformation("Entrando al constructor");
+            _logger.LogInformation("Entrando al constructor de DisenoController");
         }
 
         /// <summary>
@@ -40,7 +42,6 @@ namespace QueBox.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ListarDisenos()
         {
-            //var rs = _db.Disenos.ToList();
             var rsDapper = await _disenoQueries.ObtenerTodosAsync();
             return Ok(rsDapper);
         }
@@ -48,9 +49,9 @@ namespace QueBox.Controllers
         /// <summary>
         /// Buscar diseño por id
         /// </summary>
-        /// <param name="id">Id diseño a buscar</param>
+        /// <param name="id">Id del diseño a buscar</param>
         /// <response code="200">Cuando se encuentra el diseño</response>
-        /// <response code="404">El Diseño no existe</response>
+        /// <response code="404">El diseño no existe</response>
         /// <response code="500">Error procesando la petición</response>
         [HttpGet("ById/{id}")]
         [ProducesResponseType(typeof(Diseno), StatusCodes.Status200OK)]
@@ -58,66 +59,62 @@ namespace QueBox.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> BuscarById(int id)
         {
-            _logger.LogInformation("Buscando por id -> {0}", id);
-            Diseno? d = _db.Disenos.FirstOrDefault(f => f.ID_Diseno == id);
+            _logger.LogInformation("Buscando diseño por id -> {0}", id);
+            Diseno? diseno = _db.Disenos.FirstOrDefault(f => f.Id_Diseno == id);
 
-            if (d == null)
+            if (diseno == null)
             {
-                _logger.LogWarning("Diseño no encontrado en bd");
-                return NotFound("Diseño no existe");
+                _logger.LogWarning("Diseño no encontrado en la base de datos");
+                return NotFound("El diseño no existe");
             }
 
-            _logger.LogInformation("Diseño encontrado. ID->{0}, Nombre -> {1}", d.ID_Diseno, d.Nombre);
-
-            return Ok(d);
+            _logger.LogInformation("Diseño encontrado. Id -> {0}, Nombre -> {1}", diseno.Id_Diseno, diseno.Nombre);
+            return Ok(diseno);
         }
 
         /// <summary>
-        /// Add diseño con dapper
+        /// Crear un nuevo diseño
         /// </summary>
-        /// <param name="d">Body</param>
-        /// <returns>returns</returns>
+        /// <param name="diseno">Datos del nuevo diseño</param>
         [HttpPost]
-        public async Task<IActionResult> Crear(Diseno d)
+        public async Task<IActionResult> Crear(Diseno diseno)
         {
             try
             {
-                var rs = await _disenoRepository.Add(d);
-                d.ID_Diseno = rs;
-                return Ok(d);
+                var idGenerado = await _disenoRepository.Add(diseno);
+                diseno.Id_Diseno = idGenerado;
+                return Ok(diseno);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                _logger.LogError(ex, "Error al crear el diseño");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al crear el diseño");
             }
         }
 
         /// <summary>
-        /// Actualizar diseño
+        /// Actualizar un diseño existente
         /// </summary>
-        /// <param name="d">Diseño a actualizar</param>
-        /// <response code="200">Diseño actualizado exitosamente</response>
-        /// <response code="500">Error procesando la petición</response>
+        /// <param name="diseno">Diseño con los datos actualizados</param>
         [HttpPut]
-        public async Task<IActionResult> Actualizar(Diseno d)
+        public async Task<IActionResult> Actualizar(Diseno diseno)
         {
             try
             {
-                await _disenoRepository.Update(d);
-                return Ok(d);
+                await _disenoRepository.Update(diseno);
+                return Ok(diseno);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                _logger.LogError(ex, "Error al actualizar el diseño");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el diseño");
             }
         }
 
         /// <summary>
-        /// Eliminar diseño
+        /// Eliminar un diseño por ID
         /// </summary>
         /// <param name="id">Id del diseño a eliminar</param>
-        /// <response code="200">Diseño eliminado exitosamente</response>
-        /// <response code="500">Error procesando la petición</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Eliminar(int id)
         {
@@ -126,9 +123,10 @@ namespace QueBox.Controllers
                 await _disenoRepository.Delete(id);
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                _logger.LogError(ex, "Error al eliminar el diseño");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al eliminar el diseño");
             }
         }
     }

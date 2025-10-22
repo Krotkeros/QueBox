@@ -1,6 +1,4 @@
-﻿
-
-using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Dapper;
@@ -20,9 +18,9 @@ namespace QueBox.Query
         public async Task<Usuario> ObtenerPorIdAsync(int id)
         {
             const string query = @"
-                SELECT ID_usuario, Usuario, Clave, Correo
+                SELECT Id_Usuario, Nombre, Clave, Correo
                 FROM Usuario
-                WHERE ID_usuario = @Id";
+                WHERE Id_Usuario = @Id";
 
             return await _connection.QueryFirstOrDefaultAsync<Usuario>(query, new { Id = id });
         }
@@ -30,29 +28,29 @@ namespace QueBox.Query
         public async Task<Usuario> ObtenerPorCorreoAsync(string correo)
         {
             const string query = @"
-                SELECT ID_usuario, Usuario, Clave, Correo
+                SELECT Id_Usuario, Nombre, Clave, Correo
                 FROM Usuario
                 WHERE Correo = @Correo";
 
             return await _connection.QueryFirstOrDefaultAsync<Usuario>(query, new { Correo = correo });
         }
 
-        public async Task<Usuario> ObtenerPorUsuarioAsync(string usuario)
+        public async Task<Usuario> ObtenerPorNombreAsync(string nombre)
         {
             const string query = @"
-                SELECT ID_usuario, Usuario, Clave, Correo
+                SELECT Id_Usuario, Nombre, Clave, Correo
                 FROM Usuario
-                WHERE Usuario = @Usuario";
+                WHERE Nombre = @Nombre";
 
-            return await _connection.QueryFirstOrDefaultAsync<Usuario>(query, new { Usuario = usuario });
+            return await _connection.QueryFirstOrDefaultAsync<Usuario>(query, new { Nombre = nombre });
         }
 
         public async Task<IEnumerable<Usuario>> ObtenerTodosAsync()
         {
             const string query = @"
-                SELECT ID_usuario, Usuario, Clave, Correo
+                SELECT Id_Usuario, Nombre, Clave, Correo
                 FROM Usuario
-                ORDER BY ID_usuario";
+                ORDER BY Id_Usuario";
 
             return await _connection.QueryAsync<Usuario>(query);
         }
@@ -68,25 +66,25 @@ namespace QueBox.Query
             return count > 0;
         }
 
-        public async Task<bool> ExisteUsuarioAsync(string usuario)
+        public async Task<bool> ExisteNombreAsync(string nombre)
         {
             const string query = @"
                 SELECT COUNT(1)
                 FROM Usuario
-                WHERE Usuario = @Usuario";
+                WHERE Nombre = @Nombre";
 
-            var count = await _connection.ExecuteScalarAsync<int>(query, new { Usuario = usuario });
+            var count = await _connection.ExecuteScalarAsync<int>(query, new { Nombre = nombre });
             return count > 0;
         }
 
-        public async Task<Usuario> ValidarCredencialesAsync(string usuario, string clave)
+        public async Task<Usuario> ValidarCredencialesAsync(string nombre, string clave)
         {
             const string query = @"
-                SELECT ID_usuario, Usuario, Clave, Correo
+                SELECT Id_Usuario, Nombre, Clave, Correo
                 FROM Usuario
-                WHERE Usuario = @Usuario AND Clave = @Clave";
+                WHERE Nombre = @Nombre AND Clave = @Clave";
 
-            return await _connection.QueryFirstOrDefaultAsync<Usuario>(query, new { Usuario = usuario, Clave = clave });
+            return await _connection.QueryFirstOrDefaultAsync<Usuario>(query, new { Nombre = nombre, Clave = clave });
         }
     }
 }

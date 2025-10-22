@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Dapper;
 using QueBox.Query.Interfaces;
 using QueBox.Models;
-using Microsoft.AspNetCore.Mvc;
 
 
 
@@ -70,24 +69,6 @@ namespace QueBox.Query
                 ORDER BY c.Id_Capa";
 
             return await _connection.QueryAsync<Capa>(query);
-        }
-
-        public async Task<int> ActualizarCapaAsync(Capa capa)
-        {
-            const string query = @"
-        UPDATE Capa
-        SET Id_Img = @Id_Img,
-            Numero = @Numero
-        WHERE Id_Capa = @Id_Capa";
-
-            return await _connection.ExecuteAsync(query, capa);
-        }
-
-        public async Task<int> EliminarCapaAsync(int idCapa)
-        {
-            const string query = @"DELETE FROM Capa WHERE Id_Capa = @Id_Capa";
-
-            return await _connection.ExecuteAsync(query, new { Id_Capa = idCapa });
         }
 
     }

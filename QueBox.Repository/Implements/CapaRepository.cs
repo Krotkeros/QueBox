@@ -30,5 +30,6 @@ namespace QueBox.Repository.Implements
                 throw;
             }
         }
+
     }
 }

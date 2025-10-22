@@ -93,42 +93,5 @@ namespace QueBox.Controllers
             }
         }
 
-        /// <summary>
-        /// Actualizar una capa existente
-        /// </summary>
-        /// <param name="capa">Objeto capa con los datos actualizados</param>
-        [HttpPut]
-        public async Task<IActionResult> Actualizar(int id, Capa capa)
-        {
-            try
-            {
-                await _capaRepository.ActualizarCapaAsync(id, capa);
-                return Ok(capa);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error actualizando capa");
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar la capa");
-            }
-        }
-
-        /// <summary>
-        /// Eliminar una capa por ID
-        /// </summary>
-        /// <param name="id">Id de la capa a eliminar</param>
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Eliminar(int id)
-        {
-            try
-            {
-                await _capaRepository.EliminarCapaAsync(id);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error eliminando capa");
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error al eliminar la capa");
-            }
-        }
     }
 }

@@ -1,14 +1,14 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using QueBox.Contexts;
-using QueBox.Query.Implements;
-using QueBox.Query.Interfaces;
-using QueBox.Repository.Implements;
-using QueBox.Repository.Interfaces;
-using QueBox.Services.Implements;
-using QueBox.Services.Interfaces;
 using System.Data;
+using QueBox.Models;
+using QueBox.Repository;
+using QueBox.Query;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using QueBox.Query.Interfaces;
+using QueBox.Repository.Interfaces;
+using QueBox.Repository.Implements;
 
 
 namespace QueBox
@@ -26,8 +26,20 @@ namespace QueBox
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
             // builder.Services.AddTransient<IAnimal, Perro>();  <- Codigo para los servicios
-            builder.Services.AddTransient<IPersonaQueries, PersonaQueries>();
-            builder.Services.AddTransient<IPersonaRepository, PersonaRepository>();
+            builder.Services.AddTransient<IUsuarioQueries, UsuarioQueries>();
+            builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
+
+            // builder.Services.AddTransient<IAnimal, Perro>();  <- Codigo para los servicios
+            builder.Services.AddTransient<ICapaQueries, CapaQueries>();
+            builder.Services.AddTransient<ICapaRepository, CapaRepository>();
+
+            // builder.Services.AddTransient<IAnimal, Perro>();  <- Codigo para los servicios
+            builder.Services.AddTransient<IDisenoQueries, DisenoQueries>();
+            builder.Services.AddTransient<IDisenoRepository, DisenoRepository>();
+
+            // builder.Services.AddTransient<IAnimal, Perro>();  <- Codigo para los servicios
+            builder.Services.AddTransient<IImagenDecorativaQueries, ImagenDecorativaQueries>();
+            builder.Services.AddTransient<IImagenDecorativaRepository, ImagenDecorativaRepository>();
 
             builder.Services.AddDbContext<ApiContext>(
                 opt =>

@@ -92,44 +92,7 @@ namespace QueBox.Controllers
                 _logger.LogError(ex, "Error al crear el diseño");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al crear el diseño");
             }
-        }
-
-        /// <summary>
-        /// Actualizar un diseño existente
-        /// </summary>
-        /// <param name="diseno">Diseño con los datos actualizados</param>
-        [HttpPut]
-        public async Task<IActionResult> Actualizar(Diseno diseno)
-        {
-            try
-            {
-                await _disenoRepository.Update(diseno);
-                return Ok(diseno);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al actualizar el diseño");
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el diseño");
-            }
-        }
-
-        /// <summary>
-        /// Eliminar un diseño por ID
-        /// </summary>
-        /// <param name="id">Id del diseño a eliminar</param>
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Eliminar(int id)
-        {
-            try
-            {
-                await _disenoRepository.Delete(id);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al eliminar el diseño");
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error al eliminar el diseño");
-            }
-        }
+        }  
+        
     }
 }

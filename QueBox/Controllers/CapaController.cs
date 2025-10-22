@@ -60,17 +60,17 @@ namespace QueBox.Controllers
         public async Task<IActionResult> BuscarById(int id)
         {
             _logger.LogInformation("Buscando capa por id -> {0}", id);
-            Capa? capa = _db.Capas.FirstOrDefault(f => f.Id_Capa == id);
+            Capa? c = _db.Capas.FirstOrDefault(f => f.Id_Capa == id);
 
-            if (capa == null)
+            if (c == null)
             {
                 _logger.LogWarning("Capa no encontrada en base de datos");
                 return NotFound("La capa no existe");
             }
 
-            _logger.LogInformation("Capa encontrada. Id diseno->{0}, Numero -> {1}", p.Id_Diseno, p.Numero);
+            _logger.LogInformation("Capa encontrada. Id diseno->{0}, Numero -> {1}", c.Id_Diseno, c.Numero);
 
-            return Ok(p);
+            return Ok(c);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace QueBox.Controllers
         /// </summary>
         /// <param name="capa">Objeto capa recibido en el body</param>
         [HttpPost]
-        public async Task<IActionResult> Crear(Capa capa)
+        public async Task<IActionResult> Crear(Capa c)
         {
             try
             {

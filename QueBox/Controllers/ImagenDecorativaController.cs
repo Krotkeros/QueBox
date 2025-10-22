@@ -42,7 +42,7 @@ namespace QueBox.Controllers
         public async Task<IActionResult> ListarImagenDecorativa()
         {
             //var rs = _db.ImagenDecorativas.ToList();
-            var rsDapper = await _imagenDecorativaQueries.GetAll();
+            var rsDapper = await _imagenDecorativaQueries.ObtenerTodasAsync();
             return Ok(rsDapper);
         }
 
@@ -87,7 +87,7 @@ namespace QueBox.Controllers
             try
             {
                 var rs = await _imagenDecorativaRepository.Add(i);
-                p.Id = rs;
+                i.Id_Img = rs;
                 return Ok(i);
             }
             catch (Exception)

@@ -81,11 +81,6 @@ namespace QueBox.Query
                         imagenDictionary.Add(imagenEntry.Id_Img, imagenEntry);
                     }
 
-                    if (capa != null)
-                    {
-                        imagenEntry.Capas.Add(capa);
-                    }
-
                     return imagenEntry;
                 },
                 splitOn: "Id_Capa"

@@ -48,38 +48,6 @@ namespace QueBox.Query
 
             return await _connection.QueryAsync<Capa>(query);
         }
-
-        public async Task<Capa> ObtenerCapaConImagenAsync(int id)
-        {
-            const string query = @"
-                SELECT 
-                    c.Id_Capa, c.Id_Img, c.Numero,
-                    i.Id_Img, i.Url, i.Ancho, i.Alto
-                FROM Capa c
-                INNER JOIN ImagenDecorativa i ON c.Id_Img = i.Id_Img
-                WHERE c.Id_Capa = @Id";
-
-            var capaDictionary = new Dictionary<int, Capa>();
-
-            var result = await _connection.QueryAsync<Capa, ImagenDecorativa, Capa>(
-                query,
-                (capa, imagen) =>
-                {
-                    if (!capaDictionary.TryGetValue(capa.Id_Capa, out var capaEntry))
-                    {
-                        capaEntry = capa;
-                        capaEntry.ImagenDecorativa = imagen;
-                        capaDictionary.Add(capaEntry.Id_Capa, capaEntry);
-                    }
-                    return capaEntry;
-                },
-                new { Id = id },
-                splitOn: "Id_Img"
-            );
-
-            return result.FirstOrDefault();
-        }
-
         public async Task<int> ObtenerNumeroPorImagenAsync(int idImg, int numero)
         {
             const string query = @"

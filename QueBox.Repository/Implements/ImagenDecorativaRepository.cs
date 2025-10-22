@@ -17,11 +17,11 @@ namespace QueBox.Repository.Implements
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
         }
-        public async Task<int> Add(ImagenDecorativa I)
+        public async Task<int> Add(ImagenDecorativa i)
         {
             try
             {
-                int Id_Img = await _db.InsertAsync(p);
+                int Id_Img = await _db.InsertAsync(i);
                 return Id_Img;
             }
             catch (Exception)

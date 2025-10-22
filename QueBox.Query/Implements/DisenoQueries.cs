@@ -64,30 +64,27 @@ namespace QueBox.Query
             const string query = @"
                 SELECT 
                     d.Id_Diseno, d.Id_Usuario, d.Id_Capa, d.Largo, d.Alto, d.Ancho, d.Nombre,
-                    u.Id_Usuario, u.Nombre, u.Correo,
-                    c.Id_Capa, c.Id_Img, c.Numero
+                    u.Id_Usuario, u.Nombre, u.Correo
                 FROM Diseno d
                 INNER JOIN Usuario u ON d.Id_Usuario = u.Id_Usuario
-                INNER JOIN Capa c ON d.Id_Capa = c.Id_Capa
                 WHERE d.Id_Diseno = @Id";
 
             var disenoDictionary = new Dictionary<int, Diseno>();
 
-            var result = await _connection.QueryAsync<Diseno, Usuario, Capa, Diseno>(
+            var result = await _connection.QueryAsync<Diseno, Usuario, Diseno>(
                 query,
-                (diseno, usuario, capa) =>
+                (diseno, usuario) =>
                 {
                     if (!disenoDictionary.TryGetValue(diseno.Id_Diseno, out var disenoEntry))
                     {
                         disenoEntry = diseno;
-                        disenoEntry.Usuario = usuario;
-                        disenoEntry.Capa = capa;
+                        disenoEntry.Id_Usuario = usuario.Id_Usuario;
                         disenoDictionary.Add(disenoEntry.Id_Diseno, disenoEntry);
                     }
                     return disenoEntry;
                 },
                 new { Id = id },
-                splitOn: "Id_Usuario,Id_Capa"
+                splitOn: "Id_Usuario"
             );
 
             return result.FirstOrDefault();

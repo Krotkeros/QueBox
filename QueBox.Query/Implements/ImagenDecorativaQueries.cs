@@ -77,7 +77,7 @@ namespace QueBox.Query
                     if (!imagenDictionary.TryGetValue(imagen.Id_Img, out var imagenEntry))
                     {
                         imagenEntry = imagen;
-                        imagenEntry.Capas = new List<Capa>();
+                        imagenEntry.Id_Capa = capa.Id_Capa;
                         imagenDictionary.Add(imagenEntry.Id_Img, imagenEntry);
                     }
 

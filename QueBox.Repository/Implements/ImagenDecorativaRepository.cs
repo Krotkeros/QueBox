@@ -1,4 +1,5 @@
-﻿using Dapper.Contrib.Extensions;
+﻿using Dapper;
+using Dapper.Contrib.Extensions;
 using QueBox.Models;
 using QueBox.Repository.Interfaces;
 using System;
@@ -23,6 +24,32 @@ namespace QueBox.Repository.Implements
             {
                 int Id_Img = await _db.InsertAsync(i);
                 return Id_Img;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> Delete(int Id_Img)
+        {
+            try
+            {
+                await _db.ExecuteAsync($"DELETE FROM ImagenDecorativa WHERE Id_Img={Id_Img}");
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> Update(ImagenDecorativa i)
+        {
+            try
+            {
+                return await _db.UpdateAsync(i);
             }
             catch (Exception)
             {

@@ -76,9 +76,9 @@ namespace QueBox.Controllers
         /// <summary>
         /// Agregar una nueva capa
         /// </summary>
-        /// <param name="capa">Objeto capa recibido en el body</param>
+        /// <param name="Capa">Objeto capa recibido en el body</param>
         [HttpPost]
-        public async Task<IActionResult> Crear(Capa c)
+        public async Task<IActionResult> Add(Capa c)
         {
             try
             {
@@ -90,6 +90,62 @@ namespace QueBox.Controllers
             {
                 _logger.LogError(ex, "Error creando capa");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al crear la capa");
+            }
+        }
+
+        /// <summary>
+        /// Borrar capa
+        /// </summary>
+        /// <param name="Id_Capa"></param>
+        /// <returns></returns>
+        [HttpDelete("{Id_Capa}")]
+        public async Task<IActionResult> Delete(int Id_Capa)
+        {
+            try
+            {
+                bool rs = await _capaRepository.Delete(Id_Capa);
+                if (rs)
+                    return NoContent();
+                else
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Actualizar capa
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="Id_Capa"></param>
+        /// <returns></returns>
+        [HttpPut("{Id_Capa}")]
+        public async Task<IActionResult> Update([FromBody] Capa c, [FromRoute] int Id_Capa)
+        {
+            try
+            {
+                if (Id_Capa == c.Id_Capa)
+                {
+                    bool rs = await _capaRepository.Update(c);
+                    if (rs)
+                        return Ok(c);
+                    else
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
 

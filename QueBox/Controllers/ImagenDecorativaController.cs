@@ -1,9 +1,10 @@
-﻿using QueBox.Contexts;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using QueBox.Contexts;
 using QueBox.Models;
 using QueBox.Query.Interfaces;
+using QueBox.Repository.Implements;
 using QueBox.Repository.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace QueBox.Controllers
 {
@@ -82,13 +83,69 @@ namespace QueBox.Controllers
         /// <param name="i">Body</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Crear(ImagenDecorativa i)
+        public async Task<IActionResult> Add(ImagenDecorativa i)
         {
             try
             {
                 var rs = await _imagenDecorativaRepository.Add(i);
                 i.Id_Img = rs;
                 return Ok(i);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Borrar imagend decorativa
+        /// </summary>
+        /// <param name="Id_Img"></param>
+        /// <returns></returns>
+        [HttpDelete("{Id_Img}")]
+        public async Task<IActionResult> Delete(int Id_Img)
+        {
+            try
+            {
+                bool rs = await _imagenDecorativaRepository.Delete(Id_Img);
+                if (rs)
+                    return NoContent();
+                else
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Actualizar imagend decorativa
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="Id_Img"></param>
+        /// <returns></returns>
+        [HttpPut("{Id_Img}")]
+        public async Task<IActionResult> Update([FromBody] ImagenDecorativa i, [FromRoute] int Id_Img)
+        {
+            try
+            {
+                if (Id_Img == i.Id_Img)
+                {
+                    bool rs = await _imagenDecorativaRepository.Update(i);
+                    if (rs)
+                        return Ok(i);
+                    else
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
             catch (Exception)
             {

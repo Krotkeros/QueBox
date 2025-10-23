@@ -8,6 +8,8 @@ namespace QueBox.Repository.Interfaces
 {
     public interface IImagenDecorativaRepository
     {
-        Task<int> Add(ImagenDecorativa I);
+        Task<int> Add(ImagenDecorativa i);
+        Task<bool> Update(ImagenDecorativa i);
+        Task<bool> Delete(int Id_Img);
     }
 }

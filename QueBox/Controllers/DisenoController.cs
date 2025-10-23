@@ -1,9 +1,10 @@
-﻿using QueBox.Contexts;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using QueBox.Contexts;
 using QueBox.Models;
 using QueBox.Query.Interfaces;
+using QueBox.Repository.Implements;
 using QueBox.Repository.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace QueBox.Controllers
 {
@@ -79,7 +80,7 @@ namespace QueBox.Controllers
         /// </summary>
         /// <param name="diseno">Datos del nuevo diseño</param>
         [HttpPost]
-        public async Task<IActionResult> Crear(Diseno d)
+        public async Task<IActionResult> Add(Diseno d)
         {
             try
             {
@@ -92,7 +93,63 @@ namespace QueBox.Controllers
                 _logger.LogError(ex, "Error al crear el diseño");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al crear el diseño");
             }
-        }  
-        
+        }
+
+        /// <summary>
+        /// Borrar Diseno
+        /// </summary>
+        /// <param name="Id_Diseno"></param>
+        /// <returns></returns>
+        [HttpDelete("{Id_Diseno}")]
+        public async Task<IActionResult> Delete(int Id_Diseno)
+        {
+            try
+            {
+                bool rs = await _disenoRepository.Delete(Id_Diseno);
+                if (rs)
+                    return NoContent();
+                else
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Actualizar diseno
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="Id_Diseno"></param>
+        /// <returns></returns>
+        [HttpPut("{Id_Diseno}")]
+        public async Task<IActionResult> Update([FromBody] Diseno d, [FromRoute] int Id_Diseno)
+        {
+            try
+            {
+                if (Id_Diseno == d.Id_Diseno)
+                {
+                    bool rs = await _disenoRepository.Update(d);
+                    if (rs)
+                        return Ok(d);
+                    else
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
     }
 }

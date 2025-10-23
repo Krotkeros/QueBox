@@ -1,4 +1,5 @@
-﻿using Dapper.Contrib.Extensions;
+﻿using Dapper;
+using Dapper.Contrib.Extensions;
 using QueBox.Models;
 using QueBox.Repository.Interfaces;
 using System;
@@ -21,8 +22,34 @@ namespace QueBox.Repository.Implements
         {
             try
             {
-                int Id_Usuario= await _db.InsertAsync(o);
+                int Id_Usuario = await _db.InsertAsync(o);
                 return Id_Usuario;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> Delete(int Id_Usuario)
+        {
+            try
+            {
+                await _db.ExecuteAsync($"DELETE FROM Usuario WHERE Id_Usuario={Id_Usuario}");
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> Update(Usuario u)
+        {
+            try
+            {
+                return await _db.UpdateAsync(u);
             }
             catch (Exception)
             {

@@ -1,9 +1,10 @@
-﻿using QueBox.Contexts;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using QueBox.Contexts;
 using QueBox.Models;
 using QueBox.Query.Interfaces;
+using QueBox.Repository.Implements;
 using QueBox.Repository.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace QueBox.Controllers
 {
@@ -82,13 +83,69 @@ namespace QueBox.Controllers
         /// <param name="u">Body</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Crear(Usuario u)
+        public async Task<IActionResult> Add(Usuario u)
         {
             try
             {
                 var rs = await _usuarioRepository.Add(u);
                 u.Id_Usuario = rs;
                 return Ok(u);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Borrar usuario
+        /// </summary>
+        /// <param name="Id_Usuario"></param>
+        /// <returns></returns>
+        [HttpDelete("{Id_Usuario}")]
+        public async Task<IActionResult> Delete(int Id_Usuario)
+        {
+            try
+            {
+                bool rs = await _usuarioRepository.Delete(Id_Usuario);
+                if (rs)
+                    return NoContent();
+                else
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Actualizar usuario
+        /// </summary>
+        /// <param name="u"></param>
+        /// <param name="Id_Usuario"></param>
+        /// <returns></returns>
+        [HttpPut("{Id_Usuario}")]
+        public async Task<IActionResult> Update([FromBody] Usuario u, [FromRoute] int Id_Usuario)
+        {
+            try
+            {
+                if (Id_Usuario == u.Id_Usuario)
+                {
+                    bool rs = await _usuarioRepository.Update(u);
+                    if (rs)
+                        return Ok(u);
+                    else
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
             catch (Exception)
             {

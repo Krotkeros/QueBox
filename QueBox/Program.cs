@@ -23,6 +23,7 @@ namespace QueBox
             builder.Services.AddAuthorization();
 
             builder.Services.AddControllers();
+            builder.Services.AddRazorPages();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
             // builder.Services.AddTransient<IAnimal, Perro>();  <- Codigo para los servicios
@@ -69,6 +70,7 @@ namespace QueBox
             app.UseAuthorization();
 
             app.MapControllers();
+            app.MapRazorPages();
 
             app.Run();
         }

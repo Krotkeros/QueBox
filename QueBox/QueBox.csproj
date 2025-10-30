@@ -32,4 +32,8 @@
     <ProjectReference Include="..\QueBox.Services\QueBox.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\" />
+  </ItemGroup>
+
 </Project>

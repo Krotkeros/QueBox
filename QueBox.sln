@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueBox.Repository", "QueBox
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueBox.Services", "QueBox.Services\QueBox.Services.csproj", "{96928235-3FD6-49F0-B31F-5327051F4415}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueBox.Web", "QueBox.Web\QueBox.Web.csproj", "{8E85EED4-3422-4B06-9FB7-9C3F6406AAFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{96928235-3FD6-49F0-B31F-5327051F4415}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96928235-3FD6-49F0-B31F-5327051F4415}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96928235-3FD6-49F0-B31F-5327051F4415}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E85EED4-3422-4B06-9FB7-9C3F6406AAFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E85EED4-3422-4B06-9FB7-9C3F6406AAFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E85EED4-3422-4B06-9FB7-9C3F6406AAFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E85EED4-3422-4B06-9FB7-9C3F6406AAFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

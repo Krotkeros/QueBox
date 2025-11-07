@@ -1,0 +1,44 @@
+﻿@page "/login"
+
+<PNombreTitle>QueBox</PNombreTitle>
+
+<h1>Ingresar a QueBox</h1>
+
+<EditForm Model="@myModel">
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre:</label>
+        <InputText @bind-Value="myModel.Nombre" id="nombre" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="clave" class="form-label">Clave:</label>
+        <InputText @bind-Value="myModel.Clave" id="clave" class="form-control" />
+    </div>
+
+    <button type="submit" class="mb-3 btn btn-primary">Submit</button>
+
+
+
+</EditForm>
+
+<div class="mb-3">
+    <NavLink class="link" href="register">
+        <span class="mb-2" aria-hidden="true"></span> Registrarse
+    </NavLink>
+</div>
+
+@code {
+
+    private MyViewModel myModel = new MyViewModel();
+
+    public class MyViewModel
+    {
+        public string Nombre { get; set; }
+        public string Clave { get; set; }
+    }
+
+}

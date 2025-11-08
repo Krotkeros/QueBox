@@ -4,27 +4,27 @@
 
 <h1>Registrarse en QueBox</h1>
 
-<EditForm Model="@myModel">
+<EditForm Model="@myModel" class="row g-3 ">
 
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <div class="mb-3">
+    <div class="mb-3 col-md-6">
         <label for="nombre" class="form-label">Nombre:</label>
         <InputText @bind-Value="myModel.Nombre" id="nombre" class="form-control" />
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3 col-md-6">
         <label for="clave" class="form-label">Clave:</label>
         <InputText @bind-Value="myModel.Clave" id="clave" class="form-control" />
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3 col-md-12">
         <label for="correo" class="form-label">Correo:</label>
         <InputText @bind-Value="myModel.Correo" id="correo" class="form-control" />
     </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="col-md-4 btn btn-primary">Submit</button>
 
 
 

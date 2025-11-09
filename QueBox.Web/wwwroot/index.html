@@ -10,6 +10,34 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="QueBox.Web.styles.css" rel="stylesheet" />
+    <!-- JS -->
+
+    <!-- Original bootstrap with url
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" defer></script>
+    -->
+
+    <script>
+        window.bootstrapInterop = {
+            showModal: (modalId) => {
+                const modalEl = document.getElementById(modalId);
+                if (modalEl) {
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
+            },
+            hideModal: (modalId) => {
+                const modalEl = document.getElementById(modalId);
+                if (modalEl) {
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+                }
+            }
+        };
+    </script>
+    <!-- If you add any scoped CSS files, uncomment the following to load them
+    <link href="QueBox.Web.styles.css" rel="stylesheet" />-->
 </head>
 
 <body>

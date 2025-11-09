@@ -76,7 +76,7 @@ namespace QueBox.Controllers
         /// <summary>
         /// Agregar una nueva capa
         /// </summary>
-        /// <param name="Capa">Objeto capa recibido en el body</param>
+        /// <param name="c">Objeto capa recibido en el body</param>
         [HttpPost]
         public async Task<IActionResult> Add(Capa c)
         {

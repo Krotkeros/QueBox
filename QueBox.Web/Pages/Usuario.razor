@@ -1,6 +1,9 @@
 ﻿@page "/usuario"
+@using QueBox.Services
+@using QueBox.Models
 
-@inject HttpClient Http
+@inject DisenoService DisenoService
+@inject IJSRuntime JS
 
 <PageTitle>Weather</PageTitle>
 
@@ -8,51 +11,145 @@
 
 <p>This component demonstrates fetching data from the server.</p>
 
-@if (forecasts == null)
+@if (isLoading)
 {
-    <p><em>Loading...</em></p>
+    <p>Cargando...</p>
 }
 else
 {
-    <table class="table">
+    <table class="table table-striped">
         <thead>
             <tr>
-                <th>Date</th>
-                <th aria-label="Temperature in Celsius">Temp. (C)</th>
-                <th aria-label="Temperature in Farenheit">Temp. (F)</th>
-                <th>Summary</th>
+                <th>Nombre diseno</th>
+                <th>Editar Nombre</th>
+                <th>Borrar</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var diseno in disenos)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>
+                        <NavLink class="link" href="Diseno">
+                            <span class="mb-2" aria-hidden="true"></span> @diseno.Nombre
+                        </NavLink>
+                    </td>
+                    <td>
+
+                        <button class="btn btn-sm btn-warning" @onclick="() => EditDiseno(diseno)">Cambiar nombre</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteDiseno(diseno.Id_Diseno)">Eliminar</button>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 }
 
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="disenoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="disenoModalLabel">@modalTitle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" @onclick="CancelEdit"></button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="@editingDiseno" OnValidSubmit="SaveDiseno">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-3">
+                        <label class="form-label">Título</label>
+                        <InputText class="form-control" @bind-Value="editingDiseno.Nombre" />
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="CancelEdit">Cancelar</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @code {
-    private WeatherForecast[]? forecasts;
+    private List<Diseno> disenos = new();
+    private Diseno? editingDiseno;
+    private bool isLoading = true;
+    private string modalTitle = "Nuevo Diseno";
+
+    private async Task ShowModal()
+    {
+        await JS.InvokeVoidAsync("bootstrapInterop.showModal", "postModal");
+    }
+
+    private async Task HideModal()
+    {
+        await JS.InvokeVoidAsync("bootstrapInterop.hideModal", "postModal");
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        disenos = await DisenoService.GetDisenosAsync();
+        isLoading = false;
     }
 
-    public class WeatherForecast
+    private async void EditDiseno(Diseno diseno)
     {
-        public DateOnly Date { get; set; }
+        editingDiseno = new Diseno
+        {
+            Id_Diseno = diseno.Id_Diseno,
+            Id_Usuario = diseno.Id_Usuario,
+            Largo = diseno.Largo,
+            Alto = diseno.Alto,
+            Ancho = diseno.Ancho,
+            Nombre = diseno.Nombre
+        };
+        modalTitle = "Editar Diseno";
+        await ShowModal();
+        StateHasChanged();
+    }
 
-        public int TemperatureC { get; set; }
+    private async Task SaveDiseno()
+    {
+        if (editingDiseno == null)
+            return;
 
-        public string? Summary { get; set; }
+        if (editingDiseno.Id_Diseno == 0)
+        {
+            var created = await DisenoService.CreateDisenoAsync(editingDiseno);
+            if (created != null)
+                disenos.Insert(0, created);
+        }
+        else
+        {
+            await DisenoService.UpdateDisenoAsync(editingDiseno);
+            var index = disenos.FindIndex(d => d.Id_Diseno == editingDiseno.Id_Diseno);
+            if (index >= 0)
+                disenos[index] = editingDiseno;
+        }
 
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        editingDiseno = null;
+        await HideModal();
+        StateHasChanged();
+    }
+
+    private async void CancelEdit()
+    {
+        editingDiseno = null;
+        await HideModal();
+        StateHasChanged();
+    }
+
+    private async Task DeleteDiseno(int id)
+    {
+        await DisenoService.DeleteDisenoAsync(id);
+        disenos = disenos.Where(d => d.Id_Diseno != id).ToList();
+        StateHasChanged();
     }
 }

@@ -11,11 +11,8 @@ namespace QueBox.Web
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
-
-            // Configura la URL de tu API
-            var apiBaseAddress = "https://localhost:7045/"; // Cambia esto al puerto de tu API
-            
-            // Registra HttpClient con la URL base
+                
+            var apiBaseAddress = "https://localhost:7117/";
             builder.Services.AddScoped(sp => new HttpClient 
             { 
                 BaseAddress = new Uri(apiBaseAddress) 

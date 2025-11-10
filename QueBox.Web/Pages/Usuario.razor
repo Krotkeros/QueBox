@@ -11,6 +11,10 @@
 
 <p>This component demonstrates fetching data from the server.</p>
 
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="NewDiseno">Nuevo Diseno</button>
+</div>
+
 @if (isLoading)
 {
     <p>Cargando...</p>
@@ -98,6 +102,15 @@ else
         disenos = await DisenoService.GetDisenosAsync();
         isLoading = false;
     }
+
+    private async void NewDiseno()
+    {
+        editingDiseno = new Diseno { Id_Usuario = 1 };
+        modalTitle = "Nuevo Diseno";
+        await ShowModal();
+        StateHasChanged();
+    }
+
 
     private async void EditDiseno(Diseno diseno)
     {

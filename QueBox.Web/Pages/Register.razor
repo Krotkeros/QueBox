@@ -2,28 +2,31 @@
 @using QueBox.Services
 @using QueBox.Models
 
+@inject UsuarioService UsuarioService
+@inject IJSRuntime JS
+
 <PageTitle>QueBox</PageTitle>
 
 <h1>Registrarse en QueBox</h1>
 
-<EditForm Model="@myModel" class="row g-3 ">
+<EditForm class="row g-3 " Model="@editingUsuario" OnValidSubmit="SaveUsuario">
 
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <div class="mb-3 col-md-6">
         <label for="nombre" class="form-label">Nombre:</label>
-        <InputText @bind-Value="myModel.Nombre" id="nombre" class="form-control" />
+        <InputText @bind-Value="editingUsuario.Nombre" id="nombre" class="form-control" />
     </div>
 
     <div class="mb-3 col-md-6">
         <label for="clave" class="form-label">Clave:</label>
-        <InputText @bind-Value="myModel.Clave" id="clave" class="form-control" />
+        <InputText @bind-Value="editingUsuario.Clave" id="clave" class="form-control" />
     </div>
 
     <div class="mb-3 col-md-12">
         <label for="correo" class="form-label">Correo:</label>
-        <InputText @bind-Value="myModel.Correo" id="correo" class="form-control" />
+        <InputText @bind-Value="editingUsuario.Correo" id="correo" class="form-control" />
     </div>
 
     <button type="submit" class="col-md-4 btn btn-primary">Submit</button>
@@ -34,13 +37,36 @@
 
 @code {
 
-    private MyViewModel myModel = new MyViewModel();
+    private List<Usuario> usuarios = new();
+    private Usuario? editingUsuario;
 
-    public class MyViewModel
+    protected override async Task OnInitializedAsync()
     {
-        public string Nombre { get; set; }
-        public string Clave { get; set; }
-        public string Correo { get; set; }
+        editingUsuario = new Usuario();
+        usuarios = await UsuarioService.GetUsuariosAsync();
+    }
+
+    private async Task SaveUsuario()
+    {
+        if (editingUsuario == null)
+            return;
+
+        if (editingUsuario.Id_Usuario == 0)
+        {
+            var created = await UsuarioService.CreateUsuarioAsync(editingUsuario);
+            if (created != null)
+                usuarios.Insert(0, created);
+        }
+        else
+        {
+            await UsuarioService.UpdateUsuarioAsync(editingUsuario);
+            var index = usuarios.FindIndex(u => u.Id_Usuario == editingUsuario.Id_Usuario);
+            if (index >= 0)
+                usuarios[index] = editingUsuario;
+        }
+
+        editingUsuario = null;
+        StateHasChanged();
     }
 
 }

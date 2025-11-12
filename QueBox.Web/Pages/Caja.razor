@@ -1,15 +1,37 @@
 ﻿@page "/caja"
 @using QueBox.Services
 @using QueBox.Models
+@using Plotly.Blazor
+@using Plotly.Blazor.Traces
 
 <PageTitle>Caja</PageTitle>
 
 <h1>Caja</h1>
 
+@if (data != null)
+{
+    <PlotlyChart @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
+}
+else
+{ 
+    <h5>No data.</h5>
+}
 
 
 @code {
+    PlotlyChart chart;
 
-    
-    private Usuario usuario = new Usuario();
+    Config config = new Config();
+    Layout layout = new Layout();
+
+    // Using of the interface IList is important for the event callback!
+    IList<ITrace> data = new List<ITrace>
+    {
+        new Scatter
+        {
+            Name = "ScatterTrace",
+            X = new List<object>{1,2,3},
+            Y = new List<object>{1,2,3}
+        }
+    };
 }

@@ -8,14 +8,21 @@
 
 <h1>Caja</h1>
 
-@if (data != null)
-{
-    <PlotlyChart @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
-}
-else
-{ 
-    <h5>No data.</h5>
-}
+<section class="row g-3">
+
+    <div class="col-md-6">Hello</div>
+
+    @if (data != null)
+    {
+        <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
+    }
+    else
+    {
+        <h5>No data.</h5>
+    }
+
+
+</section>
 
 
 @code {
@@ -24,14 +31,30 @@ else
     Config config = new Config();
     Layout layout = new Layout();
 
+    static List<object> intensityn = new List<object> {
+            0, 0.14285714285714285, 0.2857142857142857, 0.42857142857142855, 0.5714285714285714, 0.7142857142857143, 0.8571428571428571, 1
+    };
     // Using of the interface IList is important for the event callback!
     IList<ITrace> data = new List<ITrace>
     {
-        new Scatter
+        
+        new Mesh3D
         {
-            Name = "ScatterTrace",
-            X = new List<object>{1,2,3},
-            Y = new List<object>{1,2,3}
+            X = new List<object>{0, 0, 1, 1, 0, 0, 1, 1},
+            Y = new List<object>{0, 1, 1, 0, 0, 1, 1, 0},
+            Z = new List<object>{0, 0, 0, 0, 1, 1, 1, 1},
+            I = new List<object>{7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2},
+            J = new List<object>{3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3},
+            K = new List<object>{0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6},
+            
+            ColorBar = new Plotly.Blazor.Traces.Mesh3DLib.ColorBar {
+                Title = new Plotly.Blazor.Traces.Mesh3DLib.ColorBarLib.Title {Text = "z" } 
+            },
+            ColorScale = "Rainbow",
+            //Intensity = new List<object> {
+            //    0, 0.14285714285714285, 0.2857142857142857, 0.42857142857142855, 0.5714285714285714, 0.7142857142857143, 0.8571428571428571, 1
+            //},
+            Intensity = intensityn
         }
     };
 }

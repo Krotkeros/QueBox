@@ -113,29 +113,21 @@ code {
     text-align: start;
 }
 
-/* --- ESTILOS AÑADIDOS/MODIFICADOS PARA FORZAR LA ALINEACIÓN Y ESPACIADO --- */
-
-/* 1. Modifica el estilo del enlace activo (.active) para eliminar el fondo gris */
 .navbar .nav-link.active {
     background-color: transparent !important;
     color: white !important;
-    /* Fuerza la uniformidad del padding horizontal para el elemento activo */
     padding-left: 0.5rem !important;
     padding-right: 0.5rem !important;
 }
 
-/* 2. Fuerza el padding uniforme en todos los nav-link (normales y activos) */
 .navbar .nav-link {
-    /* Padding vertical uniforme */
+
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
-    /* Padding horizontal uniforme (para alineación) */
     padding-left: 0.5rem !important;
     padding-right: 0.5rem !important;
 }
 
-/* 3. Ajuste para añadir espacio entre la barra fija y el contenido */
 main article.content {
-    /* 56px (altura de la barra) + 20px (espacio extra) = 76px */
     padding-top: 76px !important;
 }

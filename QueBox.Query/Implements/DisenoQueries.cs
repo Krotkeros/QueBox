@@ -20,7 +20,7 @@ namespace QueBox.Query
         public async Task<Diseno> ObtenerPorIdAsync(int id)
         {
             const string query = @"
-                SELECT Id_Diseno, Id_Usuario, Id_Capa, Largo, Alto, Ancho, Nombre
+                SELECT Id_Diseno, Id_Usuario, Largo, Alto, Ancho, Nombre
                 FROM Diseno
                 WHERE Id_Diseno = @Id";
 
@@ -30,7 +30,7 @@ namespace QueBox.Query
         public async Task<IEnumerable<Diseno>> ObtenerPorUsuarioAsync(int idUsuario)
         {
             const string query = @"
-                SELECT Id_Diseno, Id_Usuario, Id_Capa, Largo, Alto, Ancho, Nombre
+                SELECT Id_Diseno, Id_Usuario, Largo, Alto, Ancho, Nombre
                 FROM Diseno
                 WHERE Id_Usuario = @IdUsuario
                 ORDER BY Id_Diseno DESC";
@@ -41,7 +41,7 @@ namespace QueBox.Query
         public async Task<IEnumerable<Diseno>> ObtenerPorCapaAsync(int idCapa)
         {
             const string query = @"
-                SELECT Id_Diseno, Id_Usuario, Id_Capa, Largo, Alto, Ancho, Nombre
+                SELECT Id_Diseno, Id_Usuario, Largo, Alto, Ancho, Nombre
                 FROM Diseno
                 WHERE Id_Capa = @IdCapa
                 ORDER BY Id_Diseno DESC";
@@ -52,7 +52,7 @@ namespace QueBox.Query
         public async Task<IEnumerable<Diseno>> ObtenerTodosAsync()
         {
             const string query = @"
-                SELECT Id_Diseno, Id_Usuario, Id_Capa, Largo, Alto, Ancho, Nombre
+                SELECT Id_Diseno, Id_Usuario, Largo, Alto, Ancho, Nombre
                 FROM Diseno
                 ORDER BY Id_Diseno DESC";
 
@@ -63,7 +63,7 @@ namespace QueBox.Query
         {
             const string query = @"
                 SELECT 
-                    d.Id_Diseno, d.Id_Usuario, d.Id_Capa, d.Largo, d.Alto, d.Ancho, d.Nombre,
+                    d.Id_Diseno, d.Id_Usuario, d.Largo, d.Alto, d.Ancho, d.Nombre,
                     u.Id_Usuario, u.Nombre, u.Correo
                 FROM Diseno d
                 INNER JOIN Usuario u ON d.Id_Usuario = u.Id_Usuario
@@ -103,7 +103,7 @@ namespace QueBox.Query
         public async Task<IEnumerable<Diseno>> ObtenerDisenosRecientesAsync(int limite)
         {
             const string query = @"
-                SELECT TOP(@Limite) Id_Diseno, Id_Usuario, Id_Capa, Largo, Alto, Ancho, Nombre
+                SELECT TOP(@Limite) Id_Diseno, Id_Usuario, Largo, Alto, Ancho, Nombre
                 FROM Diseno
                 ORDER BY Id_Diseno DESC";
 

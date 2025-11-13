@@ -30,7 +30,7 @@ namespace QueBox.Query
         public async Task<IEnumerable<Diseno>> ObtenerPorUsuarioAsync(int idUsuario)
         {
             const string query = @"
-                SELECT Id_Diseno, Id_Usuario, Id_Capa, Largo, Alto, Ancho, Nombre
+                SELECT Id_Diseno, Id_Usuario, Largo, Alto, Ancho, Nombre
                 FROM Diseno
                 WHERE Id_Usuario = @IdUsuario
                 ORDER BY Id_Diseno DESC";
@@ -41,7 +41,7 @@ namespace QueBox.Query
         public async Task<IEnumerable<Diseno>> ObtenerPorCapaAsync(int idCapa)
         {
             const string query = @"
-                SELECT Id_Diseno, Id_Usuario, Id_Capa, Largo, Alto, Ancho, Nombre
+                SELECT Id_Diseno, Id_Usuario, Largo, Alto, Ancho, Nombre
                 FROM Diseno
                 WHERE Id_Capa = @IdCapa
                 ORDER BY Id_Diseno DESC";

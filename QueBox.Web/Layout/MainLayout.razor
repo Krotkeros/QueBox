@@ -1,11 +1,14 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
+<div class="page">
+    @* ELIMINAMOS la barra lateral (sidebar) y movemos NavMenu a la parte superior *@
     <main>
-        <div class="top-row px-4">
+        @* Incluimos el componente NavMenu en la parte superior. *@
+        <NavMenu />
+
+        @* El top-row se puede fusionar con la NavMenu si solo contiene el link "About"
+           o mantenerlo si tiene otros elementos. Lo mantendré por ahora. *@
+        <div class="top-row px-4 d-none d-sm-block">
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
         </div>
 

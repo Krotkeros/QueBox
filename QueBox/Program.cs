@@ -5,11 +5,9 @@ using System.Data;
 using QueBox.Models;
 using QueBox.Repository;
 using QueBox.Query;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using QueBox.Query.Interfaces;
 using QueBox.Repository.Interfaces;
 using QueBox.Repository.Implements;
-
 
 namespace QueBox
 {
@@ -24,21 +22,28 @@ namespace QueBox
 
             builder.Services.AddControllers();
             builder.Services.AddRazorPages();
+
+            // ======== 🔹 CORS CONFIGURATION 🔹 ========
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy => policy.AllowAnyOrigin()
+                                    .AllowAnyMethod()
+                                    .AllowAnyHeader());
+            });
+            // ==========================================
+
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
-            // builder.Services.AddTransient<IAnimal, Perro>();  <- Codigo para los servicios
             builder.Services.AddTransient<IUsuarioQueries, UsuarioQueries>();
             builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
 
-            // builder.Services.AddTransient<IAnimal, Perro>();  <- Codigo para los servicios
             builder.Services.AddTransient<ICapaQueries, CapaQueries>();
             builder.Services.AddTransient<ICapaRepository, CapaRepository>();
 
-            // builder.Services.AddTransient<IAnimal, Perro>();  <- Codigo para los servicios
             builder.Services.AddTransient<IDisenoQueries, DisenoQueries>();
             builder.Services.AddTransient<IDisenoRepository, DisenoRepository>();
 
-            // builder.Services.AddTransient<IAnimal, Perro>();  <- Codigo para los servicios
             builder.Services.AddTransient<IImagenDecorativaQueries, ImagenDecorativaQueries>();
             builder.Services.AddTransient<IImagenDecorativaRepository, ImagenDecorativaRepository>();
 
@@ -66,6 +71,10 @@ namespace QueBox
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            // ======== 🔹 USE CORS 🔹 ========
+            app.UseCors("AllowAll");
+            // =================================
 
             app.UseAuthorization();
 

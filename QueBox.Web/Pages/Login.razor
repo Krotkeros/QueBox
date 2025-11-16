@@ -1,30 +1,33 @@
-﻿@page "/login"
-@using QueBox.Services
+﻿// Login.razor
+@page "/login"
 @using QueBox.Models
+@using QueBox.Services
+@inject SignInManager<IdentityUser> SignInManager
+@inject NavigationManager NavigationManager
 
-<PageTitle>QueBox</PageTitle>
+<h3>Login</h3>
 
-<h1>Ingresar a QueBox</h1>
-
-<EditForm Model="@myModel">
+<EditForm  class="row g-3" Model="@editingUsuario" OnValidSubmit="@HandleLogin">
 
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <div class="mb-3">
-        <label for="nombre" class="form-label">Nombre:</label>
-        <InputText @bind-Value="myModel.Nombre" id="nombre" class="form-control" />
+    <div class="mb-3 col-md-12">
+        <label for="username"> Nombre:</label>
+        <InputText id="username" @bind-Value="editingUsuario.Nombre" />
     </div>
 
-    <div class="mb-3">
-        <label for="clave" class="form-label">Clave:</label>
-        <InputText @bind-Value="myModel.Clave" id="clave" class="form-control" />
+    <div class="mb-3 col-md-12">
+        <label for="password">Password:</label>
+        <InputText type="password" id="password" @bind-Value="editingUsuario.Clave" />
     </div>
 
-    <button type="submit" class="mb-3 btn btn-primary">Submit</button>
+    <button type="submit" class="col-md-4 btn btn-primary">Login</button>
 
-
-
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <p class="text-danger">@ErrorMessage</p>
+    }
 </EditForm>
 
 <div class="mb-3">
@@ -33,14 +36,32 @@
     </NavLink>
 </div>
 
+
 @code {
+    private List<Usuario> usuarios = new();
+    private Usuario editingUsuario = new Usuario();
+    private string ErrorMessage;
+    private bool isLoading = true;
 
-    private MyViewModel myModel = new MyViewModel();
-
-    public class MyViewModel
+    private async Task HandleLogin()
     {
-        public string Nombre { get; set; }
-        public string Clave { get; set; }
+        var result = await SignInManager.PasswordSignInAsync(editingUsuario.Nombre, editingUsuario.Clave, isPersistent: false, lockoutOnFailure: false);
+
+        if (result.Succeeded)
+        {
+            NavigationManager.NavigateTo("/"); // Redirect to home page
+        }
+        else
+        {
+            ErrorMessage = "Invalid login attempt.";
+        }
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        usuarios = await UsuarioService.GetUsuariosAsync();
+        isLoading = false;
+    }
+
 
 }

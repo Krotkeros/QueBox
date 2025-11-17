@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using QueBox.Contexts;
 using QueBox.Models;
 using QueBox.Query.Interfaces;
-using QueBox.Repository.Implements;
 using QueBox.Repository.Interfaces;
 
 namespace QueBox.Controllers
@@ -32,6 +31,31 @@ namespace QueBox.Controllers
             _usuarioRepository = repository ?? throw new ArgumentException(nameof(repository));
         }
 
+        // --- MÉTODO DE LOGIN AÑADIDO / CORREGIDO ---
+
+        /// <summary>
+        /// Valida las credenciales de usuario y devuelve el usuario si el login es exitoso
+        /// </summary>
+        /// <param name="login">Objeto con Nombre y Clave del usuario</param>
+        /// <response code="200">Usuario autenticado</response>
+        /// <response code="401">Credenciales incorrectas</response>
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
+        {
+            _logger.LogInformation("Intentando login para el usuario: {0}", loginRequest.Nombre);
+            var usuarioEncontrado = await _usuarioQueries.ValidarCredencialesAsync(loginRequest.Nombre, loginRequest.Clave);
+
+            if (usuarioEncontrado != null)
+            {
+                _logger.LogInformation("Login exitoso. ID: {0}", usuarioEncontrado.Id_Usuario);
+                return Ok(usuarioEncontrado);
+            }
+
+            _logger.LogWarning("Login fallido para el usuario: {0}", loginRequest.Nombre);
+            return Unauthorized();
+        }
+
+
         /// <summary>
         /// Metodo que lista todas los usuarios
         /// </summary>
@@ -42,7 +66,6 @@ namespace QueBox.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ListarUsuario()
         {
-            //var rs = _db.Usuarios.ToList();
             var rsDapper = await _usuarioQueries.ObtenerTodosAsync();
             return Ok(rsDapper);
         }

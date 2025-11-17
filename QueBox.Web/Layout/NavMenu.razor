@@ -1,6 +1,6 @@
 ﻿@using System.Security.Claims
 @using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject AuthenticationStateProvider AuthStateProvider
 
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
@@ -10,8 +10,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="@NavMenuCssClass navbar-collapse">
-
+        <div class="@NavMenuCssClass navbar-collapse" @onclick="ToggleNavMenu">
             <ul class="navbar-nav me-auto mb-2 mb-sm-0">
 
                 <li class="nav-item">
@@ -22,6 +21,7 @@
 
                 <AuthorizeView Policy="AuthenticatedUser">
                     <Authorized>
+
                         <li class="nav-item">
                             <NavLink class="nav-link" href="caja">
                                 Caja
@@ -33,6 +33,7 @@
                                 Diseños
                             </NavLink>
                         </li>
+
                     </Authorized>
                 </AuthorizeView>
 
@@ -45,40 +46,34 @@
                         </li>
                     </Authorized>
                 </AuthorizeView>
+
             </ul>
 
-
-            <ul class="navbar-nav ms-auto mb-2 mb-sm-0">
+            <ul class="navbar-nav">
                 <AuthorizeView>
                     <Authorized>
                         <li class="nav-item">
-                            <NavLink class="nav-link" href="Account/Logout" Match="NavLinkMatch.All">
-                                Cerrar Sesión
-                            </NavLink>
+                            <NavLink class="nav-link" href="logout">Cerrar Sesión</NavLink>
                         </li>
                     </Authorized>
                     <NotAuthorized>
                         <li class="nav-item">
-                            <NavLink class="nav-link" href="login">
-                                Logearse
-                            </NavLink>
+                            <NavLink class="nav-link" href="login">Logearse</NavLink>
                         </li>
                         <li class="nav-item">
-                            <NavLink class="nav-link" href="register">
-                                Registrarse
-                            </NavLink>
+                            <NavLink class="nav-link" href="register">Registrarse</NavLink>
                         </li>
                     </NotAuthorized>
                 </AuthorizeView>
             </ul>
+
         </div>
     </div>
 </nav>
 
 @code {
     private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : "show";
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {

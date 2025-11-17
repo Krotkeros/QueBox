@@ -14,25 +14,15 @@ namespace QueBox.Services
 
         private string apiUrl = "api/Usuario";
 
-        public async Task<Usuario?> ValidateLoginAsync(string nombre, string clave)
+        public async Task<Usuario> ValidateLoginAsync(string nombre, string clave)
         {
+            var loginData = new LoginRequest { Nombre = nombre, Clave = clave };
 
-            var loginData = new { Nombre = nombre, Clave = clave };
+            var response = await _http.PostAsJsonAsync("api/Usuario/login", loginData);
 
-            try
+            if (response.IsSuccessStatusCode)
             {
-
-                var response = await _http.PostAsJsonAsync($"{apiUrl}/login", loginData);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var usuarioLogeado = await response.Content.ReadFromJsonAsync<Usuario>();
-                    return usuarioLogeado;
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"Error de conexión al intentar autenticar: {ex.Message}");
+                return await response.Content.ReadFromJsonAsync<Usuario>();
             }
 
             return null;

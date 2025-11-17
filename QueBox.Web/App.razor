@@ -1,16 +1,29 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
-@using QueBox.Web.Layout // Asume que MainLayout está aquí o usa el using correcto.
+@using QueBox.Web.Layout 
 
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
-            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                
+                <NotAuthorized>
+                    <p>Acceso denegado. Redirigiendo al Login...</p>
+                    <RedirectToLogin /> 
+                </NotAuthorized>
+
+                <Authorizing>
+                    <p>Cargando autorización...</p>
+                </Authorizing>
+                
+            </AuthorizeRouteView>
+            
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>
-            <PageTitle>Not found</PageTitle>
+            <PageTitle>No encontrado</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Sorry, there's nothing at this address.</p>
+                <p role="alert">Lo sentimos, no hay nada en esta dirección.</p>
             </LayoutView>
         </NotFound>
     </Router>

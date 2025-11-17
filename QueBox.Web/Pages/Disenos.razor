@@ -1,11 +1,13 @@
 ﻿@page "/disenos"
 @using QueBox.Services
 @using QueBox.Models
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize(Policy = "AuthenticatedUser")]
 
 @inject DisenoService DisenoService
 @inject IJSRuntime JS
 
-<PageTitle>Weather</PageTitle>
+<PageTitle>Disenos</PageTitle>
 
 <h1>Disenos</h1>
 
@@ -39,7 +41,6 @@ else
                         </NavLink>
                     </td>
                     <td>
-
                         <button class="btn btn-sm btn-warning" @onclick="() => EditDiseno(diseno)">Cambiar nombre</button>
                     </td>
                     <td>
@@ -51,7 +52,6 @@ else
     </table>
 }
 
-<!-- Modal Bootstrap -->
 <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="disenoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -60,20 +60,25 @@ else
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" @onclick="CancelEdit"></button>
             </div>
             <div class="modal-body">
-                <EditForm Model="@editingDiseno" OnValidSubmit="SaveDiseno">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
 
-                    <div class="mb-3">
-                        <label class="form-label">Título</label>
-                        <InputText class="form-control" @bind-Value="editingDiseno.Nombre" />
-                    </div>
+                @if (editingDiseno != null)
+                {
+                    <EditForm Model="@editingDiseno" OnValidSubmit="SaveDiseno">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
 
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Guardar</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="CancelEdit">Cancelar</button>
-                    </div>
-                </EditForm>
+                        <div class="mb-3">
+                            <label class="form-label">Título</label>
+                            <InputText class="form-control" @bind-Value="editingDiseno.Nombre" />
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Guardar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="CancelEdit">Cancelar</button>
+                        </div>
+                    </EditForm>
+                }
+
             </div>
         </div>
     </div>
@@ -82,7 +87,7 @@ else
 
 @code {
     private List<Diseno> disenos = new();
-    private Diseno? editingDiseno;
+    private Diseno? editingDiseno; // Permite que sea null al inicio
     private bool isLoading = true;
     private string modalTitle = "Nuevo Diseno";
 
@@ -99,12 +104,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        disenos = await DisenoService.GetDisenosAsync();
+        // Añadida mejor gestión de nulos en caso de fallo en el servicio
+        disenos = (await DisenoService.GetDisenosAsync())?.ToList() ?? new List<Diseno>();
         isLoading = false;
     }
 
     private async void NewDiseno()
     {
+        // Se asegura que editingDiseno sea una instancia válida antes de mostrar el formulario
         editingDiseno = new Diseno { Id_Usuario = 1 };
         modalTitle = "Nuevo Diseno";
         await ShowModal();
@@ -114,6 +121,7 @@ else
 
     private async void EditDiseno(Diseno diseno)
     {
+        // Se crea una copia de la instancia antes de editar
         editingDiseno = new Diseno
         {
             Id_Diseno = diseno.Id_Diseno,
@@ -147,14 +155,14 @@ else
                 disenos[index] = editingDiseno;
         }
 
-        editingDiseno = null;
+        editingDiseno = null; // Se vuelve a poner a null
         await HideModal();
         StateHasChanged();
     }
 
     private async void CancelEdit()
     {
-        editingDiseno = null;
+        editingDiseno = null; // Se vuelve a poner a null
         await HideModal();
         StateHasChanged();
     }

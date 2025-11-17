@@ -2,11 +2,15 @@
 @using QueBox.Services
 @using QueBox.Models
 
-@using Plotly.Blazor
-@using Plotly.Blazor.Traces
+
+@inject UsuarioService UsuarioService
 
 @inject DisenoService DisenoService
 @inject IJSRuntime JS
+
+@using Plotly.Blazor
+@using Plotly.Blazor.Traces
+
 
 <PageTitle>Diseno</PageTitle>
 
@@ -14,24 +18,26 @@
 
 <section>
 
-    <div class="row g-3">
+    <!-- Codigo form de arriba
+
+    <div class="row">
 
         <EditForm Model="@editingDiseno" OnValidSubmit="SaveDiseno">
 
             <DataAnnotationsValidator />
             <ValidationSummary />
 
-            <div class="col-md-4">
+            <div class="col-md-4 mb-3">
                 <label for="alto" class="form-label">Alto:</label>
                 <InputNumber @TValue="float" @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-4 mb-3">
                 <label for="largo" class="form-label">Largo:</label>
                 <InputNumber @TValue="float" @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-4 mb-3">
                 <label for="ancho" class="form-label">Ancho:</label>
                 <InputNumber @TValue="float" @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
             </div>
@@ -39,8 +45,12 @@
             <button class="mb-3 row btn btn-primary" type="submit">Submit</button>
 
         </EditForm>
+    
 
     </div>
+
+    -->
+    <!-- Codigo form de izquierda -->
 
     <div class="row g-3">
 
@@ -50,34 +60,46 @@
             <ValidationSummary />
 
             <div class="mb-3">
-                <label for="alto" class="form-label">Alto:</label>
-                <InputNumber @TValue="float" @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
+                <label for="id_Usuario" class="form-label">Id_Usuario:</label>
+                <InputNumber  @bind-Value="editingDiseno.Id_Usuario" id="id_Usuario" class="form-control" />
             </div>
 
             <div class="mb-3">
                 <label for="largo" class="form-label">Largo:</label>
-                <InputNumber @TValue="float" @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
+                <InputNumber  @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="alto" class="form-label">Alto:</label>
+                <InputNumber  @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
             </div>
 
             <div class="mb-3">
                 <label for="ancho" class="form-label">Ancho:</label>
-                <InputNumber @TValue="float" @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
+                <InputNumber @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
             </div>
 
-            <button class="mb-3 row btn btn-primary" type="submit">Submit</button>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre:</label>
+                <InputText  @bind-Value="editingDiseno.Nombre" id="nombre" class="form-control" />
+            </div>
+
+            <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Submit</button>
 
         </EditForm>
 
+
+
         @if (data != null)
         {
+            <!-- <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" /> -->
             <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
         }
         else
         {
-            <h5>No data.</h5>
+            <h5 class="col-md-6">No data.</h5>
         }
     </div>
-
 
 </section>
 
@@ -90,11 +112,14 @@
     private List<Diseno> disenos = new();
     private Diseno? editingDiseno;
 
+
+
     protected override async Task OnInitializedAsync()
     {
         editingDiseno = new Diseno();
         disenos = await DisenoService.GetDisenosAsync();
     }
+
 
     private async Task SaveDiseno()
     {
@@ -103,13 +128,13 @@
 
         // Ya el diseno esta creado diseno
 
-        // if (editingDiseno.Id_Diseno == 0)
-        // {
-        //    editingDiseno.Id_Usuario = 1;
-        //    var created = await DisenoService.CreateDisenoAsync(editingDiseno);
-        //    if (created != null)
-        //        disenos.Insert(0, created);
-        //}
+         if (editingDiseno.Id_Diseno == 0)
+         {
+            var created = await DisenoService.CreateDisenoAsync(editingDiseno);
+            if (created != null)
+                disenos.Insert(0, created);
+        }
+
         else
         {
             await DisenoService.UpdateDisenoAsync(editingDiseno);
@@ -124,8 +149,6 @@
 
     // Actualizar data ImagenDecorativa
 
-
-
     // Chart
     PlotlyChart chart;
 
@@ -138,7 +161,7 @@
     // Using of the interface IList is important for the event callback!
     IList<ITrace> data = new List<ITrace>
     {
-        
+
         new Mesh3D
         {
             X = new List<object>{0, 0, 1, 1, 0, 0, 1, 1},
@@ -147,9 +170,9 @@
             I = new List<object>{7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2},
             J = new List<object>{3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3},
             K = new List<object>{0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6},
-            
+
             ColorBar = new Plotly.Blazor.Traces.Mesh3DLib.ColorBar {
-                Title = new Plotly.Blazor.Traces.Mesh3DLib.ColorBarLib.Title {Text = "z" } 
+                Title = new Plotly.Blazor.Traces.Mesh3DLib.ColorBarLib.Title {Text = "z" }
             },
             ColorScale = "Rainbow",
             //Intensity = new List<object> {
@@ -158,4 +181,5 @@
             Intensity = intensityn
         }
     };
+
 }

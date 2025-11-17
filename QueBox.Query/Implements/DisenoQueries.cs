@@ -38,17 +38,6 @@ namespace QueBox.Query
             return await _connection.QueryAsync<Diseno>(query, new { IdUsuario = idUsuario });
         }
 
-        public async Task<IEnumerable<Diseno>> ObtenerPorCapaAsync(int idCapa)
-        {
-            const string query = @"
-                SELECT Id_Diseno, Id_Usuario, Largo, Alto, Ancho, Nombre
-                FROM Diseno
-                WHERE Id_Capa = @IdCapa
-                ORDER BY Id_Diseno DESC";
-
-            return await _connection.QueryAsync<Diseno>(query, new { IdCapa = idCapa });
-        }
-
         public async Task<IEnumerable<Diseno>> ObtenerTodosAsync()
         {
             const string query = @"

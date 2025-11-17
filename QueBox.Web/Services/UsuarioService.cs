@@ -14,6 +14,19 @@ namespace QueBox.Services
 
         private string apiUrl = "api/Usuario";
 
+        public async Task<Usuario> ValidateLoginAsync(string nombre, string clave)
+        {
+            var loginData = new LoginRequest { Nombre = nombre, Clave = clave };
+
+            var response = await _http.PostAsJsonAsync("api/Usuario/login", loginData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<Usuario>();
+            }
+
+            return null;
+        }
         public async Task<List<Usuario>> GetUsuariosAsync() =>
             await _http.GetFromJsonAsync<List<Usuario>>(apiUrl) ?? [];
 

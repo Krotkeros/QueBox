@@ -1,6 +1,8 @@
 ﻿@page "/usuarios"
 @using QueBox.Services
 @using QueBox.Models
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "RequireAdminId")]
 
 @inject UsuarioService UsuarioService
 @inject IJSRuntime JS
@@ -9,7 +11,7 @@
 
 <h1>Usuarios</h1>
 
-<p>El comentario de desesperasao.</p>
+<p>Página restringida: Solo el administrador (ID 1) puede ver y gestionar usuarios.</p>
 
 @if (isLoading)
 {
@@ -20,6 +22,7 @@ else
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Nombre usuario</th>
                 <th>Editar Nombre</th>
                 <th>Borrar</th>
@@ -29,11 +32,11 @@ else
             @foreach (var usuario in usuarios)
             {
                 <tr>
+                    <td>@usuario.Id_Usuario</td>
                     <td>
                         <span class="mb-2" aria-hidden="true"></span> @usuario.Nombre
                     </td>
                     <td>
-
                         <button class="btn btn-sm btn-warning">Cambiar nombre</button>
                     </td>
                     <td>
@@ -48,7 +51,6 @@ else
 
 @code {
     private List<Usuario> usuarios = new();
-    private Usuario? editingUsuario;
     private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()

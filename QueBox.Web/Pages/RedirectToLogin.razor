@@ -1,0 +1,10 @@
+﻿@inject NavigationManager NavigationManager
+
+@code {
+    private string loginUrl = "/login";
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.NavigateTo(loginUrl, forceLoad: true);
+    }
+}

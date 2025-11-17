@@ -1,0 +1,22 @@
+﻿@page "/logout"
+@using QueBox.Web.Auth
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProviderBase
+@inject NavigationManager NavigationManager
+
+<h3>Cerrando Sesión...</h3>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Hacemos el casting al tipo CustomAuthenticationStateProvider
+        // para acceder al método MarkUserAsLoggedOut().
+        var customProvider = (CustomAuthenticationStateProvider)AuthStateProviderBase;
+
+        // Llama al método que limpia el LocalStorage
+        customProvider.MarkUserAsLoggedOut();
+
+        // Redirige forzadamente a la página de Login.
+        NavigationManager.NavigateTo("/login", true);
+    }
+}

@@ -1,4 +1,8 @@
-﻿<nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top">
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="">QueBox.Web</a>
 
@@ -16,36 +20,56 @@
                     </NavLink>
                 </li>
 
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="caja">
-                        Caja
-                    </NavLink>
-                </li>
+                <AuthorizeView Policy="AuthenticatedUser">
+                    <Authorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="caja">
+                                Caja
+                            </NavLink>
+                        </li>
 
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="disenos">
-                        Diseños
-                    </NavLink>
-                </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="disenos">
+                                Diseños
+                            </NavLink>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
 
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="usuarios">
-                        Usuarios admin
-                    </NavLink>
-                </li>
+                <AuthorizeView Policy="RequireAdminId">
+                    <Authorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="usuarios">
+                                Usuarios admin
+                            </NavLink>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
             </ul>
 
+
             <ul class="navbar-nav ms-auto mb-2 mb-sm-0">
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="login">
-                        Logearse
-                    </NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="register">
-                        Registrarse
-                    </NavLink>
-                </li>
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="Account/Logout" Match="NavLinkMatch.All">
+                                Cerrar Sesión
+                            </NavLink>
+                        </li>
+                    </Authorized>
+                    <NotAuthorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="login">
+                                Logearse
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="register">
+                                Registrarse
+                            </NavLink>
+                        </li>
+                    </NotAuthorized>
+                </AuthorizeView>
             </ul>
         </div>
     </div>

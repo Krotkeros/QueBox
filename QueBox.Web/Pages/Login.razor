@@ -1,16 +1,26 @@
-﻿// Login.razor
-@page "/login"
+﻿@page "/login"
 @using QueBox.Models
 @using QueBox.Services
-@inject SignInManager<IdentityUser> SignInManager
+@using QueBox.Web.Auth
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProviderBase 
+@inject UsuarioService UsuarioService
 @inject NavigationManager NavigationManager
 
 <h3>Login</h3>
 
-<EditForm  class="row g-3" Model="@editingUsuario" OnValidSubmit="@HandleLogin">
+@code {
 
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    public class LoginModel
+    {
+        public string Nombre { get; set; } = string.Empty;
+        public string Clave { get; set; } = string.Empty;
+    }
+}
+
+<EditForm class="row g-3" Model="@editingUsuario" OnValidSubmit="@HandleLogin">
+    @* <DataAnnotationsValidator /> *@
+    @* <ValidationSummary /> *@
 
     <div class="mb-3 col-md-12">
         <label for="username"> Nombre:</label>
@@ -38,30 +48,26 @@
 
 
 @code {
-    private List<Usuario> usuarios = new();
-    private Usuario editingUsuario = new Usuario();
-    private string ErrorMessage;
-    private bool isLoading = true;
+
+    private LoginModel editingUsuario = new LoginModel();
+    private string ErrorMessage = string.Empty;
 
     private async Task HandleLogin()
     {
-        var result = await SignInManager.PasswordSignInAsync(editingUsuario.Nombre, editingUsuario.Clave, isPersistent: false, lockoutOnFailure: false);
 
-        if (result.Succeeded)
+        var usuarioLogeado = await UsuarioService.ValidateLoginAsync(editingUsuario.Nombre, editingUsuario.Clave);
+
+        if (usuarioLogeado != null)
         {
-            NavigationManager.NavigateTo("/"); // Redirect to home page
+            var customProvider = (CustomAuthenticationStateProvider)AuthStateProviderBase;
+
+            customProvider.MarkUserAsAuthenticated(usuarioLogeado.Id_Usuario.ToString(), usuarioLogeado.Nombre);
+
+            NavigationManager.NavigateTo("/", true);
         }
         else
         {
-            ErrorMessage = "Invalid login attempt.";
+            ErrorMessage = "Nombre de usuario o contraseña incorrectos.";
         }
     }
-
-    protected override async Task OnInitializedAsync()
-    {
-        usuarios = await UsuarioService.GetUsuariosAsync();
-        isLoading = false;
-    }
-
-
 }

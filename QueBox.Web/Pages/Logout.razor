@@ -1,0 +1,14 @@
+﻿@page "/logout"
+@using QueBox.Web.Auth
+@inject CustomAuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+
+<h3>Cerrando Sesión...</h3>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AuthStateProvider.MarkUserAsLoggedOut();
+        NavigationManager.NavigateTo("/", true);
+    }
+}

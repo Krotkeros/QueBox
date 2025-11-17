@@ -33,14 +33,12 @@ else
             {
                 <tr>
                     <td>@usuario.Id_Usuario</td>
+                    <td>@usuario.Nombre</td>
                     <td>
-                        <span class="mb-2" aria-hidden="true"></span> @usuario.Nombre
+                        <button class="btn btn-sm btn-warning" @onclick="() => EditUsuario(usuario)">Cambiar nombre</button>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-warning">Cambiar nombre</button>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-danger">Eliminar</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteUsuario(usuario.Id_Usuario)">Eliminar</button>
                     </td>
                 </tr>
             }
@@ -48,14 +46,120 @@ else
     </table>
 }
 
+@if (showEditForm)
+{
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5>Editar Usuario - ID: @editingUsuario.Id_Usuario</h5>
+        </div>
+        <div class="card-body">
+            <EditForm Model="@editingUsuario" OnValidSubmit="SaveUsuario">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label class="form-label">Nombre de usuario</label>
+                    <InputText class="form-control" @bind-Value="editingUsuario.Nombre" />
+                </div>
+
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancelar</button>
+            </EditForm>
+        </div>
+    </div>
+}
 
 @code {
     private List<Usuario> usuarios = new();
+    private Usuario editingUsuario = new Usuario();
     private bool isLoading = true;
+    private bool showEditForm = false;
 
     protected override async Task OnInitializedAsync()
     {
-        usuarios = await UsuarioService.GetUsuariosAsync();
-        isLoading = false;
+        try
+        {
+            usuarios = await UsuarioService.GetUsuariosAsync();
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("console.error", "Error cargando usuarios:", ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void EditUsuario(Usuario usuario)
+    {
+        editingUsuario = new Usuario
+        {
+            Id_Usuario = usuario.Id_Usuario,
+            Nombre = usuario.Nombre,
+            Clave = usuario.Clave,
+            Correo = usuario.Correo
+        };
+        showEditForm = true;
+        StateHasChanged();
+    }
+
+    private async Task SaveUsuario()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("console.log", "Guardando usuario:", editingUsuario.Id_Usuario, editingUsuario.Nombre);
+            
+            await UsuarioService.UpdateUsuarioAsync(editingUsuario);
+            
+            var index = usuarios.FindIndex(u => u.Id_Usuario == editingUsuario.Id_Usuario);
+            if (index >= 0)
+            {
+                usuarios[index].Nombre = editingUsuario.Nombre;
+            }
+
+            await JS.InvokeVoidAsync("alert", "Usuario actualizado correctamente");
+            
+            editingUsuario = new Usuario();
+            showEditForm = false;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("alert", $"Error al guardar: {ex.Message}");
+            await JS.InvokeVoidAsync("console.error", "Error:", ex.Message);
+        }
+    }
+
+    private void CancelEdit()
+    {
+        editingUsuario = new Usuario();
+        showEditForm = false;
+        StateHasChanged();
+    }
+
+    private async Task DeleteUsuario(int id)
+    {
+        if (id == 1)
+        {
+            await JS.InvokeVoidAsync("alert", "No puedes eliminar al administrador");
+            return;
+        }
+
+        var confirmado = await JS.InvokeAsync<bool>("confirm", "¿Estás seguro de eliminar este usuario?");
+        if (confirmado)
+        {
+            try
+            {
+                await UsuarioService.DeleteUsuarioAsync(id);
+                usuarios = usuarios.Where(u => u.Id_Usuario != id).ToList();
+                await JS.InvokeVoidAsync("alert", "Usuario eliminado correctamente");
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                await JS.InvokeVoidAsync("alert", $"Error al eliminar: {ex.Message}");
+            }
+        }
     }
 }

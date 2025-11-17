@@ -1,31 +1,132 @@
 ﻿@page "/caja"
 @using QueBox.Services
 @using QueBox.Models
+
 @using Plotly.Blazor
 @using Plotly.Blazor.Traces
 
-<PageTitle>Caja</PageTitle>
+@inject DisenoService DisenoService
+@inject IJSRuntime JS
 
-<h1>Caja</h1>
+<PageTitle>Diseno</PageTitle>
 
-<section class="row g-3">
+<h1>Diseno</h1>
 
-    <div class="col-md-6">Hello</div>
+<section>
 
-    @if (data != null)
-    {
-        <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
-    }
-    else
-    {
-        <h5>No data.</h5>
-    }
+    <div class="row g-3">
+
+        <EditForm Model="@editingDiseno" OnValidSubmit="SaveDiseno">
+
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="col-md-4">
+                <label for="alto" class="form-label">Alto:</label>
+                <InputNumber @TValue="float" @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label for="largo" class="form-label">Largo:</label>
+                <InputNumber @TValue="float" @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label for="ancho" class="form-label">Ancho:</label>
+                <InputNumber @TValue="float" @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
+            </div>
+
+            <button class="mb-3 row btn btn-primary" type="submit">Submit</button>
+
+        </EditForm>
+
+    </div>
+
+    <div class="row g-3">
+
+        <EditForm class="col-md-6" Model="@editingDiseno" OnValidSubmit="SaveDiseno">
+
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label for="alto" class="form-label">Alto:</label>
+                <InputNumber @TValue="float" @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="largo" class="form-label">Largo:</label>
+                <InputNumber @TValue="float" @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="ancho" class="form-label">Ancho:</label>
+                <InputNumber @TValue="float" @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
+            </div>
+
+            <button class="mb-3 row btn btn-primary" type="submit">Submit</button>
+
+        </EditForm>
+
+        @if (data != null)
+        {
+            <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
+        }
+        else
+        {
+            <h5>No data.</h5>
+        }
+    </div>
 
 
 </section>
 
 
 @code {
+
+    // Actualizar data Diseno
+    // col-md-4
+
+    private List<Diseno> disenos = new();
+    private Diseno? editingDiseno;
+
+    protected override async Task OnInitializedAsync()
+    {
+        editingDiseno = new Diseno();
+        disenos = await DisenoService.GetDisenosAsync();
+    }
+
+    private async Task SaveDiseno()
+    {
+        if (editingDiseno == null)
+            return;
+
+        // Ya el diseno esta creado diseno
+
+        // if (editingDiseno.Id_Diseno == 0)
+        // {
+        //    editingDiseno.Id_Usuario = 1;
+        //    var created = await DisenoService.CreateDisenoAsync(editingDiseno);
+        //    if (created != null)
+        //        disenos.Insert(0, created);
+        //}
+        else
+        {
+            await DisenoService.UpdateDisenoAsync(editingDiseno);
+            var index = disenos.FindIndex(d => d.Id_Diseno == editingDiseno.Id_Diseno);
+            if (index >= 0)
+                disenos[index] = editingDiseno;
+        }
+
+        editingDiseno = null;
+        StateHasChanged();
+    }
+
+    // Actualizar data ImagenDecorativa
+
+
+
+    // Chart
     PlotlyChart chart;
 
     Config config = new Config();

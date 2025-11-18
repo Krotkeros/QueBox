@@ -89,7 +89,6 @@
         </EditForm>
 
 
-
         @if (data != null)
         {
             <!-- <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" /> -->
@@ -101,10 +100,24 @@
         }
     </div>
 
+    <button @onclick="ToggleBootstrapCollapse">Toggle 1</button>
+
+    <div id="myCollapseElement" class="collapse">
+        Aca el for para las imgs.
+    </div>
+
 </section>
 
 
 @code {
+    // Toggle
+
+    private async Task ToggleBootstrapCollapse()
+    {
+        await JS.InvokeVoidAsync("bootstrapInterop.toggleBootstrapCollapse", "myCollapseElement");
+    }
+
+
 
     // Actualizar data Diseno
     // col-md-4

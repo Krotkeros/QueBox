@@ -3,9 +3,9 @@
 @using QueBox.Models
 
 
-@inject UsuarioService UsuarioService
-
 @inject DisenoService DisenoService
+@inject CapaService CapaService
+@inject ImagenDecorativaService ImagenDecorativaService
 @inject IJSRuntime JS
 
 @using Plotly.Blazor
@@ -91,7 +91,6 @@
 
         @if (data != null)
         {
-            <!-- <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" /> -->
             <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
         }
         else
@@ -100,53 +99,112 @@
         }
     </div>
 
-    <button @onclick="ToggleBootstrapCollapse">Toggle 1</button>
+    <div id="accordion">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                    <button class="accordion-button collapsed" @onclick='() => ToggleBootstrapCollapse("myCollapseElement")'>
+                        Collapsible Group Item #1
+                    </button>
+                </h5>
+            </div>
 
-    <div id="myCollapseElement" class="collapse">
-        Aca el for para las imgs.
+            <div id="myCollapseElement" class="collapse show">
+                <div id="accordion">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <button class="accordion-button collapsed" @onclick='() => ToggleBootstrapCollapse("myCollapseElement2")'>
+                                    La imagen 1
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="myCollapseElement2">
+                            <div class="card-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                <!-- Agregar aca el form imagenes -->
+                                <!-- Agregar aca el boton para mas imagenes -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (isLoading)
+        {
+            <p>Cargando capas...</p>
+        }
+        else
+        {
+            <div id="accordion">
+                @foreach (var capa in capas)
+                {
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" @onclick="() => ToggleBootstrapCollapse(capa.Numero.ToString())">
+                                     La capa @capa.Numero
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id = capa.Numero.ToString>
+                            <div class="card-body">
+                                <!-- Agregar aca el form imagenes -->
+                                <!-- Agregar aca el boton para mas imagenes -->
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
     </div>
+
 
 </section>
 
 
 @code {
-    // Toggle
-
-    private async Task ToggleBootstrapCollapse()
-    {
-        await JS.InvokeVoidAsync("bootstrapInterop.toggleBootstrapCollapse", "myCollapseElement");
-    }
 
 
-
-    // Actualizar data Diseno
-    // col-md-4
+    // Definir datos
 
     private List<Diseno> disenos = new();
     private Diseno? editingDiseno;
+    private List<Capa> capas = new();
+
+    private bool isLoading = true;
 
 
+    // Ejecutables al iniciar
 
     protected override async Task OnInitializedAsync()
     {
         editingDiseno = new Diseno();
         disenos = await DisenoService.GetDisenosAsync();
+        capas = await CapaService.GetCapasAsync();
+        isLoading = false;
     }
 
+
+    // Guardar diseno
 
     private async Task SaveDiseno()
     {
         if (editingDiseno == null)
             return;
 
-        // Ya el diseno esta creado diseno
+        // Ya el diseno deberia estar creado
 
-         if (editingDiseno.Id_Diseno == 0)
-         {
-            var created = await DisenoService.CreateDisenoAsync(editingDiseno);
-            if (created != null)
-                disenos.Insert(0, created);
-        }
+        // if (editingDiseno.Id_Diseno == 0)
+        // {
+        //    var created = await DisenoService.CreateDisenoAsync(editingDiseno);
+        //    if (created != null)
+        //        disenos.Insert(0, created);
+        //}
 
         else
         {
@@ -178,7 +236,7 @@
         new Mesh3D
         {
             X = new List<object>{0, 0, 1, 1, 0, 0, 1, 1},
-            Y = new List<object>{0, 1, 1, 0, 0, 1, 1, 0},
+            Y = new List<object>{0, 1, 2, 0, 0, 1, 1, 0},
             Z = new List<object>{0, 0, 0, 0, 1, 1, 1, 1},
             I = new List<object>{7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2},
             J = new List<object>{3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3},
@@ -195,4 +253,11 @@
         }
     };
 
+
+    // Toggle function
+
+    private async Task ToggleBootstrapCollapse(string elementid)
+    {
+        await JS.InvokeVoidAsync("bootstrapInterop.toggleBootstrapCollapse", elementid);
+    }
 }

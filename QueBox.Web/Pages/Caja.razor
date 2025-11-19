@@ -100,75 +100,84 @@
     </div>
 
     <div id="accordion">
-        <div class="card">
-            <div class="card-header" id="headingOne">
-                <h5 class="mb-0">
-                    <button class="accordion-button collapsed" @onclick='() => ToggleBootstrapCollapse("myCollapseElement")'>
-                        Collapsible Group Item #1
-                    </button>
-                </h5>
-            </div>
-
-            <div id="myCollapseElement" class="collapse show">
-                <div id="accordion">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <button class="accordion-button collapsed" @onclick='() => ToggleBootstrapCollapse("myCollapseElement2")'>
-                                    La imagen 1
-                                </button>
-                            </h5>
-                        </div>
-
-                        <div id="myCollapseElement2">
-                            <div class="card-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                                <!-- Agregar aca el form imagenes -->
-                                <!-- Agregar aca el boton para mas imagenes -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         @if (isLoading)
         {
             <p>Cargando capas...</p>
         }
         else
         {
-            <div id="accordion">
-                @foreach (var capa in capas)
-                {
+            @foreach (var capa in capas)
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(capa.Numero.ToString())">
+                                La capa @capa.Numero
+                            </button>
+                        </h5>
+                    </div>
 
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link collapsed" @onclick="() => ToggleBootstrapCollapse(capa.Numero.ToString())">
-                                    La capa @capa.Numero
-                                </button>
-                            </h5>
-                        </div>
+                    <div id=capa.Numero.ToString>
+                        <div class="card-body">
+                            @foreach (var imagenDecorativa in imagenDecorativas)
+                            {
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">
+                                            <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(imagenDecorativa.Url)">
+                                                La imagen @imagenDecorativa.Id_Img
+                                            </button>
+                                        </h5>
+                                    </div>
 
-                        <div id=capa.Numero.ToString>
-                            <div class="card-body">
-                                @foreach (var imagenDecorativa in imagenDecorativas)
-                                {
+                                    <div id=imagenDecorativa.Url.ToString>
+                                        <div class="card-body">
+                                            <!-- Form imagenes -->
+                                            <EditForm Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">
+                                                <DataAnnotationsValidator />
+                                                <ValidationSummary />
+
+                                                <div class="mb-3">
+                                                    <label for="id_Capa" class="form-label">Id_Capa:</label>
+                                                    <InputNumber @bind-Value="imagenDecorativa.Id_Capa" id="id_Capa" class="form-control" />
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="alto" class="form-label">Alto:</label>
+                                                    <InputNumber @bind-Value="imagenDecorativa.Alto" id="alto" class="form-control" />
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="ancho" class="form-label">Ancho:</label>
+                                                    <InputNumber @bind-Value="imagenDecorativa.Ancho" id="ancho" class="form-control" />
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="url" class="form-label">Url:</label>
+                                                    <InputText @bind-Value="imagenDecorativa.Url" id="url" class="form-control" />
+                                                </div>
+
+                                                <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Submit</button>
+
+                                                <button type="submit" class="btn btn-success">Guardar</button>
+                                            </EditForm>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                            @if (editingDiseno != null)
+                            {
 
 
-                                }
-                                @if (editingDiseno != null)
-                                {
+                            }
+                            <!-- Agregar aca el boton para mas imagenes -->
 
-
-                                }
-                                <!-- Agregar aca el boton para mas imagenes -->
-
-                            </div>
                         </div>
                     </div>
-                }
-            </div>
+                </div>
+            }
         }
 
     </div>
@@ -242,7 +251,7 @@
     // Guardar imagenDecorativa
 
 
-    private async Task SaveImagenDecorativa()
+    private async Task SaveImagenDecorativa(ImagenDecorativa editingImagenDecorativa)
     {
         if (editingImagenDecorativa == null)
             return;
@@ -262,7 +271,6 @@
                 imagenDecorativas[index] = editingImagenDecorativa;
         }
 
-        editingImagenDecorativa = null;
         StateHasChanged();
     }
 

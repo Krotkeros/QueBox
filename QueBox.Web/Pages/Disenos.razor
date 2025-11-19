@@ -2,22 +2,19 @@
 @using QueBox.Services
 @using QueBox.Models
 @using Microsoft.AspNetCore.Components.Authorization
-@using System.Security.Claims
 @attribute [Authorize(Policy = "AuthenticatedUser")]
 
 @inject DisenoService DisenoService
 @inject IJSRuntime JS
-@inject NavigationManager NavManager
-@inject AuthenticationStateProvider AuthStateProvider
 
-<PageTitle>Diseños</PageTitle>
+<PageTitle>Disenos</PageTitle>
 
-<h1>Diseños</h1>
+<h1>Disenos</h1>
 
-<p>Lista de diseños disponibles.</p>
+<p>Nada que ver.</p>
 
 <div class="mb-3">
-    <button class="btn btn-primary" @onclick="NewDiseno">Nuevo Diseño</button>
+    <button class="btn btn-primary" @onclick="NewDiseno">Nuevo Diseno</button>
 </div>
 
 @if (isLoading)
@@ -29,7 +26,7 @@ else
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Nombre diseño</th>
+                <th>Nombre diseno</th>
                 <th>Editar Nombre</th>
                 <th>Borrar</th>
             </tr>
@@ -39,7 +36,7 @@ else
             {
                 <tr>
                     <td>
-                        <NavLink class="link" href="@($"Diseno/{diseno.Id_Diseno}")">
+                        <NavLink class="link" href="Diseno">
                             <span class="mb-2" aria-hidden="true"></span> @diseno.Nombre
                         </NavLink>
                     </td>
@@ -55,63 +52,76 @@ else
     </table>
 }
 
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="disenoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="disenoModalLabel">@modalTitle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" @onclick="CancelEdit"></button>
+            </div>
+            <div class="modal-body">
 
-@if (editingDiseno != null)
-{
-    <div class="card mt-3 border-primary">
-        <div class="card-header bg-primary text-white">
-            <h5>@modalTitle</h5>
-        </div>
-        <div class="card-body">
-            <EditForm Model="@editingDiseno" OnValidSubmit="SaveDiseno">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
+                @if (editingDiseno != null)
+                {
+                    <EditForm Model="@editingDiseno" OnValidSubmit="SaveDiseno">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
 
-                <div class="mb-3">
-                    <label class="form-label">Nombre del Diseño</label>
-                    <InputText class="form-control" @bind-Value="editingDiseno.Nombre" />
-                </div>
+                        <div class="mb-3">
+                            <label class="form-label">Título</label>
+                            <InputText class="form-control" @bind-Value="editingDiseno.Nombre" />
+                        </div>
 
-                <button type="submit" class="btn btn-success">Guardar</button>
-                <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancelar</button>
-            </EditForm>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Guardar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="CancelEdit">Cancelar</button>
+                        </div>
+                    </EditForm>
+                }
+
+            </div>
         </div>
     </div>
-}
+</div>
 
 
 @code {
     private List<Diseno> disenos = new();
-    private Diseno? editingDiseno;
+    private Diseno? editingDiseno; // Permite que sea null al inicio
     private bool isLoading = true;
-    private string modalTitle = "Nuevo Diseño";
+    private string modalTitle = "Nuevo Diseno";
+
+    private async Task ShowModal()
+    {
+        await JS.InvokeVoidAsync("bootstrapInterop.showModal", "postModal");
+    }
+
+    private async Task HideModal()
+    {
+        await JS.InvokeVoidAsync("bootstrapInterop.hideModal", "postModal");
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
-        isLoading = true;
-
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (userId != null)
-        {
-            disenos = (await DisenoService.GetDisenosAsync(userId))?.ToList() ?? new List<Diseno>();
-        }
-        else
-        {
-            disenos = new List<Diseno>();
-        }
-
+        // Añadida mejor gestión de nulos en caso de fallo en el servicio
+        disenos = (await DisenoService.GetDisenosAsync())?.ToList() ?? new List<Diseno>();
         isLoading = false;
     }
 
-    private void NewDiseno()
+    private async void NewDiseno()
     {
-        NavManager.NavigateTo("/caja");
+        // Se asegura que editingDiseno sea una instancia válida antes de mostrar el formulario
+        editingDiseno = new Diseno { Id_Usuario = 1 };
+        modalTitle = "Nuevo Diseno";
+        await ShowModal();
+        StateHasChanged();
     }
 
-    private async Task EditDiseno(Diseno diseno)
+
+    private async void EditDiseno(Diseno diseno)
     {
+        // Se crea una copia de la instancia antes de editar
         editingDiseno = new Diseno
         {
             Id_Diseno = diseno.Id_Diseno,
@@ -121,9 +131,9 @@ else
             Ancho = diseno.Ancho,
             Nombre = diseno.Nombre
         };
-        modalTitle = $"Editar Diseño: {diseno.Nombre}";
+        modalTitle = "Editar Diseno";
+        await ShowModal();
         StateHasChanged();
-        await Task.CompletedTask;
     }
 
     private async Task SaveDiseno()
@@ -135,46 +145,32 @@ else
         {
             var created = await DisenoService.CreateDisenoAsync(editingDiseno);
             if (created != null)
-            {
                 disenos.Insert(0, created);
-            }
         }
         else
         {
-            // Lógica para actualizar el nombre
             await DisenoService.UpdateDisenoAsync(editingDiseno);
             var index = disenos.FindIndex(d => d.Id_Diseno == editingDiseno.Id_Diseno);
             if (index >= 0)
                 disenos[index] = editingDiseno;
         }
 
-        editingDiseno = null;
+        editingDiseno = null; // Se vuelve a poner a null
+        await HideModal();
         StateHasChanged();
     }
 
-    private void CancelEdit()
+    private async void CancelEdit()
     {
-        editingDiseno = null;
+        editingDiseno = null; // Se vuelve a poner a null
+        await HideModal();
         StateHasChanged();
     }
 
     private async Task DeleteDiseno(int id)
     {
-        bool confirmado = await JS.InvokeAsync<bool>("confirm", "¿Estás seguro de que deseas ELIMINAR este diseño? Esta acción es irreversible.");
-
-        if (confirmado)
-        {
-            try
-            {
-                await DisenoService.DeleteDisenoAsync(id);
-                disenos.RemoveAll(d => d.Id_Diseno == id);
-            }
-            catch (Exception ex)
-            {
-                await JS.InvokeVoidAsync("alert", $"No se pudo eliminar el diseño. Error: {ex.Message}");
-            }
-
-            StateHasChanged();
-        }
+        await DisenoService.DeleteDisenoAsync(id);
+        disenos = disenos.Where(d => d.Id_Diseno != id).ToList();
+        StateHasChanged();
     }
 }

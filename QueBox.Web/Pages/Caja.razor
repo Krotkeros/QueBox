@@ -203,7 +203,6 @@
     {
         editingDiseno = new Diseno();
         editingImagenDecorativa = new ImagenDecorativa();
-        disenos = (await DisenoService.GetDisenosAsync())?.ToList() ?? new List<Diseno>();
         imagenDecorativas = (await ImagenDecorativaService.GetImagenDecorativasAsync())?.ToList() ?? new List<ImagenDecorativa>();
         capas = (await CapaService.GetCapasAsync())?.ToList() ?? new List<Capa>();
 

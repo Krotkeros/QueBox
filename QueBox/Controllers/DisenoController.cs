@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using QueBox.Contexts;
 using QueBox.Models;
 using QueBox.Query.Interfaces;
-using QueBox.Repository.Implements;
 using QueBox.Repository.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace QueBox.Controllers
 {
@@ -34,17 +37,36 @@ namespace QueBox.Controllers
         }
 
         /// <summary>
-        /// Método que lista todos los diseños
+        /// Método que lista los diseños filtrados por el ID de usuario.
+        /// La ID viene del cliente Blazor como Query Parameter (?userId=X).
         /// </summary>
-        /// <response code="200">Lista de diseños</response>
+        /// <param name="userId">ID del usuario (string) para el filtro.</param>
+        /// <response code="200">Lista de diseños del usuario</response>
+        /// <response code="400">ID de usuario no proporcionado o inválido</response>
         /// <response code="500">Error procesando la petición</response>
         [HttpGet]
         [ProducesResponseType(typeof(List<Diseno>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ListarDisenos()
+        public async Task<IActionResult> ListarDisenos([FromQuery] string? userId)
         {
-            var rsDapper = await _disenoQueries.ObtenerTodosAsync();
-            return Ok(rsDapper);
+            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int idUsuario))
+            {
+                _logger.LogWarning("Intento de listar diseños sin ID de usuario válido.");
+                return BadRequest("Se requiere un ID de usuario válido para listar diseños.");
+            }
+
+            try
+            {
+                var rsDapper = await _disenoQueries.ObtenerPorUsuarioAsync(idUsuario);
+
+                return Ok(rsDapper);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al listar los diseños por usuario");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error interno al procesar la solicitud.");
+            }
         }
 
         /// <summary>
@@ -61,7 +83,7 @@ namespace QueBox.Controllers
         public async Task<IActionResult> BuscarById(int id)
         {
             _logger.LogInformation("Buscando diseño por id -> {0}", id);
-            Diseno? d = _db.Disenos.FirstOrDefault(f => f.Id_Diseno == id);
+            Diseno? d = await Task.Run(() => _db.Disenos.FirstOrDefault(f => f.Id_Diseno == id));
 
             if (d == null)
             {
@@ -111,10 +133,10 @@ namespace QueBox.Controllers
                 else
                     return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                _logger.LogError(ex, "Error al eliminar el diseño");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al eliminar el diseño");
             }
         }
 
@@ -144,10 +166,10 @@ namespace QueBox.Controllers
                     return BadRequest();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                _logger.LogError(ex, "Error al actualizar el diseño");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el diseño");
             }
         }
 

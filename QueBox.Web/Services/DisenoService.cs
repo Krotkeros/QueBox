@@ -14,8 +14,10 @@ namespace QueBox.Services
 
         private string apiUrl = "api/Diseno";
 
-        public async Task<List<Diseno>> GetDisenosAsync() =>
-            await _http.GetFromJsonAsync<List<Diseno>>(apiUrl) ?? [];
+        public async Task<List<Diseno>> GetDisenosAsync(string userId)
+        {
+            return await _http.GetFromJsonAsync<List<Diseno>>($"{apiUrl}?userId={userId}") ?? [];
+        }
 
         public async Task<Diseno?> GetDisenoByIdAsync(int id) =>
             await _http.GetFromJsonAsync<Diseno>($"{apiUrl}/{id}");

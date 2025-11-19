@@ -14,80 +14,71 @@
 
 <PageTitle>Diseno</PageTitle>
 
-<h1>Diseno</h1>
-
 <main>
 
     <!-- Codigo form de arriba    -->
 
-    <div class="row g-3">
+    <EditForm class="row g-3" Model="@editingDiseno" OnValidSubmit="SaveDiseno">
 
-        <EditForm Model="@editingDiseno" OnValidSubmit="SaveDiseno">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+        <div class="col-md-4 mb-3">
+            <label for="largo" class="form-label">Largo:</label>
+            <InputNumber TValue="float" @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
+        </div>
 
-            <div class="col-md-4">
-                <label for="largo" class="form-label">Largo:</label>
-                <InputNumber  @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
-            </div>
+        <div class="col-md-4">
+            <label for="alto" class="form-label">Alto:</label>
+            <InputNumber TValue="float" @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
+        </div>
 
-            <div class="col-md-4">
-                <label for="alto" class="form-label">Alto:</label>
-                <InputNumber  @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
-            </div>
+        <div class="col-md-4">
+            <label for="ancho" class="form-label">Ancho:</label>
+            <InputNumber TValue="float" @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
+        </div>
 
-            <div class="col-md-4">
-                <label for="ancho" class="form-label">Ancho:</label>
-                <InputNumber @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
-            </div>
+        <button class="row col-md-3 btn btn-primary mx-auto" type="submit">Que Caja!</button>
 
-            <button class="mb-3 row col-md-4 btn btn-primary" type="submit">Submit</button>
-
-        </EditForm>
-
-    </div>
-
+    </EditForm>
 
     <!-- Codigo form de izquierda -->
-
     <div class="row g-3">
 
-        <div id="accordion col-md-6">
             @if (isLoading)
             {
-                <p>Cargando capas...</p>
+            <p class=" mb-3 col-md-6">Cargando capas...</p>
             }
             else
             {
                 @foreach (var capa in capas)
                 {
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(capa.Numero.ToString())">
-                                    La capa @capa.Numero
-                                </button>
-                            </h5>
-                        </div>
+                    <div id="accordion  mb-3 col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(capa.Numero.ToString())">
+                                        La capa @capa.Numero
+                                    </button>
+                                </h5>
+                            </div>
 
-                        <div id="@capa.Numero">
-                            <div class="card-body">
-                                @foreach (var imagenDecorativa in imagenDecorativas)
-                                {
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5 class="mb-0">
-                                                <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(imagenDecorativa.Url)">
-                                                    La imagen @imagenDecorativa.Id_Img
-                                                </button>
-                                            </h5>
-                                        </div>
+                            <div id="@capa.Numero">
+                                <div class="card-body">
+                                    @foreach (var imagenDecorativa in imagenDecorativas)
+                                    {
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">
+                                                    <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(imagenDecorativa.Url)">
+                                                        La imagen @imagenDecorativa.Id_Img
+                                                    </button>
+                                                </h5>
+                                            </div>
 
-                                        <div id="@imagenDecorativa.Url">
-                                            <div class="card-body">
-                                                <!-- Form imagenes -->
-                                                <EditForm Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">
+                                            <div id="@imagenDecorativa.Url">
+                                                    <!-- Form imagenes -->
+                                                <EditForm class="card-body" Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">
                                                     <DataAnnotationsValidator />
                                                     <ValidationSummary />
 
@@ -111,29 +102,27 @@
                                                         <InputText @bind-Value="imagenDecorativa.Url" id="url" class="form-control" />
                                                     </div>
 
-                                                    <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Submit</button>
+                                                    <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Enviar</button>
 
-                                                    <button type="submit" class="btn btn-success">Guardar</button>
                                                 </EditForm>
 
                                             </div>
                                         </div>
-                                    </div>
-                                }
-                                @if (editingDiseno != null)
-                                {
+                                    }
+                                    @if (editingDiseno != null)
+                                    {
 
 
-                                }
-                                <!-- Agregar aca el boton para mas imagenes -->
+                                    }
+                                    <!-- Agregar aca el boton para mas imagenes -->
 
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 }
             }
-
-        </div>
 
         @if (data != null)
         {
@@ -144,6 +133,7 @@
             <h5 class="col-md-6">No data.</h5>
         }
     </div>
+   
 
     
 </main>
@@ -246,8 +236,8 @@
     Config config = new Config();
     Layout layout = new Layout()
         {
-        Width = 600,
-        Height=600
+        Width = 890,
+        Height = 750
     };
 
     static List<object> intensityn = new List<object> {
@@ -274,6 +264,7 @@
             //Intensity = new List<object> {
             //    0, 0.14285714285714285, 0.2857142857142857, 0.42857142857142855, 0.5714285714285714, 0.7142857142857143, 0.8571428571428571, 1
             //},
+            ShowScale = false,
             Intensity = intensityn
         }
     };

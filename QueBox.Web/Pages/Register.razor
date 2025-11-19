@@ -7,31 +7,32 @@
 
 <PageTitle>QueBox</PageTitle>
 
-<h1>Registrarse en QueBox</h1>
+<main>
+    <h1>Registrarse en QueBox</h1>
 
-<EditForm class="row g-3 " Model="@editingUsuario" OnValidSubmit="SaveUsuario">
+    <EditForm class="row g-3 " Model="@editingUsuario" OnValidSubmit="SaveUsuario">
 
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <div class="mb-3 col-md-6">
-        <label for="nombre" class="form-label">Nombre:</label>
-        <InputText @bind-Value="editingUsuario.Nombre" id="nombre" class="form-control" />
-    </div>
+        <div class="mb-3 col-md-6">
+            <label for="nombre" class="form-label">Nombre:</label>
+            <InputText @bind-Value="editingUsuario.Nombre" id="nombre" class="form-control" />
+        </div>
 
-    <div class="mb-3 col-md-6">
-        <label for="clave" class="form-label">Clave:</label>
-        <InputText @bind-Value="editingUsuario.Clave" id="clave" class="form-control" />
-    </div>
+        <div class="mb-3 col-md-6">
+            <label for="clave" class="form-label">Clave:</label>
+            <InputText @bind-Value="editingUsuario.Clave" id="clave" class="form-control" />
+        </div>
 
-    <div class="mb-3 col-md-12">
-        <label for="correo" class="form-label">Correo:</label>
-        <InputText @bind-Value="editingUsuario.Correo" id="correo" class="form-control" />
-    </div>
+        <div class="mb-3 col-md-12">
+            <label for="correo" class="form-label">Correo:</label>
+            <InputText @bind-Value="editingUsuario.Correo" id="correo" class="form-control" />
+        </div>
 
-    <button type="submit" class="col-md-4 btn btn-primary">Submit</button>
-</EditForm>
-
+        <button type="submit" class="row col-md-3 btn btn-primary mx-auto">Register in</button>
+    </EditForm>
+</main>
 @code {
 
     private List<Usuario> usuarios = new();

@@ -9,45 +9,46 @@
 
 <PageTitle>Usuarios</PageTitle>
 
-<h1>Usuarios</h1>
+<main>
+    <h1>Usuarios</h1>
 
-<p>Página restringida: Solo el administrador (ID 1) puede ver y gestionar usuarios.</p>
+    <p>Página restringida: Solo el administrador (ID 1) puede ver y gestionar usuarios.</p>
 
-@if (isLoading)
-{
-    <p>Cargando...</p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre usuario</th>
-                <th>Editar Nombre</th>
-                <th>Borrar</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var usuario in usuarios)
-            {
+    @if (isLoading)
+    {
+        <p>Cargando...</p>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>@usuario.Id_Usuario</td>
-                    <td>
-                        <span class="mb-2" aria-hidden="true"></span> @usuario.Nombre
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-warning">Cambiar nombre</button>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-danger">Eliminar</button>
-                    </td>
+                    <th>ID</th>
+                    <th>Nombre usuario</th>
+                    <th>Editar Nombre</th>
+                    <th>Borrar</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-
+            </thead>
+            <tbody>
+                @foreach (var usuario in usuarios)
+                {
+                    <tr>
+                        <td>@usuario.Id_Usuario</td>
+                        <td>
+                            <span class="mb-2" aria-hidden="true"></span> @usuario.Nombre
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-warning">Cambiar nombre</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-danger">Eliminar</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</main>
 
 @code {
     private List<Usuario> usuarios = new();

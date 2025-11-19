@@ -7,7 +7,8 @@
 @inject UsuarioService UsuarioService
 @inject NavigationManager NavigationManager
 
-<h3>Login</h3>
+<main>
+    <h1>Login</h1>
 
 @code {
 
@@ -18,34 +19,34 @@
     }
 }
 
-<EditForm class="row g-3" Model="@editingUsuario" OnValidSubmit="@HandleLogin">
-    @* <DataAnnotationsValidator /> *@
-    @* <ValidationSummary /> *@
+    <EditForm class="row g-3" Model="@editingUsuario" OnValidSubmit="@HandleLogin">
+        @* <DataAnnotationsValidator /> *@
+        @* <ValidationSummary /> *@
 
-    <div class="mb-3 col-md-12">
-        <label for="username"> Nombre:</label>
-        <InputText id="username" @bind-Value="editingUsuario.Nombre" />
-    </div>
+        <div class="mb-3 col-md-12">
+            <label for="username" class="form-label"> Nombre:</label>
+            <InputText id="username" @bind-Value="editingUsuario.Nombre" class="form-control" />
+        </div>
 
-    <div class="mb-3 col-md-12">
-        <label for="password">Password:</label>
-        <InputText type="password" id="password" @bind-Value="editingUsuario.Clave" />
-    </div>
+        <div class="mb-3 col-md-12" >
+            <label for="password" class="form-label">Clave:</label>
+            <InputText type="password" id="password" @bind-Value="editingUsuario.Clave" class="form-control" />
+        </div>
 
-    <button type="submit" class="col-md-4 btn btn-primary">Login</button>
+        <button type="submit" class="row col-md-3 btn btn-primary mx-auto">Login</button>
 
-    @if (!string.IsNullOrEmpty(ErrorMessage))
-    {
-        <p class="text-danger">@ErrorMessage</p>
-    }
-</EditForm>
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <p class="text-danger">@ErrorMessage</p>
+        }
+    </EditForm>
 
-<div class="mb-3">
-    <NavLink class="link" href="register">
-        <span class="mb-2" aria-hidden="true"></span> Registrarse
+    <NavLink class="row link mx-auto" href="register">
+        <!-- <span class="mb-2" aria-hidden="true"></span> Registrarse -->
+        Registrarse
     </NavLink>
-</div>
 
+</main>
 
 @code {
 

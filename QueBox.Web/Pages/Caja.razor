@@ -1,8 +1,18 @@
 ﻿@page "/caja"
 @using QueBox.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @using QueBox.Models
+@using Plotly.Blazor
+@using Plotly.Blazor.Traces
+@using Plotly.Blazor.Traces
+@using Plotly.Blazor.Traces
+@using Plotly.Blazor.Traces
+@using Plotly.Blazor.Traces
+@using Plotly.Blazor.Traces
 
-
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavManager
 @inject DisenoService DisenoService
 @inject CapaService CapaService
 @inject ImagenDecorativaService ImagenDecorativaService
@@ -201,21 +211,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        disenos = (await DisenoService.GetDisenosAsync(userId ?? "0"))?.ToList() ?? new List<Diseno>();
+
         editingDiseno = new Diseno();
-        editingImagenDecorativa = new ImagenDecorativa();
-        disenos = (await DisenoService.GetDisenosAsync())?.ToList() ?? new List<Diseno>();
-        imagenDecorativas = (await ImagenDecorativaService.GetImagenDecorativasAsync())?.ToList() ?? new List<ImagenDecorativa>();
-        capas = (await CapaService.GetCapasAsync())?.ToList() ?? new List<Capa>();
-
-        isLoading = false;
-    }
-
-    private async Task NewDiseno()
-    {
-
-        editingDiseno = new Diseno { Id_Usuario = 1 };
-        StateHasChanged();
-        await Task.CompletedTask;
+        disenos = await DisenoService.GetDisenosAsync();
     }
 
 

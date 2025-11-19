@@ -5,6 +5,8 @@ using QueBox.Models;
 using QueBox.Query.Interfaces;
 using QueBox.Repository.Implements;
 using QueBox.Repository.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace QueBox.Controllers
 {
@@ -33,6 +35,36 @@ namespace QueBox.Controllers
             _logger.LogInformation("Entrando al constructor de DisenoController");
         }
 
+        /// <summary>
+        /// Método que lista todos los diseños de un usuario específico.
+        /// </summary>
+        /// <param name="idUsuario">Id del usuario a buscar</param>
+        /// <response code="200">Lista de diseños del usuario</response>
+        /// <response code="400">ID de usuario inválido</response>
+        /// <response code="500">Error procesando la petición</response>
+        [HttpGet("usuario/{idUsuario}")] // 🚨 Ruta configurada para el cliente Blazor
+        [ProducesResponseType(typeof(List<Diseno>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ListarDisenosByUsuario(string idUsuario)
+        {
+            if (!int.TryParse(idUsuario, out int userId))
+            {
+                _logger.LogWarning("Intento de listar diseños con ID de usuario inválido: {0}", idUsuario);
+                return BadRequest("ID de usuario inválido.");
+            }
+
+            try
+            {
+                var rsDapper = await _disenoQueries.ObtenerPorUsuarioAsync(userId);
+                return Ok(rsDapper ?? new List<Diseno>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al listar diseños para el usuario ID: {0}", userId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al procesar la petición.");
+            }
+        }
         /// <summary>
         /// Método que lista todos los diseños
         /// </summary>

@@ -1,15 +1,12 @@
 ﻿@page "/caja"
 @using QueBox.Services
+@using QueBox.Models
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
-@using QueBox.Models
 @using Plotly.Blazor
 @using Plotly.Blazor.Traces
-@using Plotly.Blazor.Traces
-@using Plotly.Blazor.Traces
-@using Plotly.Blazor.Traces
-@using Plotly.Blazor.Traces
-@using Plotly.Blazor.Traces
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.JSInterop // Asegúrate de incluir este using para el IJSRuntime
 
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavManager
@@ -18,50 +15,11 @@
 @inject ImagenDecorativaService ImagenDecorativaService
 @inject IJSRuntime JS
 
-@using Plotly.Blazor
-@using Plotly.Blazor.Traces
+<PageTitle>Diseño de Caja</PageTitle>
 
-
-<PageTitle>Diseno</PageTitle>
-
-<h1>Diseno</h1>
+<h1>Diseño de Caja</h1>
 
 <section>
-
-    <!-- Codigo form de arriba
-
-    <div class="row">
-
-        <EditForm Model="@editingDiseno" OnValidSubmit="SaveDiseno">
-
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-            <div class="col-md-4 mb-3">
-                <label for="alto" class="form-label">Alto:</label>
-                <InputNumber @TValue="float" @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
-            </div>
-
-            <div class="col-md-4 mb-3">
-                <label for="largo" class="form-label">Largo:</label>
-                <InputNumber @TValue="float" @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
-            </div>
-
-            <div class="col-md-4 mb-3">
-                <label for="ancho" class="form-label">Ancho:</label>
-                <InputNumber @TValue="float" @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
-            </div>
-
-            <button class="mb-3 row btn btn-primary" type="submit">Submit</button>
-
-        </EditForm>
-    
-
-    </div>
-
-    -->
-    <!-- Codigo form de izquierda -->
-
     <div class="row g-3">
 
         <EditForm class="col-md-6" Model="@editingDiseno" OnValidSubmit="SaveDiseno">
@@ -70,31 +28,26 @@
             <ValidationSummary />
 
             <div class="mb-3">
-                <label for="id_Usuario" class="form-label">Id_Usuario:</label>
-                <InputNumber  @bind-Value="editingDiseno.Id_Usuario" id="id_Usuario" class="form-control" />
+                <label for="nombre" class="form-label">Nombre:</label>
+                <InputText  @bind-Value="editingDiseno.Nombre" id="nombre" class="form-control" />
             </div>
 
             <div class="mb-3">
                 <label for="largo" class="form-label">Largo:</label>
-                <InputNumber  @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
+                <InputNumber @TValue="float" @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
             </div>
 
             <div class="mb-3">
                 <label for="alto" class="form-label">Alto:</label>
-                <InputNumber  @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
+                <InputNumber @TValue="float" @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
             </div>
 
             <div class="mb-3">
                 <label for="ancho" class="form-label">Ancho:</label>
-                <InputNumber @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
+                <InputNumber @TValue="float" @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
             </div>
 
-            <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre:</label>
-                <InputText  @bind-Value="editingDiseno.Nombre" id="nombre" class="form-control" />
-            </div>
-
-            <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Submit</button>
+            <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Guardar Diseño</button>
 
         </EditForm>
 
@@ -108,6 +61,8 @@
             <h5 class="col-md-6">No data.</h5>
         }
     </div>
+
+    <hr />
 
     <div id="accordion">
         @if (isLoading)
@@ -129,61 +84,53 @@
 
                     <div id="@capa.Numero">
                         <div class="card-body">
-                            @foreach (var imagenDecorativa in imagenDecorativas)
+                            @foreach (var imagenDecorativa in imagenDecorativas.Where(i => i.Id_Capa == capa.Id_Capa))
                             {
                                 <div class="card">
                                     <div class="card-header">
                                         <h5 class="mb-0">
-                                            <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(imagenDecorativa.Url)">
-                                                La imagen @imagenDecorativa.Id_Img
+                                            @* CORRECCIÓN: Usar la función de ayuda para aislar la sintaxis de C# *@
+                                            <button class="accordion-button collapsed" @onclick="() => ToggleImagenCollapse(imagenDecorativa.Id_Img)">
+                                                Imagen Decorativa #@imagenDecorativa.Id_Img (@imagenDecorativa.Url)
                                             </button>
                                         </h5>
                                     </div>
 
-                                    <div id="@imagenDecorativa.Url">
+                                    <div id="@($"img-{imagenDecorativa.Id_Img}")">
                                         <div class="card-body">
-                                            <!-- Form imagenes -->
                                             <EditForm Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">
                                                 <DataAnnotationsValidator />
                                                 <ValidationSummary />
 
                                                 <div class="mb-3">
-                                                    <label for="id_Capa" class="form-label">Id_Capa:</label>
-                                                    <InputNumber @bind-Value="imagenDecorativa.Id_Capa" id="id_Capa" class="form-control" />
+                                                    <label for="id_Capa_@imagenDecorativa.Id_Img" class="form-label">Id_Capa:</label>
+                                                    <InputNumber @bind-Value="imagenDecorativa.Id_Capa" id="id_Capa_@imagenDecorativa.Id_Img" class="form-control" />
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="alto" class="form-label">Alto:</label>
-                                                    <InputNumber @bind-Value="imagenDecorativa.Alto" id="alto" class="form-control" />
+                                                    <label for="alto_@imagenDecorativa.Id_Img" class="form-label">Alto:</label>
+                                                    <InputNumber @bind-Value="imagenDecorativa.Alto" id="alto_@imagenDecorativa.Id_Img" class="form-control" />
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="ancho" class="form-label">Ancho:</label>
-                                                    <InputNumber @bind-Value="imagenDecorativa.Ancho" id="ancho" class="form-control" />
+                                                    <label for="ancho_@imagenDecorativa.Id_Img" class="form-label">Ancho:</label>
+                                                    <InputNumber @bind-Value="imagenDecorativa.Ancho" id="ancho_@imagenDecorativa.Id_Img" class="form-control" />
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="url" class="form-label">Url:</label>
-                                                    <InputText @bind-Value="imagenDecorativa.Url" id="url" class="form-control" />
+                                                    <label for="url_@imagenDecorativa.Id_Img" class="form-label">Url:</label>
+                                                    <InputText @bind-Value="imagenDecorativa.Url" id="url_@imagenDecorativa.Id_Img" class="form-control" />
                                                 </div>
 
-                                                <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Submit</button>
-
-                                                <button type="submit" class="btn btn-success">Guardar</button>
+                                                <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                                                <button class="btn btn-danger" @onclick="() => DeleteImagenDecorativa(imagenDecorativa.Id_Img)">Eliminar</button>
                                             </EditForm>
-
                                         </div>
                                     </div>
                                 </div>
 
                             }
-                            @if (editingDiseno != null)
-                            {
-
-
-                            }
-                            <!-- Agregar aca el boton para mas imagenes -->
-
+                            <button class="btn btn-sm btn-info mt-2" @onclick="() => NewImagenDecorativa(capa.Id_Capa)">+ Agregar Imagen a Capa @capa.Numero</button>
                         </div>
                     </div>
                 </div>
@@ -196,122 +143,162 @@
 
 @code {
 
-    // Definir datos
-
-    private List<Diseno> disenos = new();
-    private Diseno? editingDiseno;
+    private List<Diseno> disenos = new();
+    private Diseno editingDiseno = new();
     private List<Capa> capas = new();
     private List<ImagenDecorativa> imagenDecorativas = new();
     private ImagenDecorativa? editingImagenDecorativa;
 
     private bool isLoading = true;
 
-
-    // Ejecutables al iniciar
-
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        disenos = (await DisenoService.GetDisenosAsync(userId ?? "0"))?.ToList() ?? new List<Diseno>();
+        isLoading = true;
 
-        editingDiseno = new Diseno();
-        disenos = await DisenoService.GetDisenosAsync();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        disenos = (await DisenoService.GetDisenosAsync(userId ?? "0"))?.ToList() ?? new List<Diseno>();
+
+        imagenDecorativas = (await ImagenDecorativaService.GetImagenDecorativasAsync())?.ToList() ?? new List<ImagenDecorativa>();
+        capas = (await CapaService.GetCapasAsync())?.ToList() ?? new List<Capa>();
+
+        editingDiseno = new Diseno();
+        editingImagenDecorativa = new ImagenDecorativa();
+
+        isLoading = false;
     }
 
+    private async Task NewDiseno()
+    {
+        editingDiseno = new Diseno();
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
 
-    // Guardar diseno
-
-    private async Task SaveDiseno()
+    private async Task SaveDiseno()
     {
         if (editingDiseno == null)
             return;
 
-        // Ya el diseno deberia estar creado
-
-        // if (editingDiseno.Id_Diseno == 0)
-        // {
-        //    var created = await DisenoService.CreateDisenoAsync(editingDiseno);
-        //    if (created != null)
-        //        disenos.Insert(0, created);
-        //}
-
-        else
+        if (editingDiseno.Id_Diseno == 0)
         {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var userIdString = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (int.TryParse(userIdString, out int userId))
+            {
+                editingDiseno.Id_Usuario = userId;
+
+                var created = await DisenoService.CreateDisenoAsync(editingDiseno);
+                if (created != null)
+                {
+                    await JS.InvokeVoidAsync("alert", $"Diseño '{created.Nombre}' creado exitosamente.");
+                    NavManager.NavigateTo("/caja");
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("alert", "Error: No se pudo crear el diseño.");
+                }
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("alert", "Error: No se pudo obtener el ID de usuario.");
+            }
+        }
+        else 
+        {
             await DisenoService.UpdateDisenoAsync(editingDiseno);
             var index = disenos.FindIndex(d => d.Id_Diseno == editingDiseno.Id_Diseno);
             if (index >= 0)
                 disenos[index] = editingDiseno;
-        }
 
-        editingDiseno = null;
+            // No redirigimos al actualizar, solo refrescamos
+            editingDiseno = new Diseno();
+            StateHasChanged();
+        }
+    }
+
+
+    // Funciones de ImagenDecorativa
+
+    private void NewImagenDecorativa(int idCapa)
+    {
+        imagenDecorativas.Add(new ImagenDecorativa { Id_Capa = idCapa });
         StateHasChanged();
     }
 
 
-    // Guardar imagenDecorativa
-
-
-    private async Task SaveImagenDecorativa(ImagenDecorativa editingImagenDecorativa)
+    private async Task SaveImagenDecorativa(ImagenDecorativa itemToSave)
     {
-        if (editingImagenDecorativa == null)
-            return;
-
-        if (editingImagenDecorativa.Id_Img == 0)
+        if (itemToSave.Id_Img == 0)
         {
-            var created = await ImagenDecorativaService.CreateImagenDecorativaAsync(editingImagenDecorativa);
-            if (created != null)
-                imagenDecorativas.Insert(0, created);
+            var created = await ImagenDecorativaService.CreateImagenDecorativaAsync(itemToSave);
+            if (created == null)
+            {
+                imagenDecorativas.Remove(itemToSave);
+                await JS.InvokeVoidAsync("alert", "Error al crear la imagen decorativa.");
+            }
         }
-
         else
         {
-            await ImagenDecorativaService.UpdateImagenDecorativaAsync(editingImagenDecorativa);
-            var index = imagenDecorativas.FindIndex(d => d.Id_Img == editingImagenDecorativa.Id_Img);
-            if (index >= 0)
-                imagenDecorativas[index] = editingImagenDecorativa;
+            await ImagenDecorativaService.UpdateImagenDecorativaAsync(itemToSave);
         }
-
         StateHasChanged();
     }
 
-    // Actualizar data ImagenDecorativa
+    private async Task DeleteImagenDecorativa(int id)
+    {
+        bool confirmado = await JS.InvokeAsync<bool>("confirm", "¿Estás seguro de que deseas ELIMINAR esta imagen?");
 
-    // Chart
+        if (confirmado)
+        {
+            try
+            {
+                await ImagenDecorativaService.DeleteImagenDecorativaAsync(id);
+                imagenDecorativas.RemoveAll(i => i.Id_Img == id);
+            }
+            catch (Exception ex)
+            {
+                await JS.InvokeVoidAsync("alert", $"No se pudo eliminar la imagen. Error: {ex.Message}");
+            }
+
+            StateHasChanged();
+        }
+    }
+    private Task ToggleImagenCollapse(int imagenId)
+    {
+        var elementId = $"img-{imagenId}";
+        return ToggleBootstrapCollapse(elementId);
+    }
+
+
     PlotlyChart chart;
 
     Config config = new Config();
     Layout layout = new Layout();
 
     static List<object> intensityn = new List<object> {
-            0, 0.14285714285714285, 0.2857142857142857, 0.42857142857142855, 0.5714285714285714, 0.7142857142857143, 0.8571428571428571, 1
-    };
-    // Using of the interface IList is important for the event callback!
+ 0, 0.14285714285714285, 0.2857142857142857, 0.42857142857142855, 0.5714285714285714, 0.7142857142857143, 0.8571428571428571, 1
+};
+
     IList<ITrace> data = new List<ITrace>
-    {
-
-        new Mesh3D
-        {
-            X = new List<object>{0, 0, 1, 1, 0, 0, 1, 1},
-            Y = new List<object>{0, 1, 1, 0, 0, 1, 1, 0},
-            Z = new List<object>{0, 0, 0, 0, 1, 1, 1, 1},
-
-            I = new List<object>{7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2},
-            J = new List<object>{3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3},
-            K = new List<object>{0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6},
-
-            ColorBar = new Plotly.Blazor.Traces.Mesh3DLib.ColorBar {
-                Title = new Plotly.Blazor.Traces.Mesh3DLib.ColorBarLib.Title {Text = "z" }
-            },
-            ColorScale = "Rainbow",
-            //Intensity = new List<object> {
-            //    0, 0.14285714285714285, 0.2857142857142857, 0.42857142857142855, 0.5714285714285714, 0.7142857142857143, 0.8571428571428571, 1
-            //},
-            Intensity = intensityn
-        }
-    };
-
-    // Toggle function
+{
+ new Mesh3D
+ {
+ X = new List<object>{0, 0, 1, 1, 0, 0, 1, 1},
+ Y = new List<object>{0, 1, 1, 0, 0, 1, 1, 0},
+ Z = new List<object>{0, 0, 0, 0, 1, 1, 1, 1},
+ I = new List<object>{7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2},
+ J = new List<object>{3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3},
+ K = new List<object>{0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6},
+ ColorBar = new Plotly.Blazor.Traces.Mesh3DLib.ColorBar {
+  Title = new Plotly.Blazor.Traces.Mesh3DLib.ColorBarLib.Title {Text = "z" }
+ },
+ ColorScale = "Rainbow",
+ Intensity = intensityn
+ }
+};
 
     private async Task ToggleBootstrapCollapse(string elementid)
     {

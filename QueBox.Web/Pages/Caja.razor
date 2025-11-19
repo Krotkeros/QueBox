@@ -1,10 +1,13 @@
 ﻿@page "/caja"
 @using QueBox.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @using QueBox.Models
-
 @using Plotly.Blazor
 @using Plotly.Blazor.Traces
 
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavManager
 @inject DisenoService DisenoService
 @inject IJSRuntime JS
 
@@ -92,8 +95,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        disenos = (await DisenoService.GetDisenosAsync(userId ?? "0"))?.ToList() ?? new List<Diseno>();
+
         editingDiseno = new Diseno();
-        disenos = await DisenoService.GetDisenosAsync();
     }
 
     private async Task SaveDiseno()

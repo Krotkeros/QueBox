@@ -13,9 +13,18 @@ namespace QueBox.Services
         }
 
         private string apiUrl = "api/Diseno";
+        public async Task<List<Diseno>?> GetDisenosAsync(string idUsuario)
+        {
+            // Llama a una nueva ruta de la API que filtra por el ID del usuario
+            var response = await _http.GetAsync($"{apiUrl}/usuario/{idUsuario}");
 
-        public async Task<List<Diseno>> GetDisenosAsync() =>
-            await _http.GetFromJsonAsync<List<Diseno>>(apiUrl) ?? [];
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<Diseno>>();
+            }
+            // Retorna lista vacía si falla la petición o no hay contenido
+            return new List<Diseno>();
+        }
 
         public async Task<Diseno?> GetDisenoByIdAsync(int id) =>
             await _http.GetFromJsonAsync<Diseno>($"{apiUrl}/{id}");

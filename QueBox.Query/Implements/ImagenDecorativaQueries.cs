@@ -31,7 +31,7 @@ namespace QueBox.Query
         public async Task<IEnumerable<ImagenDecorativa>> ObtenerTodasAsync()
         {
             const string query = @"
-                SELECT Id_Img, Url, Ancho, Alto
+                SELECT Id_Img, Id_Capa, Url, Ancho, Alto
                 FROM ImagenDecorativa
                 ORDER BY Id_Img";
 
@@ -41,7 +41,7 @@ namespace QueBox.Query
         public async Task<ImagenDecorativa> ObtenerPorUrlAsync(string url)
         {
             const string query = @"
-                SELECT Id_Img, Url, Ancho, Alto
+                SELECT Id_Img, Id_Capa, Url, Ancho, Alto
                 FROM ImagenDecorativa
                 WHERE Url = @Url";
 
@@ -51,7 +51,7 @@ namespace QueBox.Query
         public async Task<IEnumerable<ImagenDecorativa>> ObtenerPorDimensionesAsync(float ancho, float alto)
         {
             const string query = @"
-                SELECT Id_Img, Url, Ancho, Alto
+                SELECT Id_Img, Id_Capa, Url, Ancho, Alto
                 FROM ImagenDecorativa
                 WHERE Ancho = @Ancho AND Alto = @Alto";
 
@@ -62,11 +62,11 @@ namespace QueBox.Query
         {
             const string query = @"
                 SELECT 
-                    i.Id_Img, i.Url, i.Ancho, i.Alto,
-                    c.Id_Capa, c.Id_Img, c.Numero
+                    i.Id_Img, i.Id_Capa, i.Url, i.Ancho, i.Alto,
+                    c.Numero
                 FROM ImagenDecorativa i
-                LEFT JOIN Capa c ON i.Id_Img = c.Id_Img
-                ORDER BY i.Id_Img, c.Numero";
+                LEFT JOIN Capa c ON i.Id_Capa = c.Id_Capa
+                ORDER BY i.Id_Capa, c.Id_Capa";
 
             var imagenDictionary = new Dictionary<int, ImagenDecorativa>();
 
@@ -89,14 +89,15 @@ namespace QueBox.Query
             return imagenDictionary.Values;
         }
 
-        public async Task<int> ContarCapasPorImagenAsync(int idImg)
+        /*
+        public async Task<int> ContarCapasPorImagenAsync(int id_Img)
         {
             const string query = @"
                 SELECT COUNT(*)
                 FROM Capa
-                WHERE Id_Img = @IdImg";
+                WHERE Id_Img = @Id_Img";
 
-            return await _connection.ExecuteScalarAsync<int>(query, new { IdImg = idImg });
-        }
+            return await _connection.ExecuteScalarAsync<int>(query, new { Id_Img = id_Img });
+        }*/
     }
 }

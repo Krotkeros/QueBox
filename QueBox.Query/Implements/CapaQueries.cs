@@ -22,47 +22,48 @@ namespace QueBox.Query
         public async Task<Capa> ObtenerPorIdAsync(int id)
         {
             const string query = @"
-                SELECT Id_Capa, Id_Img, Numero
+                SELECT Id_Capa, Id_Diseno, Numero
                 FROM Capa
                 WHERE Id_Capa = @Id";
 
             return await _connection.QueryFirstOrDefaultAsync<Capa>(query, new { Id = id });
         }
 
-        public async Task<IEnumerable<Capa>> ObtenerPorImagenDecorativaAsync(int idImg)
+        public async Task<IEnumerable<Capa>> ObtenerPorImagenDecorativaAsync(int id_Img)
         {
             const string query = @"
-                SELECT Id_Capa, Id_Img, Numero
+                SELECT Id_Capa, Id_Diseno, Numero
                 FROM Capa
-                WHERE Id_Img = @IdImg
+                WHERE Id_Diseno = @Id_Diseno
                 ORDER BY Numero";
 
-            return await _connection.QueryAsync<Capa>(query, new { IdImg = idImg });
+            return await _connection.QueryAsync<Capa>(query, new { Id_Diseno = id_Img });
         }
 
         public async Task<IEnumerable<Capa>> ObtenerTodasAsync()
         {
             const string query = @"
-                SELECT Id_Capa, Id_Img, Numero
+                SELECT Id_Capa, Id_Diseno, Numero
                 FROM Capa
                 ORDER BY Id_Capa";
 
             return await _connection.QueryAsync<Capa>(query);
         }
-        public async Task<int> ObtenerNumeroPorImagenAsync(int idImg, int numero)
+
+        /*public async Task<int> ObtenerNumeroPorImagenAsync(int id_Diseno, int numero)
         {
             const string query = @"
                 SELECT COUNT(*)
                 FROM Capa
-                WHERE Id_Img = @IdImg AND Numero = @Numero";
+                WHERE Id_Diseno = @Id_Diseno AND Numero = @Numero";
 
-            return await _connection.ExecuteScalarAsync<int>(query, new { IdImg = idImg, Numero = numero });
-        }
+            return await _connection.ExecuteScalarAsync<int>(query, new { Id_Diseno = id_Diseno, Numero = numero });
+        }*/
 
         public async Task<IEnumerable<Capa>> ObtenerCapasDisponiblesAsync()
         {
             const string query = @"
-                SELECT c.Id_Capa, c.Id_Img, c.Numero
+                SELECT c.Id_Capa, c.Id_Diseno, c.Numero
                 FROM Capa c
                 LEFT JOIN Diseno d ON c.Id_Capa = d.Id_Capa
                 WHERE d.Id_Capa IS NULL

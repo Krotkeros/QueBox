@@ -12,6 +12,6 @@ namespace QueBox.Query.Interfaces
         Task<ImagenDecorativa> ObtenerPorUrlAsync(string url);
         Task<IEnumerable<ImagenDecorativa>> ObtenerPorDimensionesAsync(float ancho, float alto);
         Task<IEnumerable<ImagenDecorativa>> ObtenerImagenesConCapasAsync();
-        Task<int> ContarCapasPorImagenAsync(int idImg);
+        //Task<int> ContarCapasPorImagenAsync(int idImg);
     }
 }

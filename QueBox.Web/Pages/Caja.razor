@@ -117,7 +117,7 @@
                         </h5>
                     </div>
 
-                    <div id=capa.Numero.ToString>
+                    <div id="@capa.Numero">
                         <div class="card-body">
                             @foreach (var imagenDecorativa in imagenDecorativas)
                             {
@@ -130,7 +130,7 @@
                                         </h5>
                                     </div>
 
-                                    <div id=imagenDecorativa.Url.ToString>
+                                    <div id="@imagenDecorativa.Url">
                                         <div class="card-body">
                                             <!-- Form imagenes -->
                                             <EditForm Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">

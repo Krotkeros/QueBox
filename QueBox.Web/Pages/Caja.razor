@@ -169,7 +169,6 @@
 
 @code {
 
-
     // Definir datos
 
     private List<Diseno> disenos = new();
@@ -236,8 +235,9 @@
         new Mesh3D
         {
             X = new List<object>{0, 0, 1, 1, 0, 0, 1, 1},
-            Y = new List<object>{0, 1, 2, 0, 0, 1, 1, 0},
+            Y = new List<object>{0, 1, 1, 0, 0, 1, 1, 0},
             Z = new List<object>{0, 0, 0, 0, 1, 1, 1, 1},
+
             I = new List<object>{7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2},
             J = new List<object>{3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3},
             K = new List<object>{0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6},
@@ -253,11 +253,11 @@
         }
     };
 
-
     // Toggle function
 
     private async Task ToggleBootstrapCollapse(string elementid)
     {
         await JS.InvokeVoidAsync("bootstrapInterop.toggleBootstrapCollapse", elementid);
     }
+
 }

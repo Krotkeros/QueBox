@@ -122,7 +122,7 @@
 
                         <div id="myCollapseElement2">
                             <div class="card-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
                                 <!-- Agregar aca el form imagenes -->
                                 <!-- Agregar aca el boton para mas imagenes -->
                             </div>
@@ -131,7 +131,6 @@
                 </div>
             </div>
         </div>
-
         @if (isLoading)
         {
             <p>Cargando capas...</p>
@@ -146,24 +145,33 @@
                         <div class="card-header">
                             <h5 class="mb-0">
                                 <button class="btn btn-link collapsed" @onclick="() => ToggleBootstrapCollapse(capa.Numero.ToString())">
-                                     La capa @capa.Numero
+                                    La capa @capa.Numero
                                 </button>
                             </h5>
                         </div>
 
-                        <div id = capa.Numero.ToString>
+                        <div id=capa.Numero.ToString>
                             <div class="card-body">
-                                <!-- Agregar aca el form imagenes -->
+                                @foreach (var imagenDecorativa in imagenDecorativas)
+                                {
+
+
+                                }
+                                @if (editingDiseno != null)
+                                {
+
+
+                                }
                                 <!-- Agregar aca el boton para mas imagenes -->
+
                             </div>
                         </div>
                     </div>
                 }
             </div>
         }
+
     </div>
-
-
 </section>
 
 
@@ -174,6 +182,8 @@
     private List<Diseno> disenos = new();
     private Diseno? editingDiseno;
     private List<Capa> capas = new();
+    private List<ImagenDecorativa> imagenDecorativas = new();
+    private ImagenDecorativa? editingImagenDecorativa;
 
     private bool isLoading = true;
 
@@ -183,9 +193,20 @@
     protected override async Task OnInitializedAsync()
     {
         editingDiseno = new Diseno();
-        disenos = await DisenoService.GetDisenosAsync();
-        capas = await CapaService.GetCapasAsync();
+        editingImagenDecorativa = new ImagenDecorativa();
+        disenos = (await DisenoService.GetDisenosAsync())?.ToList() ?? new List<Diseno>();
+        imagenDecorativas = (await ImagenDecorativaService.GetImagenDecorativasAsync())?.ToList() ?? new List<ImagenDecorativa>();
+        capas = (await CapaService.GetCapasAsync())?.ToList() ?? new List<Capa>();
+
         isLoading = false;
+    }
+
+    private async Task NewDiseno()
+    {
+
+        editingDiseno = new Diseno { Id_Usuario = 1 };
+        StateHasChanged();
+        await Task.CompletedTask;
     }
 
 
@@ -214,6 +235,34 @@
         }
 
         editingDiseno = null;
+        StateHasChanged();
+    }
+
+
+    // Guardar imagenDecorativa
+
+
+    private async Task SaveImagenDecorativa()
+    {
+        if (editingImagenDecorativa == null)
+            return;
+
+        if (editingImagenDecorativa.Id_Img == 0)
+        {
+            var created = await ImagenDecorativaService.CreateImagenDecorativaAsync(editingImagenDecorativa);
+            if (created != null)
+                imagenDecorativas.Insert(0, created);
+        }
+
+        else
+        {
+            await ImagenDecorativaService.UpdateImagenDecorativaAsync(editingImagenDecorativa);
+            var index = imagenDecorativas.FindIndex(d => d.Id_Img == editingImagenDecorativa.Id_Img);
+            if (index >= 0)
+                imagenDecorativas[index] = editingImagenDecorativa;
+        }
+
+        editingImagenDecorativa = null;
         StateHasChanged();
     }
 

@@ -43,6 +43,8 @@ namespace QueBox.Web
             builder.Services.AddScoped<ImagenDecorativaService>();
             builder.Services.AddScoped<UsuarioService>();
 
+            builder.Services.AddSingleton<Mathy>();
+
             await builder.Build().RunAsync();
         }
     }

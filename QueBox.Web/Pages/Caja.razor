@@ -6,6 +6,8 @@
 @inject DisenoService DisenoService
 @inject CapaService CapaService
 @inject ImagenDecorativaService ImagenDecorativaService
+@inject Mathy Mathy
+
 @inject IJSRuntime JS
 
 @using Plotly.Blazor
@@ -52,77 +54,78 @@
             }
             else
             {
+
+            <div id="accordion  mb-3 col-md-6">
                 @foreach (var capa in capas)
                 {
-                    <div id="accordion  mb-3 col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">
-                                    <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(capa.Numero.ToString())">
-                                        La capa @capa.Numero
-                                    </button>
-                                </h5>
-                            </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(capa.Numero.ToString())">
+                                    La capa @capa.Numero
+                                </button>
+                            </h5>
+                        </div>
 
-                            <div id="@capa.Numero">
-                                <div class="card-body">
-                                    @foreach (var imagenDecorativa in imagenDecorativas)
-                                    {
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h5 class="mb-0">
-                                                    <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(imagenDecorativa.Url)">
-                                                        La imagen @imagenDecorativa.Id_Img
-                                                    </button>
-                                                </h5>
-                                            </div>
-
-                                            <div id="@imagenDecorativa.Url">
-                                                    <!-- Form imagenes -->
-                                                <EditForm class="card-body" Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">
-                                                    <DataAnnotationsValidator />
-                                                    <ValidationSummary />
-
-                                                    <div class="mb-3">
-                                                        <label for="id_Capa" class="form-label">Id_Capa:</label>
-                                                        <InputNumber @bind-Value="imagenDecorativa.Id_Capa" id="id_Capa" class="form-control" />
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label for="alto" class="form-label">Alto:</label>
-                                                        <InputNumber @bind-Value="imagenDecorativa.Alto" id="alto" class="form-control" />
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label for="ancho" class="form-label">Ancho:</label>
-                                                        <InputNumber @bind-Value="imagenDecorativa.Ancho" id="ancho" class="form-control" />
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label for="url" class="form-label">Url:</label>
-                                                        <InputText @bind-Value="imagenDecorativa.Url" id="url" class="form-control" />
-                                                    </div>
-
-                                                    <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Enviar</button>
-
-                                                </EditForm>
-
-                                            </div>
+                        <div id="@capa.Numero">
+                            <div class="card-body">
+                                @foreach (var imagenDecorativa in imagenDecorativas)
+                                {
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">
+                                                <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(imagenDecorativa.Url)">
+                                                    La imagen @imagenDecorativa.Id_Img
+                                                </button>
+                                            </h5>
                                         </div>
-                                    }
-                                    @if (editingDiseno != null)
-                                    {
+
+                                        <div id="@imagenDecorativa.Url">
+                                                <!-- Form imagenes -->
+                                            <EditForm class="card-body" Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">
+                                                <DataAnnotationsValidator />
+                                                <ValidationSummary />
+
+                                                <div class="mb-3">
+                                                    <label for="id_Capa" class="form-label">Id_Capa:</label>
+                                                    <InputNumber @bind-Value="imagenDecorativa.Id_Capa" id="id_Capa" class="form-control" />
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="alto" class="form-label">Alto:</label>
+                                                    <InputNumber @bind-Value="imagenDecorativa.Alto" id="alto" class="form-control" />
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="ancho" class="form-label">Ancho:</label>
+                                                    <InputNumber @bind-Value="imagenDecorativa.Ancho" id="ancho" class="form-control" />
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="url" class="form-label">Url:</label>
+                                                    <InputText @bind-Value="imagenDecorativa.Url" id="url" class="form-control" />
+                                                </div>
+
+                                                <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Enviar</button>
+
+                                            </EditForm>
+
+                                        </div>
+                                    </div>
+                                }
+                                @if (editingDiseno != null)
+                                {
 
 
-                                    }
-                                    <!-- Agregar aca el boton para mas imagenes -->
+                                }
+                                <!-- Agregar aca el boton para mas imagenes -->
 
-                                </div>
                             </div>
                         </div>
-                    </div>
-
+                    </div>                    
                 }
+            </div>
+
             }
 
         @if (data != null)
@@ -241,176 +244,34 @@
         Height = 750
     };
 
-    static List<object> intensityn = new List<object> {
-            0, 0.14285714285714285, 0.2857142857142857, 0.42857142857142855, 0.5714285714285714, 0.7142857142857143, 0.8571428571428571, 1
-    };
+    static List<object> xCoords = Mathy.LinspaceList(0, 1, 128);
 
-
-    public static List<object> LinspaceList(double start, double stop, int num, bool endpoint = true)
-    {
-        if (num < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(num), "Number of samples must be non-negative.");
-        }
-
-        if (num == 0)
-        {
-            return new List<object>();
-        }
-
-        List<object> result = new List<object>(num);
-
-        if (num == 1)
-        {
-            result.Add(start);
-            return result;
-        }
-
-        double step;
-        if (endpoint)
-        {
-            step = (stop - start) / (num - 1);
-        }
-        else
-        {
-            step = (stop - start) / num;
-        }
-
-        for (int i = 0; i < num; i++)
-        {
-            result.Add(start + i * step);
-        }
-
-        // Adjust the last element if endpoint is true to ensure it's exactly 'stop'
-        // due to potential floating-point inaccuracies
-        if (endpoint && num > 1)
-        {
-            result[num - 1] = stop;
-        }
-
-        return result;
-    }
-
-
-    public static Tuple<List<object>, List<object>> CreateMeshGrid(List<object> xValues, List<object> yValues)
-    {
-        int numX = xValues.Count;
-        int numY = yValues.Count;
-
-        // Initialize the 2D lists for X and Y grids
-        List<object> X = new List<object>();
-        List<object> Y = new List<object>();
-
-        // Populate the X grid
-        for (int i = 0; i < numY; i++)
-        {
-            List<object> rowX = new List<object>();
-            for (int j = 0; j < numX; j++)
-            {
-                rowX.Add(xValues[j]);
-            }
-            X.Add(rowX);
-        }
-
-        // Populate the Y grid
-        for (int i = 0; i < numY; i++)
-        {
-            List<object> rowY = new List<object>();
-            for (int j = 0; j < numX; j++)
-            {
-                rowY.Add(yValues[i]);
-            }
-            Y.Add(rowY);
-        }
-
-        return Tuple.Create(X, Y);
-    }
-
-    public static List<object> CreateListOfListOfOnesCapacity(int count)
-    {
-
-        List<object> onesList = new List<object>(count); // Initialize with capacity
-        for (int i = 0; i < count; i++)
-        {
-            onesList.Add(1);
-        }
-
-        List<object> onesListList = new List<object>(count); // Initialize with capacity
-        for (int i = 0; i < count; i++)
-        {
-            onesListList.Add(onesList);
-        }
-
-        return onesListList;
-    }
-
-    public static List<object> CreateListOfListOfZerosCapacity(int count)
-    {
-
-        List<object> onesList = new List<object>(count); // Initialize with capacity
-        for (int i = 0; i < count; i++)
-        {
-            onesList.Add(0);
-        }
-
-        List<object> onesListList = new List<object>(count); // Initialize with capacity
-        for (int i = 0; i < count; i++)
-        {
-            onesListList.Add(onesList);
-        }
-
-        return onesListList;
-    }
-
-
-    static List<object> xCoords = LinspaceList(0, 1, 128);
-
-    static Tuple<List<object>, List<object>> mesh = CreateMeshGrid(xCoords, xCoords);
+    static Tuple<List<object>, List<object>> mesh = Mathy.CreateMeshGrid(xCoords, xCoords);
 
     static List<object> x = mesh.Item1;
     static List<object> z = mesh.Item2;
-    static List<object> y = CreateListOfListOfOnesCapacity(128);
-    static List<object> color = CreateListOfListOfZerosCapacity(128);
+    static List<object> y_1 = Mathy.CreateListOfListOfOnesCapacity(128);
+    static List<object> y_0 = Mathy.CreateListOfListOfZerosCapacity(128);
 
     // Using of the interface IList is important for the event callback!
     IList<ITrace> data = new List<ITrace>
     {
-        new Mesh3D
-        {
-            X = new List<object>{0, 0, 1, 1, 0, 0, 1, 1},
-            Y = new List<object>{0, 1, 1, 0, 0, 1, 1, 0},
-            Z = new List<object>{0, 0, 0, 0, 1, 1, 1, 1},
 
-            I = new List<object>{7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2},
-            J = new List<object>{3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3},
-            K = new List<object>{0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6},
-
-            //ColorBar = new Plotly.Blazor.Traces.Mesh3DLib.ColorBar {
-            //    Title = new Plotly.Blazor.Traces.Mesh3DLib.ColorBarLib.Title {Text = "z" }
-            //},
-            ColorScale = "Electric",
-            //Intensity = new List<object> {
-            //    0, 0.14285714285714285, 0.2857142857142857, 0.42857142857142855, 0.5714285714285714, 0.7142857142857143, 0.8571428571428571, 1
-            //},
-            ShowScale = false,
-            Intensity = intensityn
-        },
-
-        // Y constante
+        // Y constante : 1 adelante
         new Surface
         {
             X = x,
-            Y = y,
+            Y = y_1,
             Z = z,
             //SurfaceColor = color,
             //ColorScale = "Rainbow",
 
         },
 
-        // X constante
+        // X constante : 1 adelante
         new Surface
         {
-            X = y,
+            X = y_1,
             Y = x,
             Z = z,
             //SurfaceColor = color,
@@ -418,16 +279,39 @@
 
         },
 
-        // Z constante
+        // Z constante : 0 detras
         new Surface
         {
             X = x,
             Y = z,
-            Z = y,
+            Z = y_0,
             //SurfaceColor = color,
             //ColorScale = "Rainbow",
 
-        }
+        },
+
+        // X constante : 0 detras
+        new Surface
+        {
+            X = y_0,
+            Y = x,
+            Z = z,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+
+        },
+
+        // Y constante : 0 detras
+        new Surface
+        {
+            X = x,
+            Y = y_0,
+            Z = z,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+
+        },
+
     };
 
     // Toggle function

@@ -1,60 +1,71 @@
-﻿@page "/caja"
+﻿@page "/caja/{IdDiseno:int?}"
 @using QueBox.Services
 @using QueBox.Models
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components
 
 
 @inject DisenoService DisenoService
 @inject CapaService CapaService
 @inject ImagenDecorativaService ImagenDecorativaService
 @inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthStateProvider
 
 @using Plotly.Blazor
 @using Plotly.Blazor.Traces
 @using Plotly.Blazor.LayoutLib
 
-
 <PageTitle>Diseno</PageTitle>
 
 <main>
 
-    <!-- Codigo form de arriba    -->
-
-    <EditForm class="row g-3" Model="@editingDiseno" OnValidSubmit="SaveDiseno">
-
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div class="col-md-4 mb-3">
-            <label for="largo" class="form-label">Largo:</label>
-            <InputNumber TValue="float" @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
+    @if (editingDiseno == null)
+    {
+        <div class="alert alert-info">
+            No hay diseños disponibles para mostrar o el diseño solicitado no existe.
         </div>
+    }
+    else
+    {
+        <EditForm Model="@editingDiseno" OnValidSubmit="SaveDiseno">
 
-        <div class="col-md-4">
-            <label for="alto" class="form-label">Alto:</label>
-            <InputNumber TValue="float" @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
-        </div>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-        <div class="col-md-4">
-            <label for="ancho" class="form-label">Ancho:</label>
-            <InputNumber TValue="float" @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
-        </div>
+            <div class="row g-3 align-items-end mb-3">
+                <div class="col-md-3">
+                    <label for="largo" class="form-label">Largo:</label>
+                    <InputNumber TValue="float" @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
+                </div>
 
-        <button class="row col-md-3 btn btn-primary mx-auto" type="submit">Que Caja!</button>
+                <div class="col-md-3">
+                    <label for="alto" class="form-label">Alto:</label>
+                    <InputNumber TValue="float" @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
+                </div>
 
-    </EditForm>
+                <div class="col-md-3">
+                    <label for="ancho" class="form-label">Ancho:</label>
+                    <InputNumber TValue="float" @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
+                </div>
 
-    <!-- Codigo form de izquierda -->
-    <div class="row g-3">
+                <div class="col-md-3">
+                    <button class="btn btn-primary w-100" type="submit">Que Caja!</button> 
+                </div>
+            </div>
 
+        </EditForm>
+
+        <div class="row g-3">
             @if (isLoading)
             {
-            <p class=" mb-3 col-md-6">Cargando capas...</p>
+                <p class=" mb-3 col-md-6">Cargando capas...</p>
             }
             else
             {
                 @foreach (var capa in capas)
                 {
-                    <div id="accordion  mb-3 col-md-6">
+                    <div id="accordion mb-3 col-md-6">
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="mb-0">
@@ -66,7 +77,9 @@
 
                             <div id="@capa.Numero">
                                 <div class="card-body">
-                                    @foreach (var imagenDecorativa in imagenDecorativas)
+
+                                    @foreach (var imagenDecorativa in imagenDecorativas.Where(i => i.Id_Capa == capa.Id_Capa))
+
                                     {
                                         <div class="card">
                                             <div class="card-header">
@@ -78,7 +91,7 @@
                                             </div>
 
                                             <div id="@imagenDecorativa.Url">
-                                                    <!-- Form imagenes -->
+
                                                 <EditForm class="card-body" Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">
                                                     <DataAnnotationsValidator />
                                                     <ValidationSummary />
@@ -112,10 +125,7 @@
                                     }
                                     @if (editingDiseno != null)
                                     {
-
-
                                     }
-                                    <!-- Agregar aca el boton para mas imagenes -->
 
                                 </div>
                             </div>
@@ -125,316 +135,348 @@
                 }
             }
 
-        @if (data != null)
-        {
-            <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
-        }
-        else
-        {
-            <h5 class="col-md-6">No data.</h5>
-        }
-    </div>
-   
+            @if (data != null)
+            {
+                <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
+            }
+            else
+            {
+                <h5 class="col-md-6">No data.</h5>
+            }
+        </div>
+    }
 
-    
 </main>
-
 
 @code {
 
-    // Definir datos
 
     private List<Diseno> disenos = new();
     private Diseno? editingDiseno;
     private List<Capa> capas = new();
     private List<ImagenDecorativa> imagenDecorativas = new();
     private ImagenDecorativa? editingImagenDecorativa;
-
     private bool isLoading = true;
 
+    [Parameter]
 
-    // Ejecutables al iniciar
+    public int? IdDiseno { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        editingDiseno = new Diseno();
-        editingImagenDecorativa = new ImagenDecorativa();
-        imagenDecorativas = (await ImagenDecorativaService.GetImagenDecorativasAsync())?.ToList() ?? new List<ImagenDecorativa>();
-        capas = (await CapaService.GetCapasAsync())?.ToList() ?? new List<Capa>();
-
-        isLoading = false;
-    }
-
-    private async Task NewDiseno()
-    {
-
-        editingDiseno = new Diseno { Id_Usuario = 1 };
-        StateHasChanged();
-        await Task.CompletedTask;
-    }
-
-
-    // Guardar diseno
-
-    private async Task SaveDiseno()
-    {
-        if (editingDiseno == null)
-            return;
-
-        // Ya el diseno deberia estar creado
-
-        // if (editingDiseno.Id_Diseno == 0)
-        // {
-        //    var created = await DisenoService.CreateDisenoAsync(editingDiseno);
-        //    if (created != null)
-        //        disenos.Insert(0, created);
-        //}
-
-        else
-        {
-            await DisenoService.UpdateDisenoAsync(editingDiseno);
-            var index = disenos.FindIndex(d => d.Id_Diseno == editingDiseno.Id_Diseno);
-            if (index >= 0)
-                disenos[index] = editingDiseno;
-        }
-
         editingDiseno = null;
-        StateHasChanged();
-    }
+        editingImagenDecorativa = new ImagenDecorativa();
+        int disenoIdToLoad = 0;
 
+        // Obtener la ID del usuario autenticado
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-    // Guardar imagenDecorativa
-
-
-    private async Task SaveImagenDecorativa(ImagenDecorativa editingImagenDecorativa)
-    {
-        if (editingImagenDecorativa == null)
-            return;
-
-        if (editingImagenDecorativa.Id_Img == 0)
+        if (string.IsNullOrEmpty(userId))
         {
-            var created = await ImagenDecorativaService.CreateImagenDecorativaAsync(editingImagenDecorativa);
-            if (created != null)
-                imagenDecorativas.Insert(0, created);
-        }
+            isLoading = false;
+            return; // No hay usuario logueado
+        }
 
-        else
+        // Lógica para determinar el ID a cargar
+        if (IdDiseno.HasValue && IdDiseno.Value > 0)
         {
-            await ImagenDecorativaService.UpdateImagenDecorativaAsync(editingImagenDecorativa);
-            var index = imagenDecorativas.FindIndex(d => d.Id_Img == editingImagenDecorativa.Id_Img);
-            if (index >= 0)
-                imagenDecorativas[index] = editingImagenDecorativa;
-        }
-
-        StateHasChanged();
-    }
-
-    // Actualizar data ImagenDecorativa
-
-    // Chart
-    PlotlyChart chart;
-
-    Config config = new Config();
-    Layout layout = new Layout()
-        {
-        Width = 890,
-        Height = 750
-    };
-
-    static List<object> intensityn = new List<object> {
-            0, 0.14285714285714285, 0.2857142857142857, 0.42857142857142855, 0.5714285714285714, 0.7142857142857143, 0.8571428571428571, 1
-    };
-
-
-    public static List<object> LinspaceList(double start, double stop, int num, bool endpoint = true)
-    {
-        if (num < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(num), "Number of samples must be non-negative.");
-        }
-
-        if (num == 0)
-        {
-            return new List<object>();
-        }
-
-        List<object> result = new List<object>(num);
-
-        if (num == 1)
-        {
-            result.Add(start);
-            return result;
-        }
-
-        double step;
-        if (endpoint)
-        {
-            step = (stop - start) / (num - 1);
+            // Opción A: Se proporcionó una ID válida en la URL
+            disenoIdToLoad = IdDiseno.Value;
         }
         else
         {
-            step = (stop - start) / num;
-        }
-
-        for (int i = 0; i < num; i++)
-        {
-            result.Add(start + i * step);
-        }
-
-        // Adjust the last element if endpoint is true to ensure it's exactly 'stop'
-        // due to potential floating-point inaccuracies
-        if (endpoint && num > 1)
-        {
-            result[num - 1] = stop;
-        }
-
-        return result;
-    }
-
-
-    public static Tuple<List<object>, List<object>> CreateMeshGrid(List<object> xValues, List<object> yValues)
-    {
-        int numX = xValues.Count;
-        int numY = yValues.Count;
-
-        // Initialize the 2D lists for X and Y grids
-        List<object> X = new List<object>();
-        List<object> Y = new List<object>();
-
-        // Populate the X grid
-        for (int i = 0; i < numY; i++)
-        {
-            List<object> rowX = new List<object>();
-            for (int j = 0; j < numX; j++)
+            // Opción B: No se proporcionó ID -> Cargar el primer diseño del usuario
+            disenos = (await DisenoService.GetDisenosAsync(userId))?.ToList() ?? new List<Diseno>();
+            if (disenos.Any())
             {
-                rowX.Add(xValues[j]);
-            }
-            X.Add(rowX);
+                disenoIdToLoad = disenos.First().Id_Diseno;
+                editingDiseno = disenos.First();
+            }
         }
 
-        // Populate the Y grid
-        for (int i = 0; i < numY; i++)
+        // Cargar datos si se ha encontrado un ID
+        if (disenoIdToLoad > 0)
         {
-            List<object> rowY = new List<object>();
-            for (int j = 0; j < numX; j++)
+            // Si no se asignó en el paso anterior (caso B), lo obtiene ahora (caso A)
+            if (editingDiseno == null)
             {
-                rowY.Add(yValues[i]);
+                editingDiseno = await DisenoService.GetDisenoByIdAsync(disenoIdToLoad);
             }
-            Y.Add(rowY);
-        }
+            
+            capas = (await CapaService.GetCapasByDisenoAsync(disenoIdToLoad))?.ToList() ?? new List<Capa>();
+            imagenDecorativas = (await ImagenDecorativaService.GetImagenDecorativasByDisenoAsync(disenoIdToLoad))?.ToList() ?? new List<ImagenDecorativa>();
+        }
+        else
+        {
+            // Si no se encuentra un diseño para cargar, asegurar que las listas estén vacías
+            capas = new List<Capa>();
+            imagenDecorativas = new List<ImagenDecorativa>();
+        }
+        isLoading = false;
+    }
 
-        return Tuple.Create(X, Y);
-    }
+    private async Task NewDiseno()
+    {
 
-    public static List<object> CreateListOfListOfOnesCapacity(int count)
-    {
-
-        List<object> onesList = new List<object>(count); // Initialize with capacity
-        for (int i = 0; i < count; i++)
-        {
-            onesList.Add(1);
-        }
-
-        List<object> onesListList = new List<object>(count); // Initialize with capacity
-        for (int i = 0; i < count; i++)
-        {
-            onesListList.Add(onesList);
-        }
-
-        return onesListList;
-    }
-
-    public static List<object> CreateListOfListOfZerosCapacity(int count)
-    {
-
-        List<object> onesList = new List<object>(count); // Initialize with capacity
-        for (int i = 0; i < count; i++)
-        {
-            onesList.Add(0);
-        }
-
-        List<object> onesListList = new List<object>(count); // Initialize with capacity
-        for (int i = 0; i < count; i++)
-        {
-            onesListList.Add(onesList);
-        }
-
-        return onesListList;
-    }
+        editingDiseno = new Diseno { Id_Usuario = 1 };
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
 
 
-    static List<object> xCoords = LinspaceList(0, 1, 128);
+    // Guardar diseno
 
-    static Tuple<List<object>, List<object>> mesh = CreateMeshGrid(xCoords, xCoords);
+    private async Task SaveDiseno()
+    {
+        if (editingDiseno == null)
+            return;
 
-    static List<object> x = mesh.Item1;
-    static List<object> z = mesh.Item2;
-    static List<object> y = CreateListOfListOfOnesCapacity(128);
-    static List<object> color = CreateListOfListOfZerosCapacity(128);
 
-    // Using of the interface IList is important for the event callback!
-    IList<ITrace> data = new List<ITrace>
-    {
-        new Mesh3D
-        {
-            X = new List<object>{0, 0, 1, 1, 0, 0, 1, 1},
-            Y = new List<object>{0, 1, 1, 0, 0, 1, 1, 0},
-            Z = new List<object>{0, 0, 0, 0, 1, 1, 1, 1},
 
-            I = new List<object>{7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2},
-            J = new List<object>{3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3},
-            K = new List<object>{0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6},
+        if (editingDiseno.Id_Diseno > 0)
 
-            //ColorBar = new Plotly.Blazor.Traces.Mesh3DLib.ColorBar {
-            //    Title = new Plotly.Blazor.Traces.Mesh3DLib.ColorBarLib.Title {Text = "z" }
-            //},
-            ColorScale = "Electric",
-            //Intensity = new List<object> {
-            //    0, 0.14285714285714285, 0.2857142857142857, 0.42857142857142855, 0.5714285714285714, 0.7142857142857143, 0.8571428571428571, 1
-            //},
-            ShowScale = false,
-            Intensity = intensityn
-        },
+        {
+            await DisenoService.UpdateDisenoAsync(editingDiseno);
+        }
 
-        // Y constante
-        new Surface
-        {
-            X = x,
-            Y = y,
-            Z = z,
-            //SurfaceColor = color,
-            //ColorScale = "Rainbow",
+        StateHasChanged();
+    }
 
-        },
+    // Guardar imagenDecorativa
 
-        // X constante
-        new Surface
-        {
-            X = y,
-            Y = x,
-            Z = z,
-            //SurfaceColor = color,
-            //ColorScale = "Rainbow",
+    private async Task SaveImagenDecorativa(ImagenDecorativa editingImagenDecorativa)
+    {
+        if (editingImagenDecorativa == null)
+            return;
 
-        },
+        if (editingImagenDecorativa.Id_Img == 0)
+        {
+            var created = await ImagenDecorativaService.CreateImagenDecorativaAsync(editingImagenDecorativa);
+            if (created != null)
+                imagenDecorativas.Insert(0, created);
+        }
 
-        // Z constante
-        new Surface
-        {
-            X = x,
-            Y = z,
-            Z = y,
-            //SurfaceColor = color,
-            //ColorScale = "Rainbow",
+        else
+        {
+            await ImagenDecorativaService.UpdateImagenDecorativaAsync(editingImagenDecorativa);
+            var index = imagenDecorativas.FindIndex(d => d.Id_Img == editingImagenDecorativa.Id_Img);
+           if (index >= 0)
+                imagenDecorativas[index] = editingImagenDecorativa;
+        }
 
-        }
-    };
+        StateHasChanged();
+    }
 
-    // Toggle function
+    // Actualizar data ImagenDecorativa
 
-    private async Task ToggleBootstrapCollapse(string elementid)
-    {
-        await JS.InvokeVoidAsync("bootstrapInterop.toggleBootstrapCollapse", elementid);
-    }
+    // Chart
+    PlotlyChart chart;
+
+    Config config = new Config();
+    Layout layout = new Layout()
+    {
+        Width = 890,
+        Height = 750
+    };
+
+    static List<object> intensityn = new List<object> {
+        0, 0.14285714285714285, 0.2857142857142857, 0.42857142857142855, 0.5714285714285714, 0.7142857142857143, 0.8571428571428571, 1
+    };
+
+
+    public static List<object> LinspaceList(double start, double stop, int num, bool endpoint = true)
+    {
+        if (num < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(num), "Number of samples must be non-negative.");
+        }
+
+        if (num == 0)
+        {
+            return new List<object>();
+        }
+
+        List<object> result = new List<object>(num);
+
+        if (num == 1)
+        {
+            result.Add(start);
+            return result;
+        }
+
+        double step;
+        if (endpoint)
+        {
+            step = (stop - start) / (num - 1);
+        }
+        else
+        {
+            step = (stop - start) / num;
+        }
+
+        for (int i = 0; i < num; i++)
+        {
+            result.Add(start + i * step);
+        }
+
+        // Adjust the last element if endpoint is true to ensure it's exactly 'stop'
+        // due to potential floating-point inaccuracies
+        if (endpoint && num > 1)
+        {
+            result[num - 1] = stop;
+        }
+
+        return result;
+    }
+
+
+    public static Tuple<List<object>, List<object>> CreateMeshGrid(List<object> xValues, List<object> yValues)
+    {
+        int numX = xValues.Count;
+        int numY = yValues.Count;
+
+        // Initialize the 2D lists for X and Y grids
+        List<object> X = new List<object>();
+        List<object> Y = new List<object>();
+
+        // Populate the X grid
+        for (int i = 0; i < numY; i++)
+        {
+            List<object> rowX = new List<object>();
+            for (int j = 0; j < numX; j++)
+            {
+                rowX.Add(xValues[j]);
+            }
+            X.Add(rowX);
+        }
+
+        // Populate the Y grid
+        for (int i = 0; i < numY; i++)
+        {
+            List<object> rowY = new List<object>();
+            for (int j = 0; j < numX; j++)
+            {
+                rowY.Add(yValues[i]);
+            }
+            Y.Add(rowY);
+        }
+
+        return Tuple.Create(X, Y);
+    }
+    public static List<object> CreateListOfListOfOnesCapacity(int count)
+    {
+
+        List<object> onesList = new List<object>(count); // Initialize with capacity
+        for (int i = 0; i < count; i++)
+        {
+            onesList.Add(1);
+        }
+
+        List<object> onesListList = new List<object>(count); // Initialize with capacity
+        for (int i = 0; i < count; i++)
+        {
+            onesListList.Add(onesList);
+        }
+
+        return onesListList;
+    }
+
+    public static List<object> CreateListOfListOfZerosCapacity(int count)
+    {
+
+        List<object> onesList = new List<object>(count); // Initialize with capacity
+        for (int i = 0; i < count; i++)
+        {
+            onesList.Add(0);
+        }
+
+        List<object> onesListList = new List<object>(count); // Initialize with capacity
+        for (int i = 0; i < count; i++)
+        {
+            onesListList.Add(onesList);
+        }
+
+        return onesListList;
+    }
+
+    static List<object> xCoords = LinspaceList(0, 1, 128);
+
+    static Tuple<List<object>, List<object>> mesh = CreateMeshGrid(xCoords, xCoords);
+
+    static List<object> x = mesh.Item1;
+    static List<object> z = mesh.Item2;
+    static List<object> y = CreateListOfListOfOnesCapacity(128);
+    static List<object> color = CreateListOfListOfZerosCapacity(128);
+
+    // Using of the interface IList is important for the event callback!
+    IList<ITrace> data = new List<ITrace>
+    {
+        new Mesh3D
+        {
+            X = new List<object>{0, 0, 1, 1, 0, 0, 1, 1},
+            Y = new List<object>{0, 1, 1, 0, 0, 1, 1, 0},
+            Z = new List<object>{0, 0, 0, 0, 1, 1, 1, 1},
+
+            I = new List<object>{7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2},
+            J = new List<object>{3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3},
+            K = new List<object>{0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6},
+
+            //ColorBar = new Plotly.Blazor.Traces.Mesh3DLib.ColorBar {
+
+            //   Title = new Plotly.Blazor.Traces.Mesh3DLib.ColorBarLib.Title {Text = "z" }
+
+            //},
+            ColorScale = "Electric",
+            //Intensity = new List<object> {
+
+            //   0, 0.14285714285714285, 0.2857142857142857, 0.42857142857142855, 0.5714285714285714, 0.7142857142857143, 0.8571428571428571, 1
+
+            //},
+            ShowScale = false,
+            Intensity = intensityn
+        },
+
+        // Y constante
+        new Surface
+        {
+            X = x,
+            Y = y,
+            Z = z,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+
+        },
+
+        // X constante
+        new Surface
+        {
+            X = y,
+            Y = x,
+            Z = z,
+
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+
+        },
+
+        // Z constante
+        new Surface
+        {
+            X = x,
+            Y = z,
+            Z = y,
+
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+        }
+    };
+
+    private async Task ToggleBootstrapCollapse(string elementid)
+
+    {
+        await JS.InvokeVoidAsync("bootstrapInterop.toggleBootstrapCollapse", elementid);
+    }
 
 }

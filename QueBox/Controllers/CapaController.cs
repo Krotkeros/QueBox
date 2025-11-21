@@ -4,6 +4,8 @@ using QueBox.Query.Interfaces;
 using QueBox.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;    
 
 namespace QueBox.Controllers
 {
@@ -33,16 +35,29 @@ namespace QueBox.Controllers
         }
 
         /// <summary>
-        /// Método que lista todas las capas
+        /// Método que lista todas las capas o las filtra por Id_Diseno
         /// </summary>
+        /// <param name="disenoId">ID opcional del diseño para filtrar las capas.</param>
         /// <response code="200">Lista de capas</response>
         /// <response code="500">Error procesando la petición</response>
         [HttpGet]
         [ProducesResponseType(typeof(List<Capa>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ListarCapas()
+        public async Task<IActionResult> ListarCapas([FromQuery] int? disenoId)
         {
-            var rsDapper = await _capaQueries.ObtenerTodasAsync();
+            IEnumerable<Capa> rsDapper;
+
+            if (disenoId.HasValue && disenoId.Value > 0)
+            {
+                _logger.LogInformation("Listando capas filtradas por Id_Diseno: {0}", disenoId.Value);
+                rsDapper = await _capaQueries.ObtenerPorDisenoAsync(disenoId.Value);
+            }
+            else
+            {
+                _logger.LogInformation("Listando todas las capas (sin filtro).");
+                rsDapper = await _capaQueries.ObtenerTodasAsync();
+            }
+
             return Ok(rsDapper);
         }
 
@@ -50,25 +65,21 @@ namespace QueBox.Controllers
         /// Buscar capa por id
         /// </summary>
         /// <param name="id">Id de la capa a buscar</param>
-        /// <response code="200">Cuando se encuentra la capa</response>
-        /// <response code="404">La capa no existe</response>
-        /// <response code="500">Error procesando la petición</response>
+        // ... (resto del método BuscarById permanece igual)
         [HttpGet("ById/{id}")]
         [ProducesResponseType(typeof(Capa), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> BuscarById(int id)
         {
-            _logger.LogInformation("Buscando capa por id -> {0}", id);
-            Capa? c = _db.Capas.FirstOrDefault(f => f.Id_Capa == id);
+            _logger.LogInformation("Buscando capa por id (Query) -> {0}", id);
+            Capa? c = await _capaQueries.ObtenerPorIdAsync(id);
 
             if (c == null)
             {
                 _logger.LogWarning("Capa no encontrada en base de datos");
                 return NotFound("La capa no existe");
             }
-
-            _logger.LogInformation("Capa encontrada. Id diseno->{0}, Numero -> {1}", c.Id_Diseno, c.Numero);
 
             return Ok(c);
         }
@@ -77,6 +88,7 @@ namespace QueBox.Controllers
         /// Agregar una nueva capa
         /// </summary>
         /// <param name="c">Objeto capa recibido en el body</param>
+        // ... (resto del método Add permanece igual)
         [HttpPost]
         public async Task<IActionResult> Add(Capa c)
         {
@@ -98,6 +110,7 @@ namespace QueBox.Controllers
         /// </summary>
         /// <param name="Id_Capa"></param>
         /// <returns></returns>
+        // ... (resto del método Delete permanece igual)
         [HttpDelete("{Id_Capa}")]
         public async Task<IActionResult> Delete(int Id_Capa)
         {
@@ -123,6 +136,7 @@ namespace QueBox.Controllers
         /// <param name="c"></param>
         /// <param name="Id_Capa"></param>
         /// <returns></returns>
+        // ... (resto del método Update permanece igual)
         [HttpPut("{Id_Capa}")]
         public async Task<IActionResult> Update([FromBody] Capa c, [FromRoute] int Id_Capa)
         {

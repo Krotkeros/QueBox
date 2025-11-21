@@ -1,5 +1,7 @@
 ﻿using QueBox.Models;
 using System.Net.Http.Json;
+using System.Collections.Generic; 
+using System.Threading.Tasks;    
 
 namespace QueBox.Services
 {
@@ -13,6 +15,11 @@ namespace QueBox.Services
         }
 
         private string apiUrl = "api/Capa";
+        public async Task<List<Capa>> GetCapasByDisenoAsync(int idDiseno)
+        {
+            return await _http.GetFromJsonAsync<List<Capa>>($"{apiUrl}?disenoId={idDiseno}") ?? [];
+        }
+
 
         public async Task<List<Capa>> GetCapasAsync() =>
             await _http.GetFromJsonAsync<List<Capa>>(apiUrl) ?? [];

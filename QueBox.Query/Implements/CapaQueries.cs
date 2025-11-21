@@ -1,11 +1,10 @@
-﻿﻿using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using QueBox.Query.Interfaces;
 using QueBox.Models;
-
 
 
 namespace QueBox.Query
@@ -17,6 +16,15 @@ namespace QueBox.Query
         public CapaQueries(IDbConnection connection)
         {
             _connection = connection;
+        }
+
+        public async Task<IEnumerable<Capa>> ObtenerPorDisenoAsync(int idDiseno)
+        {
+            const string sql = @"
+                SELECT Id_Capa, Id_Diseno, Numero FROM Capa
+                WHERE Id_Diseno = @IdDiseno";
+
+            return await _connection.QueryAsync<Capa>(sql, new { IdDiseno = idDiseno });
         }
 
         public async Task<Capa> ObtenerPorIdAsync(int id)
@@ -32,12 +40,12 @@ namespace QueBox.Query
         public async Task<IEnumerable<Capa>> ObtenerPorImagenDecorativaAsync(int id_Img)
         {
             const string query = @"
-                SELECT Id_Capa, Id_Diseno, Numero
-                FROM Capa
-                WHERE Id_Diseno = @Id_Diseno
-                ORDER BY Numero";
+                SELECT c.Id_Capa, c.Id_Diseno, c.Numero
+                FROM Capa c
+                INNER JOIN ImagenDecorativa i ON c.Id_Capa = i.Id_Capa
+                WHERE i.Id_Img = @IdImg";
 
-            return await _connection.QueryAsync<Capa>(query, new { Id_Diseno = id_Img });
+            return await _connection.QueryAsync<Capa>(query, new { IdImg = id_Img });
         }
 
         public async Task<IEnumerable<Capa>> ObtenerTodasAsync()
@@ -49,16 +57,6 @@ namespace QueBox.Query
 
             return await _connection.QueryAsync<Capa>(query);
         }
-
-        /*public async Task<int> ObtenerNumeroPorImagenAsync(int id_Diseno, int numero)
-        {
-            const string query = @"
-                SELECT COUNT(*)
-                FROM Capa
-                WHERE Id_Diseno = @Id_Diseno AND Numero = @Numero";
-
-            return await _connection.ExecuteScalarAsync<int>(query, new { Id_Diseno = id_Diseno, Numero = numero });
-        }*/
 
         public async Task<IEnumerable<Capa>> ObtenerCapasDisponiblesAsync()
         {

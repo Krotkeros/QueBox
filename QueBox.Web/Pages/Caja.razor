@@ -30,10 +30,14 @@
     }
     else
     {
+
+
         <EditForm Model="@editingDiseno" OnValidSubmit="SaveDiseno">
 
             <DataAnnotationsValidator />
             <ValidationSummary />
+
+
 
             <div class="row g-3 align-items-end mb-3">
                 <div class="col-md-3">
@@ -59,96 +63,104 @@
         </EditForm>
 
         <div class="row g-3">
-            @if (isLoading)
-            {
-                <p class=" mb-3 col-md-6">Cargando capas...</p>
-            }
-            else
-            {
 
-                <div id="accordion mb-3 col-md-6">
-                    @foreach (var capa in capas)
-                    {
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0 d-flex justify-content-between align-items-center">
-                                    <button class="accordion-button collapsed flex-grow-1 me-2" @onclick="() => ToggleBootstrapCollapse(capa.Numero.ToString())">
-                                        La capa @capa.Numero
-                                    </button>
-                                    <button class="btn btn-success btn-sm"
-                                                                  @onclick="() => CreateImagenDecorativa(capa.Id_Capa)">
-                                        ➕ Imagen
-                                    </button>
-                                </h5>
-                            </div>
+            <div class="col">
 
-                            <div id="@capa.Numero">
-                                <div class="card-body">
 
-                                    @foreach (var imagenDecorativa in imagenDecorativas.Where(i => i.Id_Capa == capa.Id_Capa))
 
-                                    {
-                                        <div class="card mb-3">
-                                            <div class="card-header d-flex justify-content-between align-items-center">
-                                                <h5 class="mb-0">
-                                                    <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(imagenDecorativa.Url + imagenDecorativa.Id_Img)">
-                                                        La imagen @imagenDecorativa.Id_Img
+                @if (isLoading)
+                {
+                    <p class=" mb-3 col-md-6">Cargando capas...</p>
+                }
+                else
+                {
+
+                    <div id="accordion mb-3 col-md-6">
+                        @foreach (var capa in capas)
+                        {
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0 d-flex justify-content-between align-items-center">
+                                        <button class="accordion-button collapsed flex-grow-1 me-2" @onclick="() => ToggleBootstrapCollapse(capa.Numero.ToString())">
+                                            La capa @capa.Numero
+                                        </button>
+                                        <button class="btn btn-success btn-sm"
+                                                @onclick="() => CreateImagenDecorativa(capa.Id_Capa)">
+                                            ➕ Imagen
+                                        </button>
+                                    </h5>
+                                </div>
+
+                                <div id="@capa.Numero">
+                                    <div class="card-body">
+
+                                        @foreach (var imagenDecorativa in imagenDecorativas.Where(i => i.Id_Capa == capa.Id_Capa))
+
+                                        {
+                                            <div class="card mb-3">
+                                                <div class="card-header d-flex justify-content-between align-items-center">
+                                                    <h5 class="mb-0">
+                                                        <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(imagenDecorativa.Url + imagenDecorativa.Id_Img)">
+                                                            La imagen @imagenDecorativa.Id_Img
+                                                        </button>
+                                                    </h5>
+                                                    <button class="btn btn-danger btn-sm"
+                                                            @onclick="() => DeleteImagenDecorativa(imagenDecorativa.Id_Img)">
+                                                        🗑️ Eliminar
                                                     </button>
-                                                </h5>
-                                                <button class="btn btn-danger btn-sm"
-                                                                                    @onclick="() => DeleteImagenDecorativa(imagenDecorativa.Id_Img)">
-                                                    🗑️ Eliminar
-                                                </button>
+                                                </div>
+
+                                                <div id="@(imagenDecorativa.Url + imagenDecorativa.Id_Img)">
+
+                                                    <EditForm class="card-body" Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">
+                                                        <DataAnnotationsValidator />
+                                                        <ValidationSummary />
+
+                                                        <div class="mb-3">
+                                                            <label for="alto" class="form-label">Alto:</label>
+                                                            <InputNumber @bind-Value="imagenDecorativa.Alto" id="alto" class="form-control" />
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label for="ancho" class="form-label">Ancho:</label>
+                                                            <InputNumber @bind-Value="imagenDecorativa.Ancho" id="ancho" class="form-control" />
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label for="url" class="form-label">Url:</label>
+                                                            <InputText @bind-Value="imagenDecorativa.Url" id="url" class="form-control" />
+                                                        </div>
+
+                                                        <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Enviar</button>
+
+                                                    </EditForm>
+
+                                                </div>
                                             </div>
+                                        }
+                                        @if (editingDiseno != null)
+                                        {
+                                        }
 
-                                            <div id="@(imagenDecorativa.Url + imagenDecorativa.Id_Img)">
-
-                                                <EditForm class="card-body" Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">
-                                                    <DataAnnotationsValidator />
-                                                    <ValidationSummary />
-
-                                                    <div class="mb-3">
-                                                        <label for="alto" class="form-label">Alto:</label>
-                                                        <InputNumber @bind-Value="imagenDecorativa.Alto" id="alto" class="form-control" />
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label for="ancho" class="form-label">Ancho:</label>
-                                                        <InputNumber @bind-Value="imagenDecorativa.Ancho" id="ancho" class="form-control" />
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label for="url" class="form-label">Url:</label>
-                                                        <InputText @bind-Value="imagenDecorativa.Url" id="url" class="form-control" />
-                                                    </div>
-
-                                                    <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Enviar</button>
-
-                                                </EditForm>
-
-                                            </div>
-                                        </div>
-                                    }
-                                    @if (editingDiseno != null)
-                                    {
-                                    }
-
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    }
-                </div>
+                        }
+                    </div>
 
-            }
+                }
+            </div>
+            <div class="col">
 
-            @if (data != null)
-            {
-                <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
-            }
-            else
-            {
-                <h5 class="col-md-6">No data.</h5>
-            }
+                @if (data != null)
+                {
+                    <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
+                }
+                else
+                {
+                    <h5 class="col-md-6">No data.</h5>
+                }
+            </div>
         </div>
     }
 

@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="col-md-3">
-                    <button class="btn btn-primary w-100" type="submit">Que Caja!</button> 
+                    <button class="btn btn-primary w-100" type="submit">Que Caja!</button>
                 </div>
             </div>
 
@@ -66,17 +66,21 @@
             else
             {
 
-            <div id="accordion  mb-3 col-md-6">
-                @foreach (var capa in capas)
-                {
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(capa.Numero.ToString())">
-                                    La capa @capa.Numero
-                                </button>
-                            </h5>
-                        </div>
+                <div id="accordion mb-3 col-md-6">
+                    @foreach (var capa in capas)
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0 d-flex justify-content-between align-items-center">
+                                    <button class="accordion-button collapsed flex-grow-1 me-2" @onclick="() => ToggleBootstrapCollapse(capa.Numero.ToString())">
+                                        La capa @capa.Numero
+                                    </button>
+                                    <button class="btn btn-success btn-sm"
+                                                                  @onclick="() => CreateImagenDecorativa(capa.Id_Capa)">
+                                        ➕ Imagen
+                                    </button>
+                                </h5>
+                            </div>
 
                             <div id="@capa.Numero">
                                 <div class="card-body">
@@ -84,44 +88,43 @@
                                     @foreach (var imagenDecorativa in imagenDecorativas.Where(i => i.Id_Capa == capa.Id_Capa))
 
                                     {
-                                        <div class="card">
-                                            <div class="card-header">
+                                        <div class="card mb-3">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
                                                 <h5 class="mb-0">
-                                                    <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(imagenDecorativa.Url)">
+                                                    <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(imagenDecorativa.Url + imagenDecorativa.Id_Img)">
                                                         La imagen @imagenDecorativa.Id_Img
                                                     </button>
                                                 </h5>
+                                                <button class="btn btn-danger btn-sm"
+                                                                                    @onclick="() => DeleteImagenDecorativa(imagenDecorativa.Id_Img)">
+                                                    🗑️ Eliminar
+                                                </button>
                                             </div>
 
-                                            <div id="@imagenDecorativa.Url">
+                                            <div id="@(imagenDecorativa.Url + imagenDecorativa.Id_Img)">
 
                                                 <EditForm class="card-body" Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">
                                                     <DataAnnotationsValidator />
                                                     <ValidationSummary />
 
-                                                <div class="mb-3">
-                                                    <label for="id_Capa" class="form-label">Id_Capa:</label>
-                                                    <InputNumber @bind-Value="imagenDecorativa.Id_Capa" id="id_Capa" class="form-control" />
-                                                </div>
+                                                    <div class="mb-3">
+                                                        <label for="alto" class="form-label">Alto:</label>
+                                                        <InputNumber @bind-Value="imagenDecorativa.Alto" id="alto" class="form-control" />
+                                                    </div>
 
-                                                <div class="mb-3">
-                                                    <label for="alto" class="form-label">Alto:</label>
-                                                    <InputNumber @bind-Value="imagenDecorativa.Alto" id="alto" class="form-control" />
-                                                </div>
+                                                    <div class="mb-3">
+                                                        <label for="ancho" class="form-label">Ancho:</label>
+                                                        <InputNumber @bind-Value="imagenDecorativa.Ancho" id="ancho" class="form-control" />
+                                                    </div>
 
-                                                <div class="mb-3">
-                                                    <label for="ancho" class="form-label">Ancho:</label>
-                                                    <InputNumber @bind-Value="imagenDecorativa.Ancho" id="ancho" class="form-control" />
-                                                </div>
+                                                    <div class="mb-3">
+                                                        <label for="url" class="form-label">Url:</label>
+                                                        <InputText @bind-Value="imagenDecorativa.Url" id="url" class="form-control" />
+                                                    </div>
 
-                                                <div class="mb-3">
-                                                    <label for="url" class="form-label">Url:</label>
-                                                    <InputText @bind-Value="imagenDecorativa.Url" id="url" class="form-control" />
-                                                </div>
+                                                    <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Enviar</button>
 
-                                                <button class="mb-3 col-md-4 row btn btn-primary" type="submit">Enviar</button>
-
-                                            </EditForm>
+                                                </EditForm>
 
                                             </div>
                                         </div>
@@ -130,11 +133,11 @@
                                     {
                                     }
 
+                                </div>
                             </div>
                         </div>
-                    </div>                    
-                }
-            </div>
+                    }
+                </div>
 
             }
 
@@ -165,10 +168,10 @@
 
     public int? IdDiseno { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         editingDiseno = null;
-        editingImagenDecorativa = new ImagenDecorativa();
+        editingImagenDecorativa = new ImagenDecorativa();
         int disenoIdToLoad = 0;
 
         // Obtener la ID del usuario autenticado
@@ -196,7 +199,7 @@
             {
                 disenoIdToLoad = disenos.First().Id_Diseno;
                 editingDiseno = disenos.First();
-            }
+            }
         }
 
         // Cargar datos si se ha encontrado un ID
@@ -207,82 +210,117 @@
             {
                 editingDiseno = await DisenoService.GetDisenoByIdAsync(disenoIdToLoad);
             }
-            
-            capas = (await CapaService.GetCapasByDisenoAsync(disenoIdToLoad))?.ToList() ?? new List<Capa>();
-            imagenDecorativas = (await ImagenDecorativaService.GetImagenDecorativasByDisenoAsync(disenoIdToLoad))?.ToList() ?? new List<ImagenDecorativa>();
-        }
-        else
-        {
+
+            capas = (await CapaService.GetCapasByDisenoAsync(disenoIdToLoad))?.ToList() ?? new List<Capa>();
+            imagenDecorativas = (await ImagenDecorativaService.GetImagenDecorativasByDisenoAsync(disenoIdToLoad))?.ToList() ?? new List<ImagenDecorativa>();
+        }
+        else
+        {
             // Si no se encuentra un diseño para cargar, asegurar que las listas estén vacías
             capas = new List<Capa>();
-            imagenDecorativas = new List<ImagenDecorativa>();
-        }
-        isLoading = false;
-    }
+            imagenDecorativas = new List<ImagenDecorativa>();
+        }
+        isLoading = false;
+    }
 
-    private async Task NewDiseno()
-    {
+    private async Task NewDiseno()
+    {
 
-        editingDiseno = new Diseno { Id_Usuario = 1 };
-        StateHasChanged();
-        await Task.CompletedTask;
-    }
+        editingDiseno = new Diseno { Id_Usuario = 1 };
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
 
 
     // Guardar diseno
 
     private async Task SaveDiseno()
-    {
-        if (editingDiseno == null)
-            return;
+    {
+        if (editingDiseno == null)
+            return;
 
 
 
-        if (editingDiseno.Id_Diseno > 0)
+        if (editingDiseno.Id_Diseno > 0)
 
-        {
-            await DisenoService.UpdateDisenoAsync(editingDiseno);
-        }
+        {
+            await DisenoService.UpdateDisenoAsync(editingDiseno);
+        }
 
-        StateHasChanged();
-    }
+        StateHasChanged();
+    }
 
     // Guardar imagenDecorativa
-
     private async Task SaveImagenDecorativa(ImagenDecorativa editingImagenDecorativa)
-    {
-        if (editingImagenDecorativa == null)
-            return;
+    {
+        if (editingImagenDecorativa == null)
+            return;
 
-        if (editingImagenDecorativa.Id_Img == 0)
-        {
-            var created = await ImagenDecorativaService.CreateImagenDecorativaAsync(editingImagenDecorativa);
-            if (created != null)
-                imagenDecorativas.Insert(0, created);
-        }
+        if (editingImagenDecorativa.Id_Img == 0)
+        {
+            var created = await ImagenDecorativaService.CreateImagenDecorativaAsync(editingImagenDecorativa);
+            if (created != null)
+                imagenDecorativas.Insert(0, created);
+        }
 
-        else
-        {
-            await ImagenDecorativaService.UpdateImagenDecorativaAsync(editingImagenDecorativa);
-            var index = imagenDecorativas.FindIndex(d => d.Id_Img == editingImagenDecorativa.Id_Img);
-           if (index >= 0)
-                imagenDecorativas[index] = editingImagenDecorativa;
-        }
+        else
+        {
+            await ImagenDecorativaService.UpdateImagenDecorativaAsync(editingImagenDecorativa);
+            var index = imagenDecorativas.FindIndex(d => d.Id_Img == editingImagenDecorativa.Id_Img);
+            if (index >= 0)
+                imagenDecorativas[index] = editingImagenDecorativa;
+        }
 
-        StateHasChanged();
-    }
+        StateHasChanged();
+    }
+
+
+    // Método para crear una nueva ImagenDecorativa en una Capa específica
+    private async Task CreateImagenDecorativa(int idCapa)
+    {
+        var nuevaImagen = new ImagenDecorativa
+        {
+            Id_Capa = idCapa,
+            Alto = 1,
+            Ancho = 1,
+            Url = "default.png"
+        };
+
+        var created = await ImagenDecorativaService.CreateImagenDecorativaAsync(nuevaImagen);
+
+        if (created != null)
+        {
+            imagenDecorativas.Add(created);
+            StateHasChanged();
+        }
+    }
+
+    // Método para eliminar una ImagenDecorativa
+    private async Task DeleteImagenDecorativa(int idImagen)
+    {
+        await ImagenDecorativaService.DeleteImagenDecorativaAsync(idImagen);
+
+        var imagenAEliminar = imagenDecorativas.FirstOrDefault(i => i.Id_Img == idImagen);
+        if (imagenAEliminar != null)
+        {
+            imagenDecorativas.Remove(imagenAEliminar);
+        }
+
+        StateHasChanged();
+    }
+
 
     // Actualizar data ImagenDecorativa
 
     // Chart
     PlotlyChart chart;
 
-    Config config = new Config();
-    Layout layout = new Layout()
-    {
-        Width = 890,
-        Height = 750
-    };
+    Config config = new Config();
+    Layout layout = new Layout()
+    {
+        Width = 890,
+        Height = 750
+    };
 
     static List<object> xCoords = Mathy.LinspaceList(0, 1, 128);
 
@@ -293,105 +331,105 @@
     static List<object> y_1 = Mathy.CreateListOfListOfOnesCapacity(128);
     static List<object> y_0 = Mathy.CreateListOfListOfZerosCapacity(128);
 
-    // Using of the interface IList is important for the event callback!
-    IList<ITrace> data = new List<ITrace>
+    // Using of the interface IList is important for the event callback!
+    IList<ITrace> data = new List<ITrace>
+ {
+
+        // Y constante : 1 adelante
+        new Surface
+  {
+   X = x,
+   Y = y_1,
+   Z = z,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+            SurfaceColor = y_1,
+   ColorScale = new object[]
+   {
+    new object[] { 0, "#3E2723" },  // Café muy oscuro
+                new object[] { 1, "#5D4037" }   // Café oscuro
+            },
+   ShowScale = false
+  },
+
+        // X constante : 1 adelante
+        new Surface
+  {
+   X = y_1,
+   Y = x,
+   Z = z,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+            SurfaceColor = y_1,
+   ColorScale = new object[]
+   {
+    new object[] { 0, "#3E2723" },  // Café muy oscuro
+                new object[] { 1, "#5D4037" }   // Café oscuro
+            },
+   ShowScale = false
+  },
+
+        // Z constante : 0 detras
+        new Surface
+  {
+   X = x,
+   Y = z,
+   Z = y_0,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+            SurfaceColor = y_1,
+   ColorScale = new object[]
+   {
+    new object[] { 0, "#3E2723" },  // Café muy oscuro
+                new object[] { 1, "#5D4037" }   // Café oscuro
+            },
+   ShowScale = false
+
+  },
+
+        // X constante : 0 detras
+        new Surface
+  {
+   X = y_0,
+   Y = x,
+   Z = z,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+            SurfaceColor = y_1,
+   ColorScale = new object[]
+   {
+    new object[] { 0, "#3E2723" },  // Café muy oscuro
+                new object[] { 1, "#5D4037" }   // Café oscuro
+            },
+   ShowScale = false
+
+
+  },
+
+        // Y constante : 0 detras
+        new Surface
+  {
+   X = x,
+   Y = y_0,
+   Z = z,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+            SurfaceColor = y_1,
+   ColorScale = new object[]
+   {
+    new object[] { 0, "#3E2723" },  // Café muy oscuro
+                new object[] { 1, "#5D4037" }   // Café oscuro
+            },
+   ShowScale = false
+
+  },
+
+ };
+
+    private async Task ToggleBootstrapCollapse(string elementid)
+
     {
-
-        // Y constante : 1 adelante
-        new Surface
-        {
-            X = x,
-            Y = y_1,
-            Z = z,
-            //SurfaceColor = color,
-            //ColorScale = "Rainbow",
-            SurfaceColor = y_1,
-            ColorScale = new object[]
-            {
-                new object[] { 0, "#3E2723" },  // Café muy oscuro
-                new object[] { 1, "#5D4037" }   // Café oscuro
-            },
-            ShowScale = false 
-        },
-
-        // X constante : 1 adelante
-        new Surface
-        {
-            X = y_1,
-            Y = x,
-            Z = z,
-            //SurfaceColor = color,
-            //ColorScale = "Rainbow",
-            SurfaceColor = y_1,
-            ColorScale = new object[]
-            {
-                new object[] { 0, "#3E2723" },  // Café muy oscuro
-                new object[] { 1, "#5D4037" }   // Café oscuro
-            },
-            ShowScale = false
-        },
-
-        // Z constante : 0 detras
-        new Surface
-        {
-            X = x,
-            Y = z,
-            Z = y_0,
-            //SurfaceColor = color,
-            //ColorScale = "Rainbow",
-            SurfaceColor = y_1,
-            ColorScale = new object[]
-            {
-                new object[] { 0, "#3E2723" },  // Café muy oscuro
-                new object[] { 1, "#5D4037" }   // Café oscuro
-            },
-            ShowScale = false
-
-        },
-
-        // X constante : 0 detras
-        new Surface
-        {
-            X = y_0,
-            Y = x,
-            Z = z,
-            //SurfaceColor = color,
-            //ColorScale = "Rainbow",
-            SurfaceColor = y_1,
-            ColorScale = new object[]
-            {
-                new object[] { 0, "#3E2723" },  // Café muy oscuro
-                new object[] { 1, "#5D4037" }   // Café oscuro
-            },
-            ShowScale = false
-
-        
-        },
-
-        // Y constante : 0 detras
-        new Surface
-        {
-            X = x,
-            Y = y_0,
-            Z = z,
-            //SurfaceColor = color,
-            //ColorScale = "Rainbow",
-            SurfaceColor = y_1,
-            ColorScale = new object[]
-            {
-                new object[] { 0, "#3E2723" },  // Café muy oscuro
-                new object[] { 1, "#5D4037" }   // Café oscuro
-            },
-            ShowScale = false
-
-        },
-
-    };
-
-    private async Task ToggleBootstrapCollapse(string elementid)
-
-    {
-        await JS.InvokeVoidAsync("bootstrapInterop.toggleBootstrapCollapse", elementid);
-    }
+        await JS.InvokeVoidAsync("bootstrapInterop.toggleBootstrapCollapse", elementid);
+    }
 
 }

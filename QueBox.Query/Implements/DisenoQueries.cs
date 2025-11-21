@@ -16,6 +16,19 @@ namespace QueBox.Query
         {
             _connection = connection;
         }
+        public async Task ActualizarAsync(Diseno diseno)
+        {
+            const string query = @"
+        UPDATE Diseno 
+        SET 
+            Largo = @Largo, 
+            Alto = @Alto, 
+            Ancho = @Ancho
+        WHERE 
+            Id_Diseno = @Id_Diseno";
+
+            await _connection.ExecuteAsync(query, diseno);
+        }
 
         public async Task<Diseno> ObtenerPorIdAsync(int id)
         {

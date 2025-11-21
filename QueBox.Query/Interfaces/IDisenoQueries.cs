@@ -13,5 +13,6 @@ namespace QueBox.Query.Interfaces
         Task<Diseno> ObtenerDisenoCompletoAsync(int id);
         Task<int> ContarDisenoPorUsuarioAsync(int idUsuario);
         Task<IEnumerable<Diseno>> ObtenerDisenosRecientesAsync(int limite);
+        Task ActualizarAsync(Diseno diseno);
     }
 }

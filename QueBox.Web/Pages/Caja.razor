@@ -345,98 +345,97 @@
 
     // Using of the interface IList is important for the event callback!
     IList<ITrace> data = new List<ITrace>
- {
+    {
 
         // Y constante : 1 adelante
         new Surface
-  {
-   X = x,
-   Y = y_1,
-   Z = z,
+        {
+            X = x,
+            Y = y_1,
+            Z = z,
             //SurfaceColor = color,
             //ColorScale = "Rainbow",
             SurfaceColor = y_1,
-   ColorScale = new object[]
-   {
-    new object[] { 0, "#3E2723" },  // Café muy oscuro
-                new object[] { 1, "#5D4037" }   // Café oscuro
+            ColorScale = new object[]
+            {
+            new object[] { 0, "#3E2723" },  // Café muy oscuro
+                        new object[] { 1, "#5D4037" }   // Café oscuro
             },
-   ShowScale = false
-  },
+            ShowScale = false
+        },
 
         // X constante : 1 adelante
         new Surface
-  {
-   X = y_1,
-   Y = x,
-   Z = z,
+        {
+            X = y_1,
+            Y = x,
+            Z = z,
             //SurfaceColor = color,
             //ColorScale = "Rainbow",
             SurfaceColor = y_1,
-   ColorScale = new object[]
-   {
-    new object[] { 0, "#3E2723" },  // Café muy oscuro
-                new object[] { 1, "#5D4037" }   // Café oscuro
+            ColorScale = new object[]
+            {
+            new object[] { 0, "#3E2723" },  // Café muy oscuro
+                        new object[] { 1, "#5D4037" }   // Café oscuro
             },
-   ShowScale = false
-  },
+            ShowScale = false
+        },
 
         // Z constante : 0 detras
         new Surface
-  {
-   X = x,
-   Y = z,
-   Z = y_0,
+        {
+            X = x,
+            Y = z,
+            Z = y_0,
             //SurfaceColor = color,
             //ColorScale = "Rainbow",
             SurfaceColor = y_1,
-   ColorScale = new object[]
-   {
-    new object[] { 0, "#3E2723" },  // Café muy oscuro
-                new object[] { 1, "#5D4037" }   // Café oscuro
+            ColorScale = new object[]
+            {
+            new object[] { 0, "#3E2723" },  // Café muy oscuro
+                        new object[] { 1, "#5D4037" }   // Café oscuro
             },
-   ShowScale = false
+            ShowScale = false
 
-  },
+        },
 
         // X constante : 0 detras
         new Surface
-  {
-   X = y_0,
-   Y = x,
-   Z = z,
+        {
+            X = y_0,
+            Y = x,
+            Z = z,
             //SurfaceColor = color,
             //ColorScale = "Rainbow",
             SurfaceColor = y_1,
-   ColorScale = new object[]
-   {
-    new object[] { 0, "#3E2723" },  // Café muy oscuro
-                new object[] { 1, "#5D4037" }   // Café oscuro
+            ColorScale = new object[]
+            {
+            new object[] { 0, "#3E2723" },  // Café muy oscuro
+                        new object[] { 1, "#5D4037" }   // Café oscuro
             },
-   ShowScale = false
+            ShowScale = false
 
-
-  },
+        },
 
         // Y constante : 0 detras
         new Surface
-  {
-   X = x,
-   Y = y_0,
-   Z = z,
+        {
+            X = x,
+            Y = y_0,
+            Z = z,
             //SurfaceColor = color,
             //ColorScale = "Rainbow",
             SurfaceColor = y_1,
-   ColorScale = new object[]
-   {
-    new object[] { 0, "#3E2723" },  // Café muy oscuro
-                new object[] { 1, "#5D4037" }   // Café oscuro
+            ColorScale = new object[]
+            {
+            new object[] { 0, "#3E2723" },  // Café muy oscuro
+                        new object[] { 1, "#5D4037" }   // Café oscuro
             },
-   ShowScale = false
+            ShowScale = false
 
-  },
+        },
 
- };
+    };
 
     private async Task ToggleBootstrapCollapse(string elementid)
 

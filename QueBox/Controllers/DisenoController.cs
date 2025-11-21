@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using QueBox.Contexts;
 using QueBox.Models;
 using QueBox.Query.Interfaces;
@@ -59,7 +60,6 @@ namespace QueBox.Controllers
             try
             {
                 var rsDapper = await _disenoQueries.ObtenerPorUsuarioAsync(idUsuario);
-
                 return Ok(rsDapper);
             }
             catch (Exception ex)
@@ -76,24 +76,21 @@ namespace QueBox.Controllers
         /// <response code="200">Cuando se encuentra el diseño</response>
         /// <response code="404">El diseño no existe</response>
         /// <response code="500">Error procesando la petición</response>
-        [HttpGet("ById/{id}")]
+
+        [HttpGet("{id:int}")]
         [ProducesResponseType(typeof(Diseno), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> BuscarById(int id)
         {
-            _logger.LogInformation("Buscando diseño por id -> {0}", id);
-            Diseno? d = await Task.Run(() => _db.Disenos.FirstOrDefault(f => f.Id_Diseno == id));
+            _logger.LogInformation("Buscando diseño por id (Query) -> {0}", id);
+            Diseno? d = await _disenoQueries.ObtenerPorIdAsync(id);
 
             if (d == null)
             {
                 _logger.LogWarning("Diseño no encontrado en la base de datos");
                 return NotFound("El diseño no existe");
             }
-
-            _logger.LogInformation("Diseño encontrado. id usuario ->{0}, Largo -> {1}, Alto -> {2}, Ancho -> {3},Nombre -> {4}, ",
-                d.Id_Usuario, d.Largo, d.Alto, d.Ancho, d.Nombre);
-
             return Ok(d);
         }
 
@@ -140,7 +137,6 @@ namespace QueBox.Controllers
             }
         }
 
-
         /// <summary>
         /// Actualizar diseno
         /// </summary>
@@ -159,7 +155,6 @@ namespace QueBox.Controllers
                         return Ok(d);
                     else
                         return StatusCode(StatusCodes.Status500InternalServerError);
-
                 }
                 else
                 {
@@ -172,6 +167,5 @@ namespace QueBox.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al actualizar el diseño");
             }
         }
-
     }
 }

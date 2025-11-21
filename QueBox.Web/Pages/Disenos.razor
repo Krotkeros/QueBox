@@ -2,12 +2,12 @@
 @using QueBox.Services
 @using QueBox.Models
 @using Microsoft.AspNetCore.Components.Authorization
-@using System.Security.Claims 
+@using System.Security.Claims
 @attribute [Authorize(Policy = "AuthenticatedUser")]
 
 @inject DisenoService DisenoService
 @inject IJSRuntime JS
-@inject AuthenticationStateProvider AuthStateProvider // <-- AGREGADO: Para obtener el ID del usuario
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Disenos</PageTitle>
 
@@ -40,8 +40,8 @@
                 {
                     <tr>
                         <td>
-                            <NavLink class="link" href="Diseno">
-                                <span class="mb-2" aria-hidden="true"></span> @diseno.Nombre
+                            <NavLink class="link" href="@($"/caja/{diseno.Id_Diseno}")">
+                                @diseno.Nombre
                             </NavLink>
                         </td>
                         <td>
@@ -94,9 +94,9 @@
     private Diseno? editingDiseno;
     private bool isLoading = true;
     private string modalTitle = "Nuevo Diseno";
-    
-    // Almacena el ID del usuario autenticado para usarlo en las peticiones.
-    private string? userId; 
+
+    // Almacena el ID del usuario autenticado para usarlo en las peticiones.
+    private string? userId;
 
     private async Task ShowModal()
     {
@@ -108,23 +108,21 @@
         await JS.InvokeVoidAsync("bootstrapInterop.hideModal", "postModal");
     }
 
-    // --- CAMBIO CLAVE: Obtener el userId y filtrar la lista ---
-    protected override async Task OnInitializedAsync()
+    // Obtener el userId y filtrar la lista 
+    protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        // 1. Extraer el Claim NameIdentifier (ID del usuario)
-        userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //Extraer el Claim NameIdentifier (ID del usuario)
+        userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         if (string.IsNullOrEmpty(userId))
         {
-            // En teoría, @Authorize impide esto, pero es buen manejo de error.
             disenos = new List<Diseno>();
         }
         else
         {
-            // 2. Pasar el userId al servicio (que a su vez lo envía al API Controller)
             try
             {
                 disenos = (await DisenoService.GetDisenosAsync(userId))?.ToList() ?? new List<Diseno>();
@@ -138,22 +136,19 @@
         isLoading = false;
     }
 
-    // --- CAMBIO CLAVE: Asignar el userId al nuevo diseño ---
     private async void NewDiseno()
     {
         if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int idUsuario))
         {
-            // No se puede crear si no tenemos un ID de usuario válido
             Console.WriteLine("Error: El usuario no está autenticado o el ID es inválido.");
             return;
         }
 
-        // 1. Crea la instancia del nuevo diseño
-        editingDiseno = new Diseno 
-        { 
-            Id_Usuario = idUsuario // <-- USA EL ID REAL DEL USUARIO LOGUEADO
-        }; 
-        
+        editingDiseno = new Diseno
+        {
+            Id_Usuario = idUsuario
+        };
+
         modalTitle = "Nuevo Diseno";
         await ShowModal();
         StateHasChanged();
@@ -162,7 +157,6 @@
 
     private async void EditDiseno(Diseno diseno)
     {
-        // Se crea una copia de la instancia antes de editar
         editingDiseno = new Diseno
         {
             Id_Diseno = diseno.Id_Diseno,
@@ -182,7 +176,6 @@
         if (editingDiseno == null)
             return;
 
-        // Si es un diseño nuevo (Id_Diseno == 0), el Id_Usuario ya fue asignado en NewDiseno().
         if (editingDiseno.Id_Diseno == 0)
         {
             var created = await DisenoService.CreateDisenoAsync(editingDiseno);

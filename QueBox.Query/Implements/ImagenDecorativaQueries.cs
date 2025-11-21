@@ -1,4 +1,4 @@
-﻿﻿using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,10 +18,20 @@ namespace QueBox.Query
             _connection = connection;
         }
 
+        public async Task<IEnumerable<ImagenDecorativa>> ObtenerPorDisenoAsync(int idDiseno)
+        {
+            const string sql = @"
+                SELECT i.* FROM ImagenDecorativa i
+                INNER JOIN Capa c ON i.Id_Capa = c.Id_Capa
+                WHERE c.Id_Diseno = @IdDiseno";
+
+            return await _connection.QueryAsync<ImagenDecorativa>(sql, new { IdDiseno = idDiseno });
+        }
+
         public async Task<ImagenDecorativa> ObtenerPorIdAsync(int id)
         {
             const string query = @"
-                SELECT Id_Img, Url, Ancho, Alto
+                SELECT Id_Img, Url, Ancho, Alto, Id_Capa
                 FROM ImagenDecorativa
                 WHERE Id_Img = @Id";
 
@@ -77,27 +87,19 @@ namespace QueBox.Query
                     if (!imagenDictionary.TryGetValue(imagen.Id_Img, out var imagenEntry))
                     {
                         imagenEntry = imagen;
-                        imagenEntry.Id_Capa = capa.Id_Capa;
+                        if (capa != null)
+                        {
+                            imagenEntry.Id_Capa = capa.Id_Capa;
+                        }
                         imagenDictionary.Add(imagenEntry.Id_Img, imagenEntry);
                     }
 
                     return imagenEntry;
                 },
-                splitOn: "Id_Capa"
+                splitOn: "Numero"
             );
 
             return imagenDictionary.Values;
         }
-
-        /*
-        public async Task<int> ContarCapasPorImagenAsync(int id_Img)
-        {
-            const string query = @"
-                SELECT COUNT(*)
-                FROM Capa
-                WHERE Id_Img = @Id_Img";
-
-            return await _connection.ExecuteScalarAsync<int>(query, new { Id_Img = id_Img });
-        }*/
     }
 }

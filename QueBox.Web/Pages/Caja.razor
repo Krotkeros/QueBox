@@ -1,6 +1,9 @@
-﻿@page "/caja"
+﻿@page "/caja/{IdDiseno:int?}"
 @using QueBox.Services
 @using QueBox.Models
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components
 
 
 @inject DisenoService DisenoService
@@ -9,48 +12,56 @@
 @inject Mathy Mathy
 
 @inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthStateProvider
 
 @using Plotly.Blazor
 @using Plotly.Blazor.Traces
 @using Plotly.Blazor.LayoutLib
 
-
 <PageTitle>Diseno</PageTitle>
 
 <main>
 
-    <!-- Codigo form de arriba    -->
-
-    <EditForm class="row g-3" Model="@editingDiseno" OnValidSubmit="SaveDiseno">
-
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div class="col-md-4 mb-3">
-            <label for="largo" class="form-label">Largo:</label>
-            <InputNumber TValue="float" @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
+    @if (editingDiseno == null)
+    {
+        <div class="alert alert-info">
+            No hay diseños disponibles para mostrar o el diseño solicitado no existe.
         </div>
+    }
+    else
+    {
+        <EditForm Model="@editingDiseno" OnValidSubmit="SaveDiseno">
 
-        <div class="col-md-4">
-            <label for="alto" class="form-label">Alto:</label>
-            <InputNumber TValue="float" @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
-        </div>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-        <div class="col-md-4">
-            <label for="ancho" class="form-label">Ancho:</label>
-            <InputNumber TValue="float" @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
-        </div>
+            <div class="row g-3 align-items-end mb-3">
+                <div class="col-md-3">
+                    <label for="largo" class="form-label">Largo:</label>
+                    <InputNumber TValue="float" @bind-Value="editingDiseno.Largo" id="largo" class="form-control" />
+                </div>
 
-        <button class="row col-md-3 btn btn-primary mx-auto" type="submit">Que Caja!</button>
+                <div class="col-md-3">
+                    <label for="alto" class="form-label">Alto:</label>
+                    <InputNumber TValue="float" @bind-Value="editingDiseno.Alto" id="alto" class="form-control" />
+                </div>
 
-    </EditForm>
+                <div class="col-md-3">
+                    <label for="ancho" class="form-label">Ancho:</label>
+                    <InputNumber TValue="float" @bind-Value="editingDiseno.Ancho" id="ancho" class="form-control" />
+                </div>
 
-    <!-- Codigo form de izquierda -->
-    <div class="row g-3">
+                <div class="col-md-3">
+                    <button class="btn btn-primary w-100" type="submit">Que Caja!</button> 
+                </div>
+            </div>
 
+        </EditForm>
+
+        <div class="row g-3">
             @if (isLoading)
             {
-            <p class=" mb-3 col-md-6">Cargando capas...</p>
+                <p class=" mb-3 col-md-6">Cargando capas...</p>
             }
             else
             {
@@ -67,24 +78,26 @@
                             </h5>
                         </div>
 
-                        <div id="@capa.Numero">
-                            <div class="card-body">
-                                @foreach (var imagenDecorativa in imagenDecorativas)
-                                {
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5 class="mb-0">
-                                                <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(imagenDecorativa.Url)">
-                                                    La imagen @imagenDecorativa.Id_Img
-                                                </button>
-                                            </h5>
-                                        </div>
+                            <div id="@capa.Numero">
+                                <div class="card-body">
 
-                                        <div id="@imagenDecorativa.Url">
-                                                <!-- Form imagenes -->
-                                            <EditForm class="card-body" Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">
-                                                <DataAnnotationsValidator />
-                                                <ValidationSummary />
+                                    @foreach (var imagenDecorativa in imagenDecorativas.Where(i => i.Id_Capa == capa.Id_Capa))
+
+                                    {
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">
+                                                    <button class="accordion-button collapsed" @onclick="() => ToggleBootstrapCollapse(imagenDecorativa.Url)">
+                                                        La imagen @imagenDecorativa.Id_Img
+                                                    </button>
+                                                </h5>
+                                            </div>
+
+                                            <div id="@imagenDecorativa.Url">
+
+                                                <EditForm class="card-body" Model="@imagenDecorativa" OnValidSubmit="() => SaveImagenDecorativa(imagenDecorativa)">
+                                                    <DataAnnotationsValidator />
+                                                    <ValidationSummary />
 
                                                 <div class="mb-3">
                                                     <label for="id_Capa" class="form-label">Id_Capa:</label>
@@ -110,15 +123,12 @@
 
                                             </EditForm>
 
+                                            </div>
                                         </div>
-                                    </div>
-                                }
-                                @if (editingDiseno != null)
-                                {
-
-
-                                }
-                                <!-- Agregar aca el boton para mas imagenes -->
+                                    }
+                                    @if (editingDiseno != null)
+                                    {
+                                    }
 
                             </div>
                         </div>
@@ -128,121 +138,151 @@
 
             }
 
-        @if (data != null)
-        {
-            <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
-        }
-        else
-        {
-            <h5 class="col-md-6">No data.</h5>
-        }
-    </div>
-   
+            @if (data != null)
+            {
+                <PlotlyChart class="col-md-6" @bind-Config="config" @bind-Layout="layout" @bind-Data="data" @ref="chart" />
+            }
+            else
+            {
+                <h5 class="col-md-6">No data.</h5>
+            }
+        </div>
+    }
 
-    
 </main>
-
 
 @code {
 
-    // Definir datos
 
     private List<Diseno> disenos = new();
     private Diseno? editingDiseno;
     private List<Capa> capas = new();
     private List<ImagenDecorativa> imagenDecorativas = new();
     private ImagenDecorativa? editingImagenDecorativa;
-
     private bool isLoading = true;
 
+    [Parameter]
 
-    // Ejecutables al iniciar
+    public int? IdDiseno { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        editingDiseno = new Diseno();
-        editingImagenDecorativa = new ImagenDecorativa();
-        imagenDecorativas = (await ImagenDecorativaService.GetImagenDecorativasAsync())?.ToList() ?? new List<ImagenDecorativa>();
-        capas = (await CapaService.GetCapasAsync())?.ToList() ?? new List<Capa>();
-
-        isLoading = false;
-    }
-
-    private async Task NewDiseno()
-    {
-
-        editingDiseno = new Diseno { Id_Usuario = 1 };
-        StateHasChanged();
-        await Task.CompletedTask;
-    }
-
-
-    // Guardar diseno
-
-    private async Task SaveDiseno()
-    {
-        if (editingDiseno == null)
-            return;
-
-        // Ya el diseno deberia estar creado
-
-        // if (editingDiseno.Id_Diseno == 0)
-        // {
-        //    var created = await DisenoService.CreateDisenoAsync(editingDiseno);
-        //    if (created != null)
-        //        disenos.Insert(0, created);
-        //}
-
-        else
-        {
-            await DisenoService.UpdateDisenoAsync(editingDiseno);
-            var index = disenos.FindIndex(d => d.Id_Diseno == editingDiseno.Id_Diseno);
-            if (index >= 0)
-                disenos[index] = editingDiseno;
-        }
-
         editingDiseno = null;
-        StateHasChanged();
-    }
+        editingImagenDecorativa = new ImagenDecorativa();
+        int disenoIdToLoad = 0;
 
+        // Obtener la ID del usuario autenticado
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-    // Guardar imagenDecorativa
-
-
-    private async Task SaveImagenDecorativa(ImagenDecorativa editingImagenDecorativa)
-    {
-        if (editingImagenDecorativa == null)
-            return;
-
-        if (editingImagenDecorativa.Id_Img == 0)
+        if (string.IsNullOrEmpty(userId))
         {
-            var created = await ImagenDecorativaService.CreateImagenDecorativaAsync(editingImagenDecorativa);
-            if (created != null)
-                imagenDecorativas.Insert(0, created);
-        }
+            isLoading = false;
+            return; // No hay usuario logueado
+        }
 
+        // Lógica para determinar el ID a cargar
+        if (IdDiseno.HasValue && IdDiseno.Value > 0)
+        {
+            // Opción A: Se proporcionó una ID válida en la URL
+            disenoIdToLoad = IdDiseno.Value;
+        }
         else
         {
-            await ImagenDecorativaService.UpdateImagenDecorativaAsync(editingImagenDecorativa);
-            var index = imagenDecorativas.FindIndex(d => d.Id_Img == editingImagenDecorativa.Id_Img);
-            if (index >= 0)
-                imagenDecorativas[index] = editingImagenDecorativa;
+            // Opción B: No se proporcionó ID -> Cargar el primer diseño del usuario
+            disenos = (await DisenoService.GetDisenosAsync(userId))?.ToList() ?? new List<Diseno>();
+            if (disenos.Any())
+            {
+                disenoIdToLoad = disenos.First().Id_Diseno;
+                editingDiseno = disenos.First();
+            }
         }
 
-        StateHasChanged();
-    }
-
-    // Actualizar data ImagenDecorativa
-
-    // Chart
-    PlotlyChart chart;
-
-    Config config = new Config();
-    Layout layout = new Layout()
+        // Cargar datos si se ha encontrado un ID
+        if (disenoIdToLoad > 0)
         {
-        Width = 890,
-        Height = 750
-    };
+            // Si no se asignó en el paso anterior (caso B), lo obtiene ahora (caso A)
+            if (editingDiseno == null)
+            {
+                editingDiseno = await DisenoService.GetDisenoByIdAsync(disenoIdToLoad);
+            }
+            
+            capas = (await CapaService.GetCapasByDisenoAsync(disenoIdToLoad))?.ToList() ?? new List<Capa>();
+            imagenDecorativas = (await ImagenDecorativaService.GetImagenDecorativasByDisenoAsync(disenoIdToLoad))?.ToList() ?? new List<ImagenDecorativa>();
+        }
+        else
+        {
+            // Si no se encuentra un diseño para cargar, asegurar que las listas estén vacías
+            capas = new List<Capa>();
+            imagenDecorativas = new List<ImagenDecorativa>();
+        }
+        isLoading = false;
+    }
+
+    private async Task NewDiseno()
+    {
+
+        editingDiseno = new Diseno { Id_Usuario = 1 };
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+
+    // Guardar diseno
+
+    private async Task SaveDiseno()
+    {
+        if (editingDiseno == null)
+            return;
+
+
+
+        if (editingDiseno.Id_Diseno > 0)
+
+        {
+            await DisenoService.UpdateDisenoAsync(editingDiseno);
+        }
+
+        StateHasChanged();
+    }
+
+    // Guardar imagenDecorativa
+
+    private async Task SaveImagenDecorativa(ImagenDecorativa editingImagenDecorativa)
+    {
+        if (editingImagenDecorativa == null)
+            return;
+
+        if (editingImagenDecorativa.Id_Img == 0)
+        {
+            var created = await ImagenDecorativaService.CreateImagenDecorativaAsync(editingImagenDecorativa);
+            if (created != null)
+                imagenDecorativas.Insert(0, created);
+        }
+
+        else
+        {
+            await ImagenDecorativaService.UpdateImagenDecorativaAsync(editingImagenDecorativa);
+            var index = imagenDecorativas.FindIndex(d => d.Id_Img == editingImagenDecorativa.Id_Img);
+           if (index >= 0)
+                imagenDecorativas[index] = editingImagenDecorativa;
+        }
+
+        StateHasChanged();
+    }
+
+    // Actualizar data ImagenDecorativa
+
+    // Chart
+    PlotlyChart chart;
+
+    Config config = new Config();
+    Layout layout = new Layout()
+    {
+        Width = 890,
+        Height = 750
+    };
 
     static List<object> xCoords = Mathy.LinspaceList(0, 1, 128);
 
@@ -307,7 +347,7 @@
             },
             ShowScale = false
 
-        },
+        },
 
         // X constante : 0 detras
         new Surface
@@ -348,11 +388,10 @@
 
     };
 
-    // Toggle function
+    private async Task ToggleBootstrapCollapse(string elementid)
 
-    private async Task ToggleBootstrapCollapse(string elementid)
-    {
-        await JS.InvokeVoidAsync("bootstrapInterop.toggleBootstrapCollapse", elementid);
-    }
+    {
+        await JS.InvokeVoidAsync("bootstrapInterop.toggleBootstrapCollapse", elementid);
+    }
 
 }

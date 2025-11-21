@@ -8,8 +8,8 @@ namespace QueBox.Query.Interfaces
     {
         Task<Capa> ObtenerPorIdAsync(int id);
         Task<IEnumerable<Capa>> ObtenerPorImagenDecorativaAsync(int Id_Img);
+        Task<IEnumerable<Capa>> ObtenerPorDisenoAsync(int idDiseno);
         Task<IEnumerable<Capa>> ObtenerTodasAsync();
-        //Task<int> ObtenerNumeroPorImagenAsync(int Id_Img, int numero);
         Task<IEnumerable<Capa>> ObtenerCapasDisponiblesAsync();
 
     }

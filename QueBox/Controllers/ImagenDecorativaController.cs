@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using QueBox.Contexts;
 using QueBox.Models;
 using QueBox.Query.Interfaces;
-using QueBox.Repository.Implements;
 using QueBox.Repository.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace QueBox.Controllers
 {
@@ -33,27 +34,36 @@ namespace QueBox.Controllers
         }
 
         /// <summary>
-        /// Metodo que lista todas las imagenes decorativas
+        /// Metodo que lista todas las imagenes decorativas o las filtra por Id_Diseno
         /// </summary>
+        /// <param name="disenoId">ID opcional del diseño para filtrar las imágenes.</param>
         /// <response code="200">Lista de imagenes decorativas</response>
         /// <response code="500">Error procesando la peticion</response>
         [HttpGet]
         [ProducesResponseType(typeof(List<ImagenDecorativa>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ListarImagenDecorativa()
+        public async Task<IActionResult> ListarImagenDecorativa([FromQuery] int? disenoId)
         {
-            //var rs = _db.ImagenDecorativas.ToList();
-            var rsDapper = await _imagenDecorativaQueries.ObtenerTodasAsync();
+            IEnumerable<ImagenDecorativa> rsDapper;
+
+            if (disenoId.HasValue && disenoId.Value > 0)
+            {
+                _logger.LogInformation("Listando imágenes decorativas filtradas por Id_Diseno: {0}", disenoId.Value);
+                rsDapper = await _imagenDecorativaQueries.ObtenerPorDisenoAsync(disenoId.Value);
+            }
+            else
+            {
+                _logger.LogInformation("Listando todas las imágenes decorativas (sin filtro).");
+                rsDapper = await _imagenDecorativaQueries.ObtenerTodasAsync();
+            }
+
             return Ok(rsDapper);
         }
 
         /// <summary>
         /// Buscar imagenDecorativa por id
         /// </summary>
-        /// <param name="id">Id imagenDecorativa a buscar</param>
-        /// <response code="200">Cuando se encuentra la imagenDecorativa</response>
-        /// <response code="404">la ImagenDecorativa no existe</response>
-        /// <response code="500">Error procesando la peticion</response>
+        // ... (resto de métodos BuscarById, Add, Delete, Update permanecen iguales)
 
         [HttpGet("ById/{id}")]
         [ProducesResponseType(typeof(ImagenDecorativa), StatusCodes.Status200OK)]

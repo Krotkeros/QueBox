@@ -371,19 +371,58 @@
                 {
 
                     if (imagenDecorativa != null && !string.IsNullOrEmpty(imagenDecorativa.Url) && imagenDecorativa.Url != "default.png")
-                    
+
                     {
                         Mathy mathy = new Mathy();
 
-                        List<Object> color = await mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
+                        List<Object> colorData = await Mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
 
+                        int filas = 0;
+                        int columnas = 0;
+
+                        if (colorData != null && colorData.Count > 0)
+                        {
+                            // 1. Obtener el número de filas (Height)
+                            filas = colorData.Count;
+
+                            // 2. Intentar castear el primer elemento (la primera fila) a una lista
+                            // para obtener el número de columnas (Width).
+                            if (colorData[0] is List<Object> primeraFila)
+                            {
+                                columnas = primeraFila.Count;
+                            }
+                            // Alternativamente, si sabes que el tipo interno es List<double> o similar:
+                            else if (colorData[0] is List<double> primeraFilaDouble)
+                            {
+                                columnas = primeraFilaDouble.Count;
+                            }
+                        }
+
+                        // Aquí, 'filas' contendrá el número de filas y 'columnas' el número de columnas.
+                        // En tu caso de Plotly, ambas deberían ser 128.
+
+                        float margin_x = editingDiseno.Largo / 3;
+                        float margin_y = editingDiseno.Largo / 3;
+
+
+                        List<object> yCoordsImg = Mathy.LinspaceList(0, editingDiseno.Ancho, filas);
+                        List<object> zCoordsImg = Mathy.LinspaceList(0, editingDiseno.Alto, columnas);
+
+                        Tuple<List<object>, List<object>> meshImg = Mathy.CreateMeshGrid(yCoordsImg, zCoordsImg);
+
+
+                        List<object> yImg = meshImg.Item1;
+                        List<object> zImg = meshImg.Item2;
+
+
+                        List<object> x_1Img = Mathy.CreateAsymetricListOfListOfValCapacity(filas, columnas, 1);
 
                         Surface mySurfaceImage = new Surface
                         {
-                            X = x_1,
-                            Y = y,
-                            Z = z,
-                            SurfaceColor = color,
+                            X = x_1Img,
+                            Y = yImg,
+                            Z = zImg,
+                            SurfaceColor = colorData,
                             ColorScale = "Greys",
                             ShowScale = false
                         };
@@ -425,15 +464,54 @@
                     {
                         Mathy mathy = new Mathy();
 
-                        List<Object> color = await mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
+                        List<Object> colorData = await Mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
 
+                        int filas = 0;
+                        int columnas = 0;
+
+                        if (colorData != null && colorData.Count > 0)
+                        {
+                            // 1. Obtener el número de filas (Height)
+                            filas = colorData.Count;
+
+                            // 2. Intentar castear el primer elemento (la primera fila) a una lista
+                            // para obtener el número de columnas (Width).
+                            if (colorData[0] is List<Object> primeraFila)
+                            {
+                                columnas = primeraFila.Count;
+                            }
+                            // Alternativamente, si sabes que el tipo interno es List<double> o similar:
+                            else if (colorData[0] is List<double> primeraFilaDouble)
+                            {
+                                columnas = primeraFilaDouble.Count;
+                            }
+                        }
+
+                        // Aquí, 'filas' contendrá el número de filas y 'columnas' el número de columnas.
+                        // En tu caso de Plotly, ambas deberían ser 128.
+
+                        float margin_x = editingDiseno.Largo / 3;
+                        float margin_y = editingDiseno.Largo / 3;
+
+
+                        List<object> yCoordsImg = Mathy.LinspaceList(0, editingDiseno.Ancho, filas);
+                        List<object> zCoordsImg = Mathy.LinspaceList(0, editingDiseno.Alto, columnas);
+
+                        Tuple<List<object>, List<object>> meshImg = Mathy.CreateMeshGrid(yCoordsImg, zCoordsImg);
+
+
+                        List<object> yImg = meshImg.Item1;
+                        List<object> zImg = meshImg.Item2;
+
+
+                        List<object> x_0Img = Mathy.CreateAsymetricListOfListOfValCapacity(filas, columnas, 0);
 
                         Surface mySurfaceImage = new Surface
                         {
-                            X = x_0,
-                            Y = y,
-                            Z = z,
-                            SurfaceColor = color,
+                            X = x_0Img,
+                            Y = yImg,
+                            Z = zImg,
+                            SurfaceColor = colorData,
                             ColorScale = "Greys",
                             ShowScale = false
                         };
@@ -445,7 +523,7 @@
         }
     }
     // Los siguientes métodos permanecen SÍNCRONOS ya que no hacen llamadas a servicios asíncronos.
-    
+
     public async Task Create_surfaceY()
     {
         List<object> xCoords = Mathy.LinspaceList(0, editingDiseno.Largo, 2);
@@ -492,15 +570,54 @@
                     {
                         Mathy mathy = new Mathy();
 
-                        List<Object> color = await mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
+                        List<Object> colorData = await Mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
 
+                        int filas = 0;
+                        int columnas = 0;
+
+                        if (colorData != null && colorData.Count > 0)
+                        {
+                            // 1. Obtener el número de filas (Height)
+                            filas = colorData.Count;
+
+                            // 2. Intentar castear el primer elemento (la primera fila) a una lista
+                            // para obtener el número de columnas (Width).
+                            if (colorData[0] is List<Object> primeraFila)
+                            {
+                                columnas = primeraFila.Count;
+                            }
+                            // Alternativamente, si sabes que el tipo interno es List<double> o similar:
+                            else if (colorData[0] is List<double> primeraFilaDouble)
+                            {
+                                columnas = primeraFilaDouble.Count;
+                            }
+                        }
+
+                        // Aquí, 'filas' contendrá el número de filas y 'columnas' el número de columnas.
+                        // En tu caso de Plotly, ambas deberían ser 128.
+
+                        float margin_x = editingDiseno.Largo / 3;
+                        float margin_y = editingDiseno.Largo / 3;
+
+
+                        List<object> xCoordsImg = Mathy.LinspaceList(0, editingDiseno.Largo, filas);
+                        List<object> zCoordsImg = Mathy.LinspaceList(0, editingDiseno.Alto, columnas);
+
+                        Tuple<List<object>, List<object>> meshImg = Mathy.CreateMeshGrid(xCoordsImg, zCoordsImg);
+
+
+                        List<object> xImg = meshImg.Item1;
+                        List<object> zImg = meshImg.Item2;
+
+
+                        List<object> y_1Img = Mathy.CreateAsymetricListOfListOfValCapacity(filas, columnas, 1);
 
                         Surface mySurfaceImage = new Surface
                         {
-                            X = x,
-                            Y = y_1,
-                            Z = z,
-                            SurfaceColor = color,
+                            X = xImg,
+                            Y = y_1Img,
+                            Z = zImg,
+                            SurfaceColor = colorData,
                             ColorScale = "Greys",
                             ShowScale = false
                         };
@@ -543,15 +660,54 @@
                     {
                         Mathy mathy = new Mathy();
 
-                        List<Object> color = await mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
+                        List<Object> colorData = await Mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
 
+                        int filas = 0;
+                        int columnas = 0;
+
+                        if (colorData != null && colorData.Count > 0)
+                        {
+                            // 1. Obtener el número de filas (Height)
+                            filas = colorData.Count;
+
+                            // 2. Intentar castear el primer elemento (la primera fila) a una lista
+                            // para obtener el número de columnas (Width).
+                            if (colorData[0] is List<Object> primeraFila)
+                            {
+                                columnas = primeraFila.Count;
+                            }
+                            // Alternativamente, si sabes que el tipo interno es List<double> o similar:
+                            else if (colorData[0] is List<double> primeraFilaDouble)
+                            {
+                                columnas = primeraFilaDouble.Count;
+                            }
+                        }
+
+                        // Aquí, 'filas' contendrá el número de filas y 'columnas' el número de columnas.
+                        // En tu caso de Plotly, ambas deberían ser 128.
+
+                        float margin_x = editingDiseno.Largo / 3;
+                        float margin_y = editingDiseno.Largo / 3;
+
+
+                        List<object> xCoordsImg = Mathy.LinspaceList(0, editingDiseno.Largo, filas);
+                        List<object> zCoordsImg = Mathy.LinspaceList(0, editingDiseno.Alto, columnas);
+
+                        Tuple<List<object>, List<object>> meshImg = Mathy.CreateMeshGrid(xCoordsImg, zCoordsImg);
+
+
+                        List<object> xImg = meshImg.Item1;
+                        List<object> zImg = meshImg.Item2;
+
+
+                        List<object> y_0Img = Mathy.CreateAsymetricListOfListOfValCapacity(filas, columnas, 0);
 
                         Surface mySurfaceImage = new Surface
                         {
-                            X = x,
-                            Y = y_0,
-                            Z = z,
-                            SurfaceColor = color,
+                            X = xImg,
+                            Y = y_0Img,
+                            Z = zImg,
+                            SurfaceColor = colorData,
                             ColorScale = "Greys",
                             ShowScale = false
                         };

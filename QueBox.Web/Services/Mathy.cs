@@ -79,6 +79,16 @@ namespace QueBox.Services
             return onesListList;
         }
 
+        public static List<object> CreateAsymetricListOfListOfValCapacity(int rows, int cols,float val)
+        {
+            List<object> onesList = new List<object>();
+            for (int i = 0; i < rows; i++) { onesList.Add(val); }
+            List<object> onesListList = new List<object>();
+            for (int i = 0; i < cols; i++) { onesListList.Add(onesList); }
+            return onesListList;
+        }
+
+
         public static List<object> CreateListOfListOfZerosCapacity(int count)
         {
             List<object> zerosList = new List<object>(count); 

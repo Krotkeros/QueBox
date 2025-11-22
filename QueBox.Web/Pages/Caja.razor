@@ -173,7 +173,7 @@
 
 
     IList<ITrace> data = new List<ITrace>();
-    
+
     // Las mallas deben ser inicializadas una sola vez, la lógica de Mathy estática es correcta para esto.
     static List<object> xCoords = Mathy.LinspaceList(0, 1, 128);
     static Tuple<List<object>, List<object>> mesh = Mathy.CreateMeshGrid(xCoords, xCoords);
@@ -324,7 +324,7 @@
         if (imagenAEliminar != null)
         {
             imagenDecorativas.Remove(imagenAEliminar);
-            
+
             // --- RECARGA GRÁFICO ---
             data.Clear();
             await Create_surfaceX(); 
@@ -337,66 +337,75 @@
     }
 
 
-    // MODIFICADO: Ahora es ASYNC TASK y usa la instancia inyectada 'Mathy'.
     public async Task Create_surfaceX()
     {
-        // Traza por defecto para la cara frontal (X=1, Capa 1)
-        var imagenCapa1 = imagenDecorativas.FirstOrDefault(i => i.Id_Capa == 1);
-
-        if (imagenCapa1 != null && !string.IsNullOrEmpty(imagenCapa1.Url) && imagenCapa1.Url != "default.png")
-        {
-            // OBTENER DATOS DE COLOR ASÍNCRONAMENTE (usando la instancia inyectada)
-            // Esto funcionará si Mathy.cs está usando SixLabors.ImageSharp
-            List<Object> colorData = await Mathy.GetGrayscalePixelsFromUrl(imagenCapa1.Url);
-
-            // Crear la superficie con la imagen
-            Surface mySurfaceImage = new Surface
+        // Capa 1
+        Surface mySurfaceXOne = new Surface
             {
-                X = y_1, // X=1
+                X = y_1,
                 Y = x,
                 Z = z,
-                SurfaceColor = colorData, // Datos de color de la imagen (debe ser List<List<double>>)
-                ColorScale = "Greys", // Usamos escala de grises para el color de la imagen
-                ShowScale = false
-            };
-            data.Add(mySurfaceImage);
-        }
-        else
-        {
-            // Superficie por defecto si no hay imagen en Capa 1
-            Surface mySurfaceXOne = new Surface
-            {
-                X = y_1, // X=1
-                Y = x,
-                Z = z,
-                SurfaceColor = y_1, // Color sólido por defecto
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+                SurfaceColor = y_1,
                 ColorScale = new object[]
                 {
-                    new object[] { 0, "#3E2723" },
-                    new object[] { 1, "#5D4037" }
-                },
+           new object[] { 0, "#3E2723" },  // Café muy oscuro
+                        new object[] { 1, "#5D4037" }   // Café oscuro
+                 },
                 ShowScale = false
             };
-            data.Add(mySurfaceXOne);
-        }
 
-        // Traza de Capa 3 (Cara trasera de la caja: X=0)
-        Surface mySurfaceXZero = new Surface
+        IEnumerable<Capa> capas1 = capas.Where(i => i.Id_Capa == 1);
+
+        if (capas1 != null)
         {
-            X = y_0, // X=0
-            Y = x,
-            Z = z,
-            SurfaceColor = y_1,
-            ColorScale = new object[]
+            foreach (var capa in capas1)
+
             {
-                new object[] { 0, "#3E2723" },
-                new object[] { 1, "#5D4037" }
-            },
-            ShowScale = false
-        };
-        data.Add(mySurfaceXZero);
+                foreach (var imagenDecorativa in imagenDecorativas.Where(i => i.Id_Capa == capa.Id_Capa))
+                {
+
+                    if (imagenDecorativa != null && !string.IsNullOrEmpty(imagenDecorativa.Url) && imagenDecorativa.Url != "default.png")
+                    
+                    {
+                        Mathy mathy = new Mathy();
+
+                        List<Object> color = await mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
+
+
+                        Surface mySurfaceImage = new Surface
+                        {
+                            X = y_1,
+                            Y = x,
+                            Z = z,
+                            SurfaceColor = color,
+                            ColorScale = "Greys",
+                            ShowScale = false
+                        };
+
+                        data.Add(mySurfaceImage);
+                    }
+                }
+            }
+        }
+        // Capa 3
+        Surface mySurfaceXZero = new Surface
+            {
+                X = y_0,
+                Y = x,
+                Z = z,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+                SurfaceColor = y_1,
+                ColorScale = new object[]
+                {
+           new object[] { 0, "#3E2723" },  // Café muy oscuro
+                        new object[] { 1, "#5D4037" }   // Café oscuro
+                 },
+                ShowScale = false
+            };
     }
-    
     // Los siguientes métodos permanecen SÍNCRONOS ya que no hacen llamadas a servicios asíncronos.
     
     public void Create_surfaceY()

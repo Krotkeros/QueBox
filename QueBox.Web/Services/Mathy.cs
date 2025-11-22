@@ -70,11 +70,11 @@ namespace QueBox.Services
             return Tuple.Create(X, Y);
         }
 
-        public static List<object> CreateListOfListOfOnesCapacity(int count)
+        public static List<object> CreateListOfListOfValCapacity(int count, float val)
         {
-            List<object> onesList = new List<object>(count); 
-            for (int i = 0; i < count; i++) { onesList.Add(1.0); }
-            List<object> onesListList = new List<object>(count); 
+            List<object> onesList = new List<object>(count);
+            for (int i = 0; i < count; i++) { onesList.Add(val); }
+            List<object> onesListList = new List<object>(count);
             for (int i = 0; i < count; i++) { onesListList.Add(onesList); }
             return onesListList;
         }

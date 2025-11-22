@@ -174,14 +174,6 @@
 
     IList<ITrace> data = new List<ITrace>();
 
-    // Las mallas deben ser inicializadas una sola vez, la lógica de Mathy estática es correcta para esto.
-    static List<object> xCoords = Mathy.LinspaceList(0, 1, 128);
-    static Tuple<List<object>, List<object>> mesh = Mathy.CreateMeshGrid(xCoords, xCoords);
-    static List<object> x = mesh.Item1;
-    static List<object> z = mesh.Item2;
-    static List<object> y_1 = Mathy.CreateListOfListOfOnesCapacity(128);
-    static List<object> y_0 = Mathy.CreateListOfListOfZerosCapacity(128);
-
     PlotlyChart chart;
 
     Config config = new Config();
@@ -339,15 +331,25 @@
 
     public async Task Create_surfaceX()
     {
+        List<object> yCoords = Mathy.LinspaceList(0, editingDiseno.Ancho, 2);
+        List<object> zCoords = Mathy.LinspaceList(0, editingDiseno.Alto, 2);
+
+        Tuple<List<object>, List<object>> mesh = Mathy.CreateMeshGrid(yCoords, zCoords);
+
+        List<object> y = mesh.Item1;
+        List<object> z = mesh.Item2;
+
+
+        List<object> x_1 = Mathy.CreateListOfListOfValCapacity(2, editingDiseno.Largo);
+        List<object> x_0 = Mathy.CreateListOfListOfZerosCapacity(2);
+
         // Capa 1
         Surface mySurfaceXOne = new Surface
             {
-                X = y_1,
-                Y = x,
+                X = x_1,
+                Y = y,
                 Z = z,
-            //SurfaceColor = color,
-            //ColorScale = "Rainbow",
-                SurfaceColor = y_1,
+                SurfaceColor = x_1,
                 ColorScale = new object[]
                 {
            new object[] { 0, "#3E2723" },  // Café muy oscuro
@@ -378,8 +380,8 @@
 
                         Surface mySurfaceImage = new Surface
                         {
-                            X = y_1,
-                            Y = x,
+                            X = x_1,
+                            Y = y,
                             Z = z,
                             SurfaceColor = color,
                             ColorScale = "Greys",
@@ -394,12 +396,10 @@
         // Capa 3
         Surface mySurfaceXZero = new Surface
             {
-                X = y_0,
-                Y = x,
+                X = x_0,
+                Y = y,
                 Z = z,
-            //SurfaceColor = color,
-            //ColorScale = "Rainbow",
-                SurfaceColor = y_1,
+                SurfaceColor = x_1,
                 ColorScale = new object[]
                 {
            new object[] { 0, "#3E2723" },  // Café muy oscuro
@@ -430,8 +430,8 @@
 
                         Surface mySurfaceImage = new Surface
                         {
-                            X = y_1,
-                            Y = x,
+                            X = x_0,
+                            Y = y,
                             Z = z,
                             SurfaceColor = color,
                             ColorScale = "Greys",
@@ -448,6 +448,18 @@
     
     public async Task Create_surfaceY()
     {
+        List<object> xCoords = Mathy.LinspaceList(0, editingDiseno.Largo, 2);
+        List<object> zCoords = Mathy.LinspaceList(0, editingDiseno.Alto, 2);
+
+        Tuple<List<object>, List<object>> mesh = Mathy.CreateMeshGrid(xCoords, zCoords);
+
+        List<object> x = mesh.Item1;
+        List<object> z = mesh.Item2;
+
+
+        List<object> y_1 = Mathy.CreateListOfListOfValCapacity(2, editingDiseno.Ancho);
+        List<object> y_0 = Mathy.CreateListOfListOfZerosCapacity(2);
+
         // Capa 2 (Y=1)
         Surface mySurfaceYOne = new Surface
         {
@@ -485,8 +497,8 @@
 
                         Surface mySurfaceImage = new Surface
                         {
-                            X = y_1,
-                            Y = x,
+                            X = x,
+                            Y = y_1,
                             Z = z,
                             SurfaceColor = color,
                             ColorScale = "Greys",
@@ -536,8 +548,8 @@
 
                         Surface mySurfaceImage = new Surface
                         {
-                            X = y_1,
-                            Y = x,
+                            X = x,
+                            Y = y_0,
                             Z = z,
                             SurfaceColor = color,
                             ColorScale = "Greys",
@@ -553,13 +565,25 @@
 
     public void Create_surfaceZ()
     {
+
+        List<object> xCoords = Mathy.LinspaceList(0, editingDiseno.Largo, 2);
+        List<object> yCoords = Mathy.LinspaceList(0, editingDiseno.Ancho, 2);
+
+        Tuple<List<object>, List<object>> mesh = Mathy.CreateMeshGrid(xCoords, yCoords);
+
+        List<object> x = mesh.Item1;
+        List<object> y = mesh.Item2;
+
+        List<object> z_0 = Mathy.CreateListOfListOfZerosCapacity(2);
+
+
         // Floor (Z=0)
         Surface mySurfaceZZero = new Surface
         {
             X = x,
-            Y = z,
-            Z = y_0,
-            SurfaceColor = y_1,
+            Y = y,
+            Z = z_0,
+            SurfaceColor = z_0,
             ColorScale = new object[]
             {
             new object[] { 0, "#3E2723" },

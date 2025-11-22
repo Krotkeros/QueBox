@@ -351,7 +351,7 @@
 
 
 
-    public void Create_surfaceX(List<Capa> capas)
+    public async Task Create_surfaceX(List<Capa> capas)
     {
         // Capa 1
         Surface mySurfaceXOne = new Surface
@@ -369,6 +369,7 @@
             },
             ShowScale = false
         };
+
         IEnumerable<Capa> capas1 = capas.Where(i => i.Id_Capa == 1);
 
         if (capas1 != null) { 
@@ -379,14 +380,14 @@
                 {
                     Mathy mathy = new Mathy();
 
-                    Task<List<Object>> color = mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
+                    List<Object> color = await mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
 
                     Surface mySurfaceImage = new Surface
                         {
                             X = y_1,
                             Y = x,
                             Z = z,
-                            // SurfaceColor = color,
+                            SurfaceColor = color,
                             //ColorScale = "Rainbow",
                             ColorScale = new object[]
                             {

@@ -356,6 +356,8 @@
                 ShowScale = false
             };
 
+        data.Add(mySurfaceXOne);
+
         IEnumerable<Capa> capas1 = capas.Where(i => i.Id_Capa == 1);
 
         if (capas1 != null)
@@ -405,10 +407,46 @@
                  },
                 ShowScale = false
             };
+
+        data.Add(mySurfaceXZero);
+
+        IEnumerable<Capa> capas3 = capas.Where(i => i.Id_Capa == 3);
+
+        if (capas3 != null)
+        {
+            foreach (var capa in capas3)
+
+            {
+                foreach (var imagenDecorativa in imagenDecorativas.Where(i => i.Id_Capa == capa.Id_Capa))
+                {
+
+                    if (imagenDecorativa != null && !string.IsNullOrEmpty(imagenDecorativa.Url) && imagenDecorativa.Url != "default.png")
+
+                    {
+                        Mathy mathy = new Mathy();
+
+                        List<Object> color = await mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
+
+
+                        Surface mySurfaceImage = new Surface
+                        {
+                            X = y_1,
+                            Y = x,
+                            Z = z,
+                            SurfaceColor = color,
+                            ColorScale = "Greys",
+                            ShowScale = false
+                        };
+
+                        data.Add(mySurfaceImage);
+                    }
+                }
+            }
+        }
     }
     // Los siguientes métodos permanecen SÍNCRONOS ya que no hacen llamadas a servicios asíncronos.
     
-    public void Create_surfaceY()
+    public async Task Create_surfaceY()
     {
         // Capa 2 (Y=1)
         Surface mySurfaceYOne = new Surface
@@ -424,6 +462,43 @@
             },
             ShowScale = false
         };
+
+        data.Add(mySurfaceYOne);
+
+        IEnumerable<Capa> capas2 = capas.Where(i => i.Id_Capa == 2);
+
+        if (capas2 != null)
+        {
+            foreach (var capa in capas2)
+
+            {
+                foreach (var imagenDecorativa in imagenDecorativas.Where(i => i.Id_Capa == capa.Id_Capa))
+                {
+
+                    if (imagenDecorativa != null && !string.IsNullOrEmpty(imagenDecorativa.Url) && imagenDecorativa.Url != "default.png")
+
+                    {
+                        Mathy mathy = new Mathy();
+
+                        List<Object> color = await mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
+
+
+                        Surface mySurfaceImage = new Surface
+                        {
+                            X = y_1,
+                            Y = x,
+                            Z = z,
+                            SurfaceColor = color,
+                            ColorScale = "Greys",
+                            ShowScale = false
+                        };
+
+                        data.Add(mySurfaceImage);
+                    }
+                }
+            }
+        }
+
         // Capa 4 (Y=0)
         Surface mySurfaceYZero = new Surface
         {
@@ -439,8 +514,41 @@
             ShowScale = false
         };
 
-        data.Add(mySurfaceYOne);
         data.Add(mySurfaceYZero);
+
+        IEnumerable<Capa> capas4 = capas.Where(i => i.Id_Capa == 4);
+
+        if (capas4 != null)
+        {
+            foreach (var capa in capas4)
+
+            {
+                foreach (var imagenDecorativa in imagenDecorativas.Where(i => i.Id_Capa == capa.Id_Capa))
+                {
+
+                    if (imagenDecorativa != null && !string.IsNullOrEmpty(imagenDecorativa.Url) && imagenDecorativa.Url != "default.png")
+
+                    {
+                        Mathy mathy = new Mathy();
+
+                        List<Object> color = await mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
+
+
+                        Surface mySurfaceImage = new Surface
+                        {
+                            X = y_1,
+                            Y = x,
+                            Z = z,
+                            SurfaceColor = color,
+                            ColorScale = "Greys",
+                            ShowScale = false
+                        };
+
+                        data.Add(mySurfaceImage);
+                    }
+                }
+            }
+        }
     }
 
     public void Create_surfaceZ()

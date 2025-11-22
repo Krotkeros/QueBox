@@ -1,52 +1,36 @@
 ﻿// Mathy.cs
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Drawing;
-using QueBox.Services;
-
 using System.IO;
+
+// USAMOS SixLabors.ImageSharp en lugar de System.Drawing para compatibilidad con Blazor WASM
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing; 
 
 namespace QueBox.Services
 {
+    // El constructor debe ser público si se usa para inyección de dependencias
     public class Mathy : IMathy
     {
+        // --- Métodos Estáticos (Funciones Matemáticas) ---
+
         public static List<object> LinspaceList(double start, double stop, int num, bool endpoint = true)
         {
-            if (num < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(num), "Number of samples must be non-negative.");
-            }
-
-            if (num == 0)
-            {
-                return new List<object>();
-            }
+            if (num < 0) throw new ArgumentOutOfRangeException(nameof(num), "Number of samples must be non-negative.");
+            if (num == 0) return new List<object>();
 
             List<object> result = new List<object>(num);
+            if (num == 1) { result.Add(start); return result; }
 
-            if (num == 1)
-            {
-                result.Add(start);
-                return result;
-            }
-
-            double step;
-            if (endpoint)
-            {
-                step = (stop - start) / (num - 1);
-            }
-            else
-            {
-                step = (stop - start) / num;
-            }
+            double step = endpoint ? (stop - start) / (num - 1) : (stop - start) / num;
 
             for (int i = 0; i < num; i++)
             {
                 result.Add(start + i * step);
             }
-
-            // Adjust the last element if endpoint is true to ensure it's exactly 'stop'
-            // due to potential floating-point inaccuracies
             if (endpoint && num > 1)
             {
                 result[num - 1] = stop;
@@ -60,11 +44,9 @@ namespace QueBox.Services
             int numX = xValues.Count;
             int numY = yValues.Count;
 
-            // Initialize the 2D lists for X and Y grids
             List<object> X = new List<object>();
             List<object> Y = new List<object>();
 
-            // Populate the X grid
             for (int i = 0; i < numY; i++)
             {
                 List<object> rowX = new List<object>();
@@ -75,7 +57,6 @@ namespace QueBox.Services
                 X.Add(rowX);
             }
 
-            // Populate the Y grid
             for (int i = 0; i < numY; i++)
             {
                 List<object> rowY = new List<object>();
@@ -91,55 +72,56 @@ namespace QueBox.Services
 
         public static List<object> CreateListOfListOfOnesCapacity(int count)
         {
-
-            List<object> onesList = new List<object>(count); // Initialize with capacity
-            for (int i = 0; i < count; i++)
-            {
-                onesList.Add(1);
-            }
-
-            List<object> onesListList = new List<object>(count); // Initialize with capacity
-            for (int i = 0; i < count; i++)
-            {
-                onesListList.Add(onesList);
-            }
-
+            List<object> onesList = new List<object>(count); 
+            for (int i = 0; i < count; i++) { onesList.Add(1.0); }
+            List<object> onesListList = new List<object>(count); 
+            for (int i = 0; i < count; i++) { onesListList.Add(onesList); }
             return onesListList;
         }
 
         public static List<object> CreateListOfListOfZerosCapacity(int count)
         {
-
-            List<object> onesList = new List<object>(count); // Initialize with capacity
-            for (int i = 0; i < count; i++)
-            {
-                onesList.Add(0);
-            }
-
-            List<object> onesListList = new List<object>(count); // Initialize with capacity
-            for (int i = 0; i < count; i++)
-            {
-                onesListList.Add(onesList);
-            }
-
-            return onesListList;
+            List<object> zerosList = new List<object>(count); 
+            for (int i = 0; i < count; i++) { zerosList.Add(0.0); }
+            List<object> zerosListList = new List<object>(count); 
+            for (int i = 0; i < count; i++) { zerosListList.Add(zerosList); }
+            return zerosListList;
         }
 
 
+        // --- Implementación de IMathy (Procesamiento de Imágenes con ImageSharp) ---
+
         public async Task<List<Object>> GetGrayscalePixelsFromUrl(string imageUrl)
         {
-            // 1. Download the image bytes
-            byte[] imageBytes = await DownloadImageBytes(imageUrl);
-
-            // 2. Convert bytes to Bitmap
-            using (Bitmap originalBitmap = BytesToBitmap(imageBytes))
+            try
             {
-                // 3. Convert to grayscale
-                using (Bitmap grayscaleBitmap = ConvertToGrayscale(originalBitmap))
+                // 1. Download the image bytes
+                byte[] imageBytes = await DownloadImageBytes(imageUrl);
+
+                if (imageBytes.Length == 0)
                 {
-                    // 4. Extract pixel data as a list
-                    return GetGrayscalePixelList(grayscaleBitmap);
+                    // Si no se pudo descargar, devolver una matriz vacía
+                    return new List<Object>();
                 }
+
+                // 2. Cargar y procesar la imagen con ImageSharp
+                // Usamos MemoryStream porque LoadAsync requiere un Stream o un path.
+                using (var ms = new MemoryStream(imageBytes))
+                using (var image = await Image.LoadAsync<Rgba32>(ms))
+                {
+                    // Convertir a escala de grises
+                    image.Mutate(x => x.Grayscale());
+                    
+                    // 3. Extraer pixel data como una matriz 2D
+                    return GetGrayscalePixelListImageSharp(image);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Este catch ahora captura los errores de ImageSharp o descarga
+                Console.WriteLine($"Error general al procesar la imagen: {ex.Message}");
+                // Devolver una matriz vacía si hay un fallo
+                return new List<Object>(); 
             }
         }
 
@@ -147,52 +129,47 @@ namespace QueBox.Services
         {
             using (HttpClient client = new HttpClient())
             {
-                return await client.GetByteArrayAsync(imageUrl);
-            }
-        }
-
-        private Bitmap BytesToBitmap(byte[] imageBytes)
-        {
-            using (MemoryStream ms = new MemoryStream(imageBytes))
-            {
-                return new Bitmap(Image.FromStream(ms));
-            }
-        }
-
-        private Bitmap ConvertToGrayscale(Bitmap originalBitmap)
-        {
-            Bitmap grayscaleBitmap = new Bitmap(originalBitmap.Width, originalBitmap.Height);
-
-            for (int x = 0; x < originalBitmap.Width; x++)
-            {
-                for (int y = 0; y < originalBitmap.Height; y++)
+                try
                 {
-                    Color pixel = originalBitmap.GetPixel(x, y);
-                    int grayValue = (pixel.R + pixel.G + pixel.B) / 3;
-                    Color grayPixel = Color.FromArgb(grayValue, grayValue, grayValue);
-                    grayscaleBitmap.SetPixel(x, y, grayPixel);
+                    return await client.GetByteArrayAsync(imageUrl);
+                }
+                catch (HttpRequestException)
+                {
+                    Console.WriteLine($"Error al descargar la imagen desde {imageUrl}.");
+                    return new byte[0]; 
                 }
             }
-            return grayscaleBitmap;
         }
 
-        private List<Object> GetGrayscalePixelList(Bitmap grayscaleBitmap)
+        // Nuevo método para extraer píxeles de SixLabors.ImageSharp
+        private List<Object> GetGrayscalePixelListImageSharp(Image<Rgba32> image)
         {
-            List<Object> pixelList = new List<Object>();
+            List<Object> pixelMatrix = new List<Object>(); 
 
-
-            for (int y = 0; y < grayscaleBitmap.Height; y++) // Iterate row by row
+            // Los píxeles de ImageSharp se acceden por [x, y]
+            // Plotly espera [fila (Y), columna (X)]
+            for (int y = 0; y < image.Height; y++) // Iteración por filas (eje Z/Y)
             {
-
-                List<Object> pixelListy = new List<Object>();
-                for (int x = 0; x < grayscaleBitmap.Width; x++) // Iterate column by column
+                List<Object> rowPixels = new List<Object>();
+                for (int x = 0; x < image.Width; x++) // Iteración por columnas (eje X)
                 {
-                    Color pixel = grayscaleBitmap.GetPixel(x, y);
-                    pixelListy.Add(pixel.R); // R, G, and B will be the same for grayscale
+                    Rgba32 pixel = image[x, y];
+                    
+                    // Convertir el valor de R (que es igual a G y B en escala de grises) a double
+                    // y normalizarlo (opcional, pero Plotly funciona bien con valores 0-255 o 0-1)
+                    // Usaremos 0-255, Plotly lo interpreta como intensidad.
+                    rowPixels.Add((double)pixel.R); 
                 }
-                pixelListy.Add(pixelListy);
+                
+                // Agregamos la fila completa a la matriz
+                pixelMatrix.Add(rowPixels); 
             }
-            return pixelList;
+            return pixelMatrix;
         }
+
+        // Los métodos obsoletos de System.Drawing se eliminan, ya que ImageSharp los reemplaza:
+        // private Bitmap BytesToBitmap(byte[] imageBytes) { ... }
+        // private Bitmap ConvertToGrayscale(Bitmap originalBitmap) { ... }
+        // private List<Object> GetGrayscalePixelList(Bitmap grayscaleBitmap) { ... }
     }
 }

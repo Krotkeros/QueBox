@@ -254,7 +254,7 @@
         }
         isLoading = false;
 
-        Create_surfaceX();
+        Create_surfaceX(capas);
         Create_surfaceY();
         Create_surfaceZ();
 
@@ -269,9 +269,9 @@
     }
 
 
-    // Guardar diseno
+    // Guardar diseno
 
-    private async Task SaveDiseno()
+    private async Task SaveDiseno()
     {
         if (editingDiseno == null)
             return;
@@ -287,8 +287,8 @@
         StateHasChanged();
     }
 
-    // Guardar imagenDecorativa
-    private async Task SaveImagenDecorativa(ImagenDecorativa editingImagenDecorativa)
+    // Guardar imagenDecorativa
+    private async Task SaveImagenDecorativa(ImagenDecorativa editingImagenDecorativa)
     {
         if (editingImagenDecorativa == null)
             return;
@@ -347,11 +347,11 @@
     }
 
 
-    // Actualizar data ImagenDecorativa
+    // Actualizar data ImagenDecorativa
 
 
 
-    public void Create_surfaceX()
+    public void Create_surfaceX(List<Capa> capas)
     {
         // Capa 1
         Surface mySurfaceXOne = new Surface
@@ -359,8 +359,8 @@
             X = y_1,
             Y = x,
             Z = z,
-            //SurfaceColor = color,
-            //ColorScale = "Rainbow",
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
             SurfaceColor = y_1,
             ColorScale = new object[]
             {
@@ -369,6 +369,38 @@
             },
             ShowScale = false
         };
+        IEnumerable<Capa> capas1 = capas.Where(i => i.Id_Capa == 1);
+
+        if (capas1 != null) { 
+            foreach (var capa in capas1)
+
+            {
+                foreach (var imagenDecorativa in imagenDecorativas.Where(i => i.Id_Capa == capa.Id_Capa))
+                {
+                    Mathy mathy = new Mathy();
+
+                    Task<List<Object>> color = mathy.GetGrayscalePixelsFromUrl(imagenDecorativa.Url);
+
+                    Surface mySurfaceImage = new Surface
+                        {
+                            X = y_1,
+                            Y = x,
+                            Z = z,
+                            // SurfaceColor = color,
+                            //ColorScale = "Rainbow",
+                            ColorScale = new object[]
+                            {
+                            new object[] { 0, "#3E2723" },  // Café muy oscuro
+                                        new object[] { 1, "#5D4037" }   // Café oscuro
+                            },
+                            ShowScale = false
+                        };
+
+                    data.Add(mySurfaceImage);
+
+                }
+            }
+        }
         // Capa 3
         Surface mySurfaceXZero = new Surface
         {

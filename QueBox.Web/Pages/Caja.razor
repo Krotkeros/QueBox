@@ -254,7 +254,9 @@
         }
         isLoading = false;
 
-        Create_surface();
+        Create_surfaceX();
+        Create_surfaceY();
+        Create_surfaceZ();
 
     }
 
@@ -349,9 +351,64 @@
 
 
 
-    public void Create_surface()
+    public void Create_surfaceX()
     {
-        Surface mySurface = new Surface
+        // Capa 1
+        Surface mySurfaceXOne = new Surface
+        {
+            X = y_1,
+            Y = x,
+            Z = z,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+            SurfaceColor = y_1,
+            ColorScale = new object[]
+            {
+            new object[] { 0, "#3E2723" },  // Café muy oscuro
+                        new object[] { 1, "#5D4037" }   // Café oscuro
+            },
+            ShowScale = false
+        };
+        // Capa 3
+        Surface mySurfaceXZero = new Surface
+        {
+            X = y_0,
+            Y = x,
+            Z = z,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+            SurfaceColor = y_1,
+            ColorScale = new object[]
+            {
+            new object[] { 0, "#3E2723" },  // Café muy oscuro
+                        new object[] { 1, "#5D4037" }   // Café oscuro
+            },
+            ShowScale = false
+        };
+
+        data.Add(mySurfaceXOne);
+        data.Add(mySurfaceXZero);
+    }
+    public void Create_surfaceY()
+    {
+        // Capa 2
+        Surface mySurfaceYOne = new Surface
+        {
+            X = x,
+            Y = y_1,
+            Z = z,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+            SurfaceColor = y_1,
+            ColorScale = new object[]
+            {
+            new object[] { 0, "#3E2723" },  // Café muy oscuro
+                        new object[] { 1, "#5D4037" }   // Café oscuro
+            },
+            ShowScale = false
+        };
+        // Capa 4
+        Surface mySurfaceYZero = new Surface
         {
             X = x,
             Y = y_0,
@@ -367,8 +424,33 @@
             ShowScale = false
         };
 
-        data.Add(mySurface);
+        data.Add(mySurfaceYOne);
+        data.Add(mySurfaceYZero);
     }
+
+    public void Create_surfaceZ()
+    {
+        // Floor
+        Surface mySurfaceZZero = new Surface
+        {
+            X = x,
+            Y = z,
+            Z = y_0,
+            //SurfaceColor = color,
+            //ColorScale = "Rainbow",
+            SurfaceColor = y_1,
+            ColorScale = new object[]
+            {
+            new object[] { 0, "#3E2723" },  // Café muy oscuro
+                        new object[] { 1, "#5D4037" }   // Café oscuro
+            },
+            ShowScale = false
+        };
+
+        data.Add(mySurfaceZZero);
+    }
+
+
 
 
     private async Task ToggleBootstrapCollapse(string elementid)

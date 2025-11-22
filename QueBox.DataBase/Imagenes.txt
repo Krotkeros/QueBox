@@ -1,0 +1,3 @@
+Imagen text 1 : https://raw.githubusercontent.com/empet/Discrete-Arnold-map/master/Images/cat-128.jpg
+
+Imagen Text 2: https://raw.githubusercontent.com/Krotkeros/QueBox/refs/heads/develop/pinguino-128x128.png

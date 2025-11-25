@@ -44,19 +44,6 @@ CREATE TABLE ImagenDecorativa (
 );
 GO
 
-DELIMITER //
-
-CREATE TRIGGER after_diseno_insert
-AFTER INSERT ON Diseno
-FOR EACH ROW
-BEGIN
-    INSERT INTO Capa (Id_Diseno, Numero)
-    VALUES (NEW.column_name_in_table1);
-END;
-//
-
-DELIMITER ;
-
 
 CREATE TRIGGER TR_Diseno_AfterInsert
 ON Diseno

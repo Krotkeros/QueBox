@@ -236,7 +236,7 @@
 
         // Llamada asíncrona para cargar los datos de la caja, incluyendo las imágenes
         await Create_surfaceX();
-        Create_surfaceY();
+        await Create_surfaceY();
         Create_surfaceZ();
     }
 
@@ -253,7 +253,7 @@
         // Recargar el gráfico si las dimensiones cambian
         data.Clear();
         await Create_surfaceX();
-        Create_surfaceY();
+        await Create_surfaceY();
         Create_surfaceZ();
 
         StateHasChanged();
@@ -320,7 +320,7 @@
             // --- RECARGA GRÁFICO ---
             data.Clear();
             await Create_surfaceX();
-            Create_surfaceY();
+            await Create_surfaceY();
             Create_surfaceZ();
             // -----------------------
         }
@@ -425,7 +425,7 @@
                         List<object> zImg = meshImg.Item2;
 
 
-                        List<object> x_1Img = Mathy.CreateAsymetricListOfListOfValCapacity(filas, columnas, editingDiseno.Largo);
+                        List<object> x_1Img = Mathy.CreateAsymetricListOfListOfValCapacity(filas, columnas, editingDiseno.Largo + editingDiseno.Largo / 2000);
 
                         Surface mySurfaceImage = new Surface
                         {
@@ -523,7 +523,7 @@
                         List<object> zImg = meshImg.Item2;
 
 
-                        List<object> x_0Img = Mathy.CreateAsymetricListOfListOfValCapacity(filas, columnas, 0);
+                        List<object> x_0Img = Mathy.CreateAsymetricListOfListOfValCapacity(filas, columnas, 0 - editingDiseno.Largo / 2000);
 
                         Surface mySurfaceImage = new Surface
                         {
@@ -639,7 +639,7 @@
                         List<object> zImg = meshImg.Item2;
 
 
-                        List<object> y_1Img = Mathy.CreateAsymetricListOfListOfValCapacity(filas, columnas, editingDiseno.Ancho);
+                        List<object> y_1Img = Mathy.CreateAsymetricListOfListOfValCapacity(filas, columnas, editingDiseno.Ancho + editingDiseno.Ancho / 2000);
 
                         Surface mySurfaceImage = new Surface
                         {
@@ -738,7 +738,7 @@
                         List<object> zImg = meshImg.Item2;
 
 
-                        List<object> y_0Img = Mathy.CreateAsymetricListOfListOfValCapacity(filas, columnas, 0);
+                        List<object> y_0Img = Mathy.CreateAsymetricListOfListOfValCapacity(filas, columnas, 0 - editingDiseno.Ancho / 2000);
 
                         Surface mySurfaceImage = new Surface
                         {

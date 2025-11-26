@@ -236,7 +236,7 @@
 
         // Llamada asíncrona para cargar los datos de la caja, incluyendo las imágenes
         await Create_surfaceX();
-        await Create_surfaceY();
+        Create_surfaceY();
         Create_surfaceZ();
     }
 
@@ -280,8 +280,8 @@
 
         // --- RECARGA GRÁFICO ---
         data.Clear();
-        await Create_surfaceX(); 
-        Create_surfaceY();
+        await Create_surfaceX();
+        await Create_surfaceY();
         Create_surfaceZ();
         // -----------------------
 
@@ -319,7 +319,7 @@
 
             // --- RECARGA GRÁFICO ---
             data.Clear();
-            await Create_surfaceX(); 
+            await Create_surfaceX();
             Create_surfaceY();
             Create_surfaceZ();
             // -----------------------
@@ -345,18 +345,18 @@
 
         // Capa 1
         Surface mySurfaceXOne = new Surface
-            {
-                X = x_1,
-                Y = y,
-                Z = z,
-                SurfaceColor = x_1,
-                ColorScale = new object[]
+        {
+            X = x_1,
+            Y = y,
+            Z = z,
+            SurfaceColor = x_1,
+            ColorScale = new object[]
                 {
            new object[] { 0, "#3E2723" },  // Café muy oscuro
                         new object[] { 1, "#5D4037" }   // Café oscuro
                  },
-                ShowScale = false
-            };
+            ShowScale = false
+        };
 
         data.Add(mySurfaceXOne);
 
@@ -401,12 +401,22 @@
                         // Aquí, 'filas' contendrá el número de filas y 'columnas' el número de columnas.
                         // En tu caso de Plotly, ambas deberían ser 128.
 
-                        float margin_x = editingDiseno.Largo / 3;
-                        float margin_y = editingDiseno.Largo / 3;
+
+                        float margin_x = editingDiseno.Ancho / 3;
+                        float margin_y = editingDiseno.Alto / 3;
+
+                        float lim_x = margin_x * 2;
+                        float lim_y = margin_y * 2;
+
+                        // Posicion de la imagen
+
+                        float position_x = (imagenDecorativa.Ancho < lim_x) ? imagenDecorativa.Ancho : lim_x;
+                        float position_y = (imagenDecorativa.Alto < lim_y) ? imagenDecorativa.Alto : lim_y;
 
 
-                        List<object> yCoordsImg = Mathy.LinspaceList(0, editingDiseno.Ancho, filas);
-                        List<object> zCoordsImg = Mathy.LinspaceList(0, editingDiseno.Alto, columnas);
+
+                        List<object> yCoordsImg = Mathy.LinspaceList(position_x, position_x + margin_x, filas);
+                        List<object> zCoordsImg = Mathy.LinspaceList(position_y, position_y + margin_y, columnas);
 
                         Tuple<List<object>, List<object>> meshImg = Mathy.CreateMeshGrid(yCoordsImg, zCoordsImg);
 
@@ -434,18 +444,18 @@
         }
         // Capa 3
         Surface mySurfaceXZero = new Surface
-            {
-                X = x_0,
-                Y = y,
-                Z = z,
-                SurfaceColor = x_1,
-                ColorScale = new object[]
+        {
+            X = x_0,
+            Y = y,
+            Z = z,
+            SurfaceColor = x_1,
+            ColorScale = new object[]
                 {
            new object[] { 0, "#3E2723" },  // Café muy oscuro
                         new object[] { 1, "#5D4037" }   // Café oscuro
                  },
-                ShowScale = false
-            };
+            ShowScale = false
+        };
 
         data.Add(mySurfaceXZero);
 
@@ -490,12 +500,21 @@
                         // Aquí, 'filas' contendrá el número de filas y 'columnas' el número de columnas.
                         // En tu caso de Plotly, ambas deberían ser 128.
 
-                        float margin_x = editingDiseno.Largo / 3;
-                        float margin_y = editingDiseno.Largo / 3;
+                        float margin_x = editingDiseno.Ancho / 3;
+                        float margin_y = editingDiseno.Alto / 3;
+
+                        float lim_x = margin_x * 2;
+                        float lim_y = margin_y * 2;
+
+                        // Posicion de la imagen
+
+                        float position_x = (imagenDecorativa.Ancho < lim_x) ? imagenDecorativa.Ancho : lim_x;
+                        float position_y = (imagenDecorativa.Alto < lim_y) ? imagenDecorativa.Alto : lim_y;
 
 
-                        List<object> yCoordsImg = Mathy.LinspaceList(0, editingDiseno.Ancho, filas);
-                        List<object> zCoordsImg = Mathy.LinspaceList(0, editingDiseno.Alto, columnas);
+                        List<object> yCoordsImg = Mathy.LinspaceList(position_x, position_x + margin_x, filas);
+                        List<object> zCoordsImg = Mathy.LinspaceList(position_y, position_y + margin_y, columnas);
+
 
                         Tuple<List<object>, List<object>> meshImg = Mathy.CreateMeshGrid(yCoordsImg, zCoordsImg);
 
@@ -596,12 +615,22 @@
                         // Aquí, 'filas' contendrá el número de filas y 'columnas' el número de columnas.
                         // En tu caso de Plotly, ambas deberían ser 128.
 
+
                         float margin_x = editingDiseno.Largo / 3;
-                        float margin_y = editingDiseno.Largo / 3;
+                        float margin_y = editingDiseno.Alto / 3;
+
+                        float lim_x = margin_x * 2;
+                        float lim_y = margin_y * 2;
+
+                        // Posicion de la imagen
+
+                        float position_x = (imagenDecorativa.Ancho < lim_x) ? imagenDecorativa.Ancho : lim_x;
+                        float position_y = (imagenDecorativa.Alto < lim_y) ? imagenDecorativa.Alto : lim_y;
 
 
-                        List<object> xCoordsImg = Mathy.LinspaceList(0, editingDiseno.Largo, filas);
-                        List<object> zCoordsImg = Mathy.LinspaceList(0, editingDiseno.Alto, columnas);
+                        List<object> xCoordsImg = Mathy.LinspaceList(position_x, position_x + margin_x, filas);
+                        List<object> zCoordsImg = Mathy.LinspaceList(position_y, position_y + margin_y, columnas);
+
 
                         Tuple<List<object>, List<object>> meshImg = Mathy.CreateMeshGrid(xCoordsImg, zCoordsImg);
 
@@ -686,12 +715,21 @@
                         // Aquí, 'filas' contendrá el número de filas y 'columnas' el número de columnas.
                         // En tu caso de Plotly, ambas deberían ser 128.
 
+
                         float margin_x = editingDiseno.Largo / 3;
-                        float margin_y = editingDiseno.Largo / 3;
+                        float margin_y = editingDiseno.Alto / 3;
+
+                        float lim_x = margin_x * 2;
+                        float lim_y = margin_y * 2;
+
+                        // Posicion de la imagen
+
+                        float position_x = (imagenDecorativa.Ancho < lim_x) ? imagenDecorativa.Ancho : lim_x;
+                        float position_y = (imagenDecorativa.Alto < lim_y) ? imagenDecorativa.Alto : lim_y;
 
 
-                        List<object> xCoordsImg = Mathy.LinspaceList(0, editingDiseno.Largo, filas);
-                        List<object> zCoordsImg = Mathy.LinspaceList(0, editingDiseno.Alto, columnas);
+                        List<object> xCoordsImg = Mathy.LinspaceList(position_x, position_x + margin_x, filas);
+                        List<object> zCoordsImg = Mathy.LinspaceList(position_y, position_y + margin_y, columnas);
 
                         Tuple<List<object>, List<object>> meshImg = Mathy.CreateMeshGrid(xCoordsImg, zCoordsImg);
 

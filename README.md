@@ -22,7 +22,7 @@ The plot can be interactive and downloable.
 
 ### Box example
 
-![Alt text](path/to/image.png)
+![cat_box](https://github.com/Krotkeros/QueBox/blob/main/cat_box.png)
 
 ## What it means
 

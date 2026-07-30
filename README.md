@@ -1,5 +1,7 @@
 # QueBox
 
+![cat_box](cat_box.png)
+
 ## What it is?
 
 QueBox is a web application, the purpose is to make 3d boxes that can have different dimensions and images in any of his horizontal layers.

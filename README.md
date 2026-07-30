@@ -1,6 +1,6 @@
 # QueBox
 
-![cat_box](cat_box.png)
+![cat_box](https://github.com/Krotkeros/QueBox/blob/main/cat_box.png)
 
 ## What it is?
 
